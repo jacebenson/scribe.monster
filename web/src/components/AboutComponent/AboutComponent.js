@@ -9,7 +9,7 @@ import { PlayIcon } from 'src/components/CallToActionWithVideo/'
 import CallToActionWithVideo from 'src/components/CallToActionWithVideo/'
 import Welcome from 'src/components/Welcome'
 
-import InstallExtension from '../InstallExtension/InstallExtension'
+//import InstallExtension from '../InstallExtension/InstallExtension'
 const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
   const { isAuthenticated } = useAuth()
 
@@ -39,7 +39,7 @@ const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
         message={message}
         imageAltText={imageAltText}
         image={imageToVideo}
-        displayVideo={displayVideo}
+        //displayVideo={displayVideo}
         setDisplayVideo={setDisplayVideo}
       >
         <Fragment>
@@ -55,10 +55,10 @@ const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
                 navigate('/signup')
               }}
             >
-              Signup
+              Sign up to get updates!
             </Button>
           )}
-          <Button
+          {/*<Button
             rounded={'full'}
             size={'lg'}
             fontWeight={'normal'}
@@ -84,9 +84,9 @@ const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
             }}
           >
             {loginButtonString}
-          </Button>
+          </Button>*/}
         </Fragment>
-        <Button
+        {/*<Button
           rounded={'full'}
           size={'lg'}
           fontWeight={'normal'}
@@ -98,8 +98,8 @@ const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
           leftIcon={<PlayIcon h={4} w={4} color={'gray.400'} />}
         >
           How It Works
-        </Button>
-        <InstallExtension />
+        </Button>*/}
+        {/*<InstallExtension />*/}
       </CallToActionWithVideo>
     </Box>
   )

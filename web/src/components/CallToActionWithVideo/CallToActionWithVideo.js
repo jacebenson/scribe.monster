@@ -94,7 +94,7 @@ export default function CallToActionWithVideo({
           >
             {!displayVideo && (
               <Fragment>
-                <IconButton
+                {/*<IconButton
                   aria-label={'Play Button'}
                   variant={'ghost'}
                   _hover={{ bg: 'transparent' }}
@@ -108,7 +108,7 @@ export default function CallToActionWithVideo({
                   onClick={() => {
                     setDisplayVideo(true)
                   }}
-                />
+                />*/}
 
                 <Image
                   alt={imageAltText}
