@@ -25,6 +25,16 @@ export default function Footer() {
         <Stack direction={'row'} spacing={6}>
           <Link href={'/'}>Home</Link>
         </Stack>
+        <Text>
+          Powered by{' '}
+          <Link isExternal href="https://tskr.io">
+            Tskr
+          </Link>{' '}
+          and{' '}
+          <Link isExternal href="https://openai.com">
+            OpenAI
+          </Link>
+        </Text>
         <Text>© 2022 Scribe Monster. All rights reserved</Text>
       </Container>
     </Box>
