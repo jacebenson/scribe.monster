@@ -8,7 +8,7 @@ import SidebarWithHeader from 'src/components/SidebarWithHeader'
 import AboutPage from 'src/pages/AboutPage'
 
 const Standard = ({ children /*, isAuthenticated, currentUser*/ }) => {
-  const brand = 'Seedling' //TODO: USE PROPERTY OR ENV VARIABLE
+  const brand = 'ScribeMonster' //TODO: USE PROPERTY OR ENV VARIABLE
   const { isAuthenticated, currentUser } = useAuth()
   let myProps = {
     brand,
