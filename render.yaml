@@ -27,6 +27,26 @@ services:
   - type: rewrite
     source: /*
     destination: /index.html
+  headers:
+  - path: /*
+    name: X-Frame-Options
+    value: DENY
+  - path: /*
+    name: X-XSS-Protection
+    value: "1; mode=block"
+  - path: /*
+    name: X-Content-Type-Options
+    value: "nosniff"
+  - path: /*
+    name: Strict-Transport-Security
+    value: "max-age=63072000; includeSubDomains; preload"
+  - path: /*
+    name: Referrer-Policy
+    value: "same-origin"
+    #Content-Security-Policy = "default-src 'none'; manifest-src 'self'; worker-src 'self'; connect-src 'self'                                        ; img-src 'self'; script-src 'self'                                           ; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'; base-uri 'self';"
+  - path: /*
+    name: Content-Security-Policy
+    value: "default-src 'none'; manifest-src 'self'; worker-src 'self'; connect-src 'self' https://monitoring.jace.pro/api/collect; img-src 'self'; script-src 'self' https://monitoring.jace.pro/minneapolis.js; style-src 'unsafe-inline'       ; frame-ancestors 'self'; base-uri 'self';"
 
 - name: scribe.monster-api
   type: web
