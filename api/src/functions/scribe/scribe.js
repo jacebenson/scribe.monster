@@ -87,7 +87,7 @@ export const handler = async (event /*, context*/) => {
       AND: [
         { extensionKey: { equals: extensionKey } },
         { username: { equals: username } },
-        { level: { OR: [{ equals: 'paid' }, { equals: 'free' }] } },
+        //{ level: { OR: [{ equals: 'paid' }, { equals: 'free' }] } },
       ],
     }
     var hasValidKey =
