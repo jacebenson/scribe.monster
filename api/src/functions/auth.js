@@ -15,7 +15,7 @@ export const handler = async (event, context) => {
       //await executeAfterUpdateRules('user', { record: user })
       return user
     },
-    expires: 60 * 60 * 24,
+    expires: 60 * 60 * 24 * 7,
     errors: {
       usernameNotFound: 'Username not found',
       usernameRequired: 'Username is required',

@@ -24,11 +24,8 @@ export default function Footer() {
       >
         <Stack direction={'row'} spacing={6}>
           <Link href={'/'}>Home</Link>
-          <Link href={'https://tskr.io/about/'}>About</Link>
-          <Link href={'https://tskr.io/docs/'}>Blog</Link>
-          <Link href={'https://twitter.com/IoTskr'}>Twitter</Link>
         </Stack>
-        <Text>© 2022 Tskr. All rights reserved</Text>
+        <Text>© 2022 Scribe Monster. All rights reserved</Text>
       </Container>
     </Box>
   )

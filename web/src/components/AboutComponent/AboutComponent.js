@@ -7,16 +7,18 @@ import { navigate } from '@redwoodjs/router'
 
 import { PlayIcon } from 'src/components/CallToActionWithVideo/'
 import CallToActionWithVideo from 'src/components/CallToActionWithVideo/'
-import DeployButton from 'src/components/DeployButton'
 import Welcome from 'src/components/Welcome'
+
+import InstallExtension from '../InstallExtension/InstallExtension'
 const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
   const { isAuthenticated } = useAuth()
 
-  let header = { lineOne: 'Seedling', lineTwo: 'Starter' }
-  let message = `Have an idea for a new project? Does getting the access,
-  business logic, and automation drag on? Seedling is a tool that makes it
-  easy to get started with your project. It's free, and it's open source.`
-  let imageToVideo = './desk-g04ccd6cc7_1280.webp'
+  let header = {
+    lineOne: 'Scribe Monster',
+    lineTwo: 'Unlock your scripting potential with Stew!',
+  }
+  let message = `Let Stew the scribe monster take the initiative and get started on your client scripts, business rules, script includes, code reviews, and design work.`
+  let imageToVideo = './header.png'
   let imageAltText =
     'Find me in ./web/src/components/AboutComponent/AboutComponent.js'
   const { loading, logIn, logOut /*, currentUser*/, type } = useAuth()
@@ -97,7 +99,7 @@ const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
         >
           How It Works
         </Button>
-        <DeployButton />
+        <InstallExtension />
       </CallToActionWithVideo>
     </Box>
   )
