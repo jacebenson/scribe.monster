@@ -56,60 +56,35 @@ import {
 const Welcome = () => {
   const features = [
     {
-      title: 'Convention over configuration',
-      text: 'We want a clear way to solve most problems, if it can be solved it should be done in a repeatable way.',
+      title: 'Client Scripts',
+      text: 'The former bane of your existance but I live for them',
     },
     {
-      title: 'Authentication providers',
-      text: 'Today we support dbAuth, and Auth0.  Just change your environment variables to switch.',
+      title: 'Business Rules',
+      text: 'When you need one you need one, and if its scripted I can help',
     },
     {
-      title: 'Beautiful Responsive Emails',
-      text: 'No one likes the minefield that is email.  MJML helps build your templates and make them beautiful on every client.',
+      title: 'Script Includes',
+      text: 'We will write some clear script includes together',
+    },
+    {
+      title: 'Code Reviews',
+      text: 'Point out some problems with scripts you need to check',
+    },
+    {
+      title: 'Design Work',
+      text: 'Give you a headstart on that design',
     },
     {
       title: 'Privacy is important to us',
       text: "We've taken steps to ensure that your users' privacy is respected.",
-    },
-    {
-      title: 'Security Roles',
-      text: 'Table and field level roles by default are set so you can simply give them out and not figure them out.',
-    },
-    {
-      title: 'Row Level Security',
-      text: 'Row Level Security is hard, we a convention for how to do this that makes sense.',
-    },
-    {
-      title: 'Automate with rules',
-      text: 'Rules are api side logic that run before and after create, read, update and delete operations.',
-    },
-    {
-      title: 'Accessibility',
-      text: 'We use Chakra-UI to make these sites as accessible as possible.',
-    },
-    {
-      title: 'Forms and Lists',
-      text: 'When generating pages and components from models, we build out sortable, searchable, filterable lists, and common forms.',
-    },
-    {
-      title: 'Own your data',
-      text: (
-        <>
-          When you own it, you can do{' '}
-          <Text display={'inline'} fontWeight={'bold'}>
-            whatever
-          </Text>{' '}
-          you want with it. That{"'"}s a tool hard to replace when you give away
-          your keys.
-        </>
-      ),
     },
   ]
 
   return (
     <Box p={4} backgroundColor={'white'}>
       <Stack spacing={4} as={Container} maxW={'3xl'} textAlign={'center'}>
-        <Heading fontSize={'3xl'}>Welcome to Seedling</Heading>
+        <Heading fontSize={'3xl'}>Welcome to Scribe Monster</Heading>
         <Text color={'gray.600'} fontSize={'xl'}>
           These important features are critical to building a great solution.
         </Text>
