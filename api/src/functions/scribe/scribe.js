@@ -37,6 +37,12 @@ export const handler = async (event /*, context*/) => {
     logger.info('Invoked scribe function')
     logger.info('body', event.body)
     console.log('event', event.httpMethod)
+    if (event.httpMethod == 'OPTIONS') {
+      return respond({
+        code: 200,
+        data: { message: 'This is allowed from all places' },
+      })
+    }
     if (event.httpMethod !== 'POST') {
       return respond({
         code: 500,
