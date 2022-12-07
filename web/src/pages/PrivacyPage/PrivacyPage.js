@@ -11,7 +11,7 @@ import {
   Center,
 } from '@chakra-ui/react'
 
-import { Link, navigate, routes, useLocation } from '@redwoodjs/router'
+import { Link, routes, useLocation } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
 
 const PrivacyPage = () => {
@@ -186,7 +186,7 @@ const PrivacyPage = () => {
     },
     {
       id: 'chilrens-privacy',
-      title: "Childres's privacy",
+      title: "Children's privacy",
       content: (
         <>
           <Text>
