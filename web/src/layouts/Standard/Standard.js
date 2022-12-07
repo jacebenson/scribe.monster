@@ -23,7 +23,7 @@ const Standard = ({ children /*, isAuthenticated, currentUser*/ }) => {
       )}
       {!isAuthenticated && (
         <Fragment>
-          <AboutPage />
+          {children}
           <Footer />
         </Fragment>
       )}

@@ -1,10 +1,6 @@
-import fetch from 'node-fetch'
-
 import { db } from 'src/lib/db'
 import { logger } from 'src/lib/logger'
 
-const API_ENDPOINT = 'https://api.openai.com/v1/edits'
-const AUTH = process.env.OPENAITOKEN
 /**
  * The handler function is your code that processes http request events.
  * You can use return and throw to send a response or error, respectively.
@@ -44,38 +40,10 @@ export const handler = async (event /*, context*/) => {
         data: { message: 'This is allowed from all places' },
       })
     }
-    if (event.httpMethod !== 'POST') {
+    if (event.httpMethod !== 'GET') {
       return respond({
         code: 500,
-        data: { error: 'We expect a POST' },
-      })
-    }
-    if (!event.body) {
-      return respond({
-        code: 500,
-        data: { error: 'Missing JSON Body' },
-      })
-    }
-    var body = JSON.parse(event?.body)
-    var input = body?.input
-    var instruction = body?.instruction
-    var model = body?.model || 'code-davinci-edit-001'
-    // code-davinci-edit-001
-    // text-davinci-edit-001
-    logger.info({
-      input,
-      instruction,
-    })
-    if (!input) {
-      return respond({
-        code: 500,
-        data: { error: 'JSON Body missing `input` property' },
-      })
-    }
-    if (!instruction) {
-      return respond({
-        code: 500,
-        data: { error: 'JSON Body missing `instruction` property' },
+        data: { error: 'We expect a GET' },
       })
     }
     // post is good.  now lets see if the user can auth...
@@ -115,24 +83,9 @@ export const handler = async (event /*, context*/) => {
     if (!hasValidKey) {
       return respond({ code: 401, data: { error: 'Key not valid' } })
     }
-    const response = await fetch(API_ENDPOINT, {
-      method: 'POST',
-      cache: 'no-cache',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: AUTH,
-      },
-      body: JSON.stringify({
-        model,
-        input,
-        instruction,
-      }),
-    })
-    const data = await response.json()
-    console.log({ data })
     return respond({
       code: 200,
-      data: { code: data.choices[0].text, tokens: data.usage.total_tokens },
+      data: { message: 'success' },
     })
   } catch (error) {
     console.log(error)

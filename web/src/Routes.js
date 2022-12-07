@@ -29,7 +29,9 @@ const Routes = () => {
       <Route path="/reset-password" page={ResetPasswordPage} name="resetPassword" />
       <Route path="/login" page={LoginPage} name="login" />
       <Route path="/signup" page={SignupPage} name="signup" />
+
       <Set wrap={Standard}>
+        <Route path="/privacy" page={PrivacyPage} name="privacy" />
         <Route path="/logout" page={LogoutPage} name="logout" />
         <Route path="/" page={HomePage} name="home" />
         <Private unauthenticated="home">

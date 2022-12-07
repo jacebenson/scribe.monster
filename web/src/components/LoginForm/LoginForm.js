@@ -15,6 +15,7 @@ import { useAuth } from '@redwoodjs/auth'
 import { navigate, routes } from '@redwoodjs/router'
 import { Toaster, toast } from '@redwoodjs/web/toast'
 
+import CookieModal from 'src/components/CookieModal'
 import FormComponent from 'src/components/FormComponent'
 const LoginForm = () => {
   const { isAuthenticated, logIn } = useAuth()
@@ -54,6 +55,7 @@ const LoginForm = () => {
   ]
   return (
     <Stack minH={'100vh'} direction={{ base: 'column', md: 'row' }}>
+      <CookieModal />
       <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
       <Flex p={8} flex={1} align={'center'} justify={'center'}>
         <Stack spacing={4} w={'full'} maxW={'md'}>
