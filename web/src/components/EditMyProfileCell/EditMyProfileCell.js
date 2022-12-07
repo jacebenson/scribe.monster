@@ -17,6 +17,7 @@ export const QUERY = gql`
       username
       email
       name
+      extensionKey
     }
   }
 `
@@ -97,6 +98,12 @@ export const Success = ({ myProfile }) => {
       name: 'email',
       prettyName: 'Email (required to send you details)',
       required: 'Yep',
+    },
+    {
+      name: 'extensionKey',
+      prettyName: 'Key',
+      type: 'password',
+      disabled: true,
     },
   ]
   if (!process.env.AUTH0_DOMAIN) {

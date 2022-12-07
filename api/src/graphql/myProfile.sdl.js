@@ -4,6 +4,7 @@ export const schema = gql`
     name: String!
     username: String!
     email: String
+    extensionKey: String
     #createdAt: DateTime
     #updatedAt: DateTime
   }

@@ -58,7 +58,7 @@ const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
               Sign up to get updates!
             </Button>
           )}
-          {/*<Button
+          <Button
             rounded={'full'}
             size={'lg'}
             fontWeight={'normal'}
@@ -84,7 +84,7 @@ const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
             }}
           >
             {loginButtonString}
-          </Button>*/}
+          </Button>
         </Fragment>
         <Button
           rounded={'full'}
