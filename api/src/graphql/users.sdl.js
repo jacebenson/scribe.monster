@@ -14,6 +14,7 @@ export const schema = gql`
     resetToken: String @masked
     "Controls how long a reset token is good for with dbAuth"
     resetTokenExpiresAt: DateTime
+    extensionKey: String
     GroupMember: [GroupMember]!
       @requireAuth(roles: ["groupMemberRead", "admin"])
     Preference: [Preference]!
@@ -53,6 +54,7 @@ export const schema = gql`
     email: String
     salt: String
     hashedPassword: String
+    extensionKey: String
   }
 
   type Mutation {

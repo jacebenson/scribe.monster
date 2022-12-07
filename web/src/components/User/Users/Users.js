@@ -15,6 +15,10 @@ export const initialColumns = [
     showMatching,
     filterOut,
   },
+  {
+    Header: 'Key',
+    accessor: 'extensionKey',
+  },
   // TODO: check if the logged in user can see groupMembers,
   // TODO: ln2 and add this appropriately
   // TODO: ln3 somehow include/exclude the data from the graphql call

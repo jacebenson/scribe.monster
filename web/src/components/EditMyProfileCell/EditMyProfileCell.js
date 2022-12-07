@@ -102,8 +102,8 @@ export const Success = ({ myProfile }) => {
     {
       name: 'extensionKey',
       prettyName: 'Key',
-      type: 'password',
-      disabled: true,
+      type: 'string',
+      placeholder: 'if empty, access will be denied from extension',
     },
   ]
   if (!process.env.AUTH0_DOMAIN) {

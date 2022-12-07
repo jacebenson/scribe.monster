@@ -63,6 +63,7 @@ export const QUERY = gql`
         #GroupMember {
         #  id
         #}
+        extensionKey
         Preference {
           id
         }

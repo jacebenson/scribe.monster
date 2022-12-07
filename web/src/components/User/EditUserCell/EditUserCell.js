@@ -17,6 +17,7 @@ export const QUERY = gql`
       updatedAt
       name
       email
+      extensionKey
     }
   }
 `
@@ -28,6 +29,7 @@ const UPDATE_USER_MUTATION = gql`
       updatedAt
       name
       email
+      extensionKey
     }
   }
 `
@@ -96,10 +98,10 @@ export const Success = ({ user }) => {
       required: 'This is required',
     },
     {
-      name: 'role',
-      prettyName: 'Role',
-      type: 'json',
-      defaultValue: { foo: 'bar' },
+      name: 'extensionKey',
+      prettyName: 'Key',
+      type: 'string',
+      placeholder: 'if empty, access will be denied from extension',
     },
   ]
   // if (currentUser.id === user.id) {
