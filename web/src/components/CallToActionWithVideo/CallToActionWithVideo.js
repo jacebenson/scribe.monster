@@ -16,6 +16,8 @@ import {
 } from '@chakra-ui/react'
 
 import VimeoEmbed from 'src/components/VimeoEmbed'
+
+import YouTubeEmbed from '../YouTubeEmbed/YouTubeEmbed'
 export default function CallToActionWithVideo({
   children,
   header,
@@ -94,7 +96,7 @@ export default function CallToActionWithVideo({
           >
             {!displayVideo && (
               <Fragment>
-                {/*<IconButton
+                <IconButton
                   aria-label={'Play Button'}
                   variant={'ghost'}
                   _hover={{ bg: 'transparent' }}
@@ -108,7 +110,7 @@ export default function CallToActionWithVideo({
                   onClick={() => {
                     setDisplayVideo(true)
                   }}
-                />*/}
+                />
 
                 <Image
                   alt={imageAltText}
@@ -121,7 +123,7 @@ export default function CallToActionWithVideo({
               </Fragment>
             )}
             {displayVideo && (
-              <VimeoEmbed embedId={'359801094'} w={'100%'} h={'100%'} />
+              <YouTubeEmbed embedId={'wVBuizJkhSA'} w={'100%'} h={'100%'} />
             )}
           </Box>
         </Flex>
