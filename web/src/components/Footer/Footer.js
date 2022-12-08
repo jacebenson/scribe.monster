@@ -3,9 +3,11 @@ import {
   Container,
   Stack,
   Text,
-  Link,
+  Link as ChakraLink,
   useColorModeValue,
 } from '@chakra-ui/react'
+
+import { Link, routes } from '@redwoodjs/router'
 
 export default function Footer() {
   return (
@@ -23,17 +25,18 @@ export default function Footer() {
         align={{ base: 'center', md: 'center' }}
       >
         <Stack direction={'row'} spacing={6}>
-          <Link href={'/'}>Home</Link>
+          <Link to={routes.home()}>Home</Link>
+          <Link to={routes.privacy()}>Privacy Policy</Link>
         </Stack>
         <Text>
           Powered by{' '}
-          <Link isExternal href="https://tskr.io">
+          <ChakraLink isExternal href="https://tskr.io">
             Tskr
-          </Link>{' '}
+          </ChakraLink>{' '}
           and{' '}
-          <Link isExternal href="https://openai.com">
+          <ChakraLink isExternal href="https://openai.com">
             OpenAI
-          </Link>
+          </ChakraLink>
         </Text>
         <Text>© 2022 Scribe Monster. All rights reserved</Text>
       </Container>
