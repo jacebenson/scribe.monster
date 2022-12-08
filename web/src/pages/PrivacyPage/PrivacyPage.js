@@ -226,6 +226,7 @@ const PrivacyPage = () => {
             If you have any questions or suggestions about my Privacy Policy, do
             not hesitate to{' '}
             <ChakraLink
+              isExternal={''}
               onClick={() => {
                 window.open(
                   'mailto:jace' + '@' + 'benson.com&subject=About ScribeMonster'
