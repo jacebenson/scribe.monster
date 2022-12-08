@@ -84,6 +84,11 @@ const PrivacyPage = () => {
             used to identify you.
           </Text>
           <Text>
+            OpenAI does use a small amount their requests to retain their
+            models, however that can be opted out of and I{"'"}ve opted out of
+            that.
+          </Text>
+          <Text>
             Link to the privacy policy of third-party service providers used by
             the app
           </Text>
