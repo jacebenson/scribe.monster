@@ -55,7 +55,7 @@ const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
                 navigate('/signup')
               }}
             >
-              Sign up to get updates!
+              Sign up!
             </Button>
           )}
           <Button
