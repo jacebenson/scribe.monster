@@ -2,7 +2,7 @@ import fetch from 'node-fetch'
 
 import { db } from 'src/lib/db'
 import { logger } from 'src/lib/logger'
-
+import { log } from 'src/lib/util'
 const API_ENDPOINT = 'https://api.openai.com/v1/edits'
 const AUTH = process.env.OPENAITOKEN
 /**
@@ -130,6 +130,11 @@ export const handler = async (event /*, context*/) => {
     })
     const data = await response.json()
     console.log({ data })
+
+    await log(
+      `${username} used ${data.usage.total_tokens}`,
+      `/functions/scribe`
+    )
     return respond({
       code: 200,
       data: { code: data.choices[0].text, tokens: data.usage.total_tokens },
