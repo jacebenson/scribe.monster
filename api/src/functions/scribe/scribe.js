@@ -2,25 +2,11 @@ import fetch from 'node-fetch'
 
 import { db } from 'src/lib/db'
 import { logger } from 'src/lib/logger'
+import prompts from 'src/lib/prompts'
 import { log } from 'src/lib/util'
-const API_ENDPOINT = 'https://api.openai.com/v1/edits'
+//const API_ENDPOINT = 'https://api.openai.com/v1/edits'
 const AUTH = process.env.OPENAITOKEN
-/**
- * The handler function is your code that processes http request events.
- * You can use return and throw to send a response or error, respectively.
- *
- * Important: When deployed, a custom serverless function is an open API endpoint and
- * is your responsibility to secure appropriately.
- *
- * @see {@link https://redwoodjs.com/docs/serverless-functions#security-considerations|Serverless Function Considerations}
- * in the RedwoodJS documentation for more information.
- *
- * @typedef { import('aws-lambda').APIGatewayEvent } APIGatewayEvent
- * @typedef { import('aws-lambda').Context } Context
- * @param { APIGatewayEvent } event - an object which contains information from the invoker.
- * @param { Context } context - contains information about the invocation,
- * function, and execution environment.
- */
+
 function respond({ code, data }) {
   return {
     statusCode: code,
@@ -59,23 +45,28 @@ export const handler = async (event /*, context*/) => {
     var body = JSON.parse(event?.body)
     var input = body?.input
     var instruction = body?.instruction
-    var model = body?.model || 'code-davinci-edit-001'
-    // code-davinci-edit-001
-    // text-davinci-edit-001
+    var action = body?.action || 'edit'
     logger.info({
       input,
       instruction,
+      action,
     })
-    if (!input) {
+    if (!input || !instruction || !action) {
       return respond({
         code: 500,
-        data: { error: 'JSON Body missing `input` property' },
+        data: {
+          error: 'JSON Body missing input, instruction or action properties',
+        },
       })
     }
-    if (!instruction) {
+    var prompt = prompts({ prompt: instruction, input })[action]
+    console.log({ prompt })
+    if (!prompt) {
       return respond({
         code: 500,
-        data: { error: 'JSON Body missing `instruction` property' },
+        data: {
+          error: 'Action invalid, try, edit, complete, or explain.',
+        },
       })
     }
     // post is good.  now lets see if the user can auth...
@@ -115,18 +106,14 @@ export const handler = async (event /*, context*/) => {
     if (!hasValidKey) {
       return respond({ code: 401, data: { error: 'Key not valid' } })
     }
-    const response = await fetch(API_ENDPOINT, {
+    const response = await fetch('https://api.openai.com/v1/completions', {
       method: 'POST',
       cache: 'no-cache',
       headers: {
         'Content-Type': 'application/json',
         Authorization: AUTH,
       },
-      body: JSON.stringify({
-        model,
-        input,
-        instruction,
-      }),
+      body: JSON.stringify({ ...prompt }),
     })
     const data = await response.json()
     console.log({ data })
