@@ -17,7 +17,7 @@ ${input}
 ${input.split('\n')[0]}`,// `(function(c,p){`
 */
       prompt: `Code this given this prompt, "${prompt}":
-${input.split('\n')[0].substr(0,input.split('\n')[0].length-1)}`,
+${input.split('\n')[0].substr(0,input.split('\n')[0].length-1).trim()}`,
       model: 'text-davinci-002',
       temperature: 0,
       max_tokens: 2000,
