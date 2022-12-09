@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react'
 
-import { Box, Button } from '@chakra-ui/react'
+import { Box, Button, Link } from '@chakra-ui/react'
 
 import { useAuth } from '@redwoodjs/auth'
 import { navigate } from '@redwoodjs/router'
@@ -42,6 +42,21 @@ const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
         displayVideo={displayVideo}
         setDisplayVideo={setDisplayVideo}
       >
+        <Button
+          as={Link}
+          rounded={'full'}
+          size={'xl'}
+          fontWeight={'normal'}
+          px={6}
+          backgroundColor={'green'}
+          color={'white'}
+          href={
+            'https://chrome.google.com/webstore/detail/scribemonster/jdibjdmndifkeafbhbajogekgeolmmfh?hl=en&authuser=0'
+          }
+        >
+          Get the Extension!
+        </Button>
+
         <Fragment>
           {!auth0?.domain && (
             <Button
