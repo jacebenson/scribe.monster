@@ -2,9 +2,9 @@ import fetch from 'node-fetch'
 
 import { db } from 'src/lib/db'
 import { logger } from 'src/lib/logger'
+let dog = console.log
 import prompts from 'src/lib/prompts'
 import { log } from 'src/lib/util'
-//const API_ENDPOINT = 'https://api.openai.com/v1/edits'
 const AUTH = process.env.OPENAITOKEN
 
 function respond({ code, data }) {
@@ -23,7 +23,7 @@ export const handler = async (event /*, context*/) => {
   try {
     logger.info('Invoked scribe function')
     logger.info('body', event.body)
-    console.log('event', event.httpMethod)
+    dog('event', event.httpMethod)
     if (event.httpMethod == 'OPTIONS') {
       return respond({
         code: 200,
@@ -46,28 +46,35 @@ export const handler = async (event /*, context*/) => {
     var input = body?.input
     var instruction = body?.instruction
     var action = body?.action || 'edit'
-    logger.info({
+    dog({
       input,
       instruction,
       action,
     })
-    if (!input || !instruction || !action) {
-      return respond({
-        code: 500,
-        data: {
-          error: 'JSON Body missing input, instruction or action properties',
-        },
-      })
-    }
-    var prompt = prompts({ prompt: instruction, input })[action]
-    console.log({ prompt })
-    if (!prompt) {
+    var promptConfig = prompts({ prompt: instruction, input })[action]
+    if (!promptConfig) {
       return respond({
         code: 500,
         data: {
           error: 'Action invalid, try, edit, complete, or explain.',
         },
       })
+    }
+    dog({ promptConfig: promptConfig.required })
+    for (
+      let requiredFieldCount = 0;
+      requiredFieldCount < promptConfig.required.length;
+      requiredFieldCount++
+    ) {
+      let typeOfField = typeof body[promptConfig.required[requiredFieldCount]]
+      if (typeOfField === 'undefined') {
+        return respond({
+          code: 500,
+          data: {
+            error: `Missing ${promptConfig.required[requiredFieldCount]}`,
+          },
+        })
+      }
     }
     // post is good.  now lets see if the user can auth...
     if (!event.headers.authorization) {
@@ -106,25 +113,34 @@ export const handler = async (event /*, context*/) => {
     if (!hasValidKey) {
       return respond({ code: 401, data: { error: 'Key not valid' } })
     }
-    const response = await fetch('https://api.openai.com/v1/completions', {
+    const response = await fetch(promptConfig.endpoint, {
       method: 'POST',
       cache: 'no-cache',
       headers: {
         'Content-Type': 'application/json',
         Authorization: AUTH,
       },
-      body: JSON.stringify({ ...prompt }),
+      body: JSON.stringify({ ...promptConfig.ai }),
     })
     const data = await response.json()
     console.log({ data })
-
-    await log(
-      `${username} used ${data.usage.total_tokens}`,
-      `/functions/scribe`
-    )
+    if (data?.usage?.total_tokens) {
+      await log(
+        `${username} used ${data.usage.total_tokens}`,
+        `/functions/scribe`
+      )
+    }
     return respond({
       code: 200,
-      data: { code: data.choices[0].text, tokens: data.usage.total_tokens },
+      data: {
+        code: data?.choices?.[0]?.text,
+        tokens: data?.usage?.total_tokens,
+        raw: { ...data },
+        config: {
+          required: promptConfig.required,
+          about: '',
+        },
+      },
     })
   } catch (error) {
     console.log(error)
