@@ -44,14 +44,19 @@ export const handler = async (event /*, context*/) => {
     }
     var body = JSON.parse(event?.body)
     var input = body?.input
-    var instruction = body?.instruction
+    var prompt = body?.prompt
     var action = body?.action || 'edit'
+    var table = body?.table
+    var type = body?.type
     dog({
       input,
-      instruction,
+      prompt,
       action,
+      table,
+      type,
     })
-    var promptConfig = prompts({ prompt: instruction, input })[action]
+    let promptConfig = prompts({ input, prompt, table, type })[action]
+
     if (!promptConfig) {
       return respond({
         code: 500,

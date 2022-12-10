@@ -1,5 +1,5 @@
 const strip = require('strip-comments')
-export const prompts = ({ prompt, input }) => {
+export const prompts = ({ input, prompt, action, table, type }) => {
   return {
     /*edit: {
       ai: {
@@ -26,35 +26,53 @@ ${input}
         stop: ['```'],
       },
       endpoint: 'https://api.openai.com/v1/completions',
-      required: ['input', 'instruction', 'action'],
+      required: ['input', 'prompt', 'action'],
       about: 'This will edit the script.',
     },
-    complete: {
-      ai: {
-        prompt: `${input}
-"""
-Rewite the code above based on this prompt, "${prompt}.":
-`,
-        model: 'text-davinci-002',
-        temperature: 1,
-        max_tokens: 500,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-      },
-      endpoint: 'https://api.openai.com/v1/completions',
-      required: ['instruction', 'input', 'action'],
-      about:
-        'This will complete the script based on the code in the first line.',
-    },
+    complete: (() => {
+      console.log({ function: 'complete' })
+      if (table === 'catalog_script_client' || table === 'sys_script_client') {
+        console.log({ function: 'complete', table })
+        return {
+          //client script
+          ai: {
+            model: 'curie:ft-scribemonster-2022-12-10-06-06-40',
+            prompt: `action: ${action}\ntype: ${type}\nprompt: ${prompt}\nresponse:\n\n`,
+            temperature: 0.3,
+            max_tokens: 600,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0,
+            stop: ['END'],
+          },
+          endpoint: 'https://api.openai.com/v1/completions',
+          required: ['type', 'prompt'],
+          about:
+            'This will complete the script based on just the prompt and the type.',
+        }
+      }
+      console.log({ function: 'complete', original: 'true' })
+      return {
+        // everything else
+        ai: {
+          prompt: `${input}\n\n"""\nRewite the code above based on this prompt, "${prompt}.":\n\n\n`,
+          model: 'text-davinci-002',
+          temperature: 1,
+          max_tokens: 500,
+          top_p: 1,
+          frequency_penalty: 0,
+          presence_penalty: 0,
+        },
+        endpoint: 'https://api.openai.com/v1/completions',
+        required: ['prompt', 'input', 'action'],
+        about:
+          'This will complete the script based on the code in the first line.',
+      }
+    })(),
     explain: {
       ai: {
-        prompt: `"""
-${strip(input)}
-"""
-Explain this above code:
-1.`,
         model: 'text-davinci-002',
+        prompt: `"""\n${strip(input)}\n"""\nExplain this above code:\n1.`,
         temperature: 0.7,
         max_tokens: 400,
         top_p: 1,
