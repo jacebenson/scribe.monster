@@ -1,0 +1,1560 @@
+[
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Add info message on subscriptions lists",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "license_details",
+   "filter": "",
+   "condition": "",
+   "order": "90",
+   "script": "function onBefore(current, previous) {\n\ttry {\n\t\tif (RP.isHomePage())\n\t\t\treturn;\n\t\t\n\t\tif (JSUtil.nil(ListProperties))\n\t\t\treturn;\n\t\t\n\t\tif (JSUtil.nil(ListProperties.getTable()))\n\t\t\treturn;\n\t\t\n\t\tif (ListProperties.getTable() + '' != 'license_details')\n\t\t\treturn;\n\t\t\n\t\tif (ListProperties.isRelatedList())\n\t\t\treturn;\n\t\t\t\n\t\tif (ListProperties.isEmbeddedList())\n\t\t\treturn;\n\t\t\n\t\tvar viewName = ListProperties.getView();\n\t\tif (JSUtil.notNil(viewName)) {\n\t\t\tif ((viewName.indexOf(\"rpt-temp\") == 0) || (viewName.indexOf(\"RPT\") == 0))\n\t\t\t\treturn;\n\t\t}\n\n\t\tvar unmappedTableCount = SNC.CustomTableUtils.getUnmappedTableCount();\n\t\tif (unmappedTableCount > 0) {\n\t\t\tvar link = SNC.CustomTableUtils.getInventoryURI();\n\t\t\tgs.addInfoMessage(gs.getMessage('warn_user_of_subscription_impact', link));\n\t\t}\n\n\t\tgs.addInfoMessage(gs.getMessage('Not all subscription services are monitored and not all of your purchased subscriptions may appear in the list. ') + '<a id=\"permalink\" class=\"linked\" style=\"color:#666666;\" href=\"/weba_redirect.do?sysparm_url=http://docs.servicenow.com/?context=CSHelp:Subscription-Management-Missing-Subscriptions&sysparm_category=Subscription-List&sysparm_action=More-Info&sysparm_name=Clicked\" target=\"_blank\">' + gs.getMessage('More Info') + '</a>');\n\n\t\tif (SNC.UsageAnalyticsScriptUtils.getEntitlementLevel() === 'OFF' && SNC.UsageAnalyticsScriptUtils.isAutoSystemEntitlementEnabled())\n\t\t\tgs.addInfoMessage(gs.getMessage('licensing_per_user_allocation_info'));\n\n\t} catch (e) {\n\t}\n\t\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Instruct User to Run Index",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before_display",
+   "table": "ais_datasource",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n\n    if (current.type == \"external\")\n        return;\n\n    var gr = new GlideRecord(\"ais_ingest_datasource_stats\");\n    gr.addQuery(\"datasource\", current.source);\n    gr.query();\n    if (!gr.next()) {\n\t\tgs.addInfoMessage(gs.getMessage(\"This Indexed Source has never been fully processed. Click &quot;Index All Tables&quot; to ensure the content is available to be searched\"));\n    }\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "incident query",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "incident",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "restrictIncidents();\nfunction restrictIncidents() {\n\tif (!gs.hasRole(\"itil\") && !gs.hasRole(\"sn_incident_read\") && gs.isInteractive()) {\n\t\t//Do NOT restrict Incidents if SPM premium plugin is active AND user has the service_viewer role.\n\t\tif (GlidePluginManager.isActive('com.snc.spm') && gs.hasRole('service_viewer'))\n            return;\n\t\tif (GlidePluginManager.isActive('sn_fsm_itsm_mng') && gs.hasRole('wm_ext_agent'))\n            return;\n\t\t// STRY52118544: ham_user is added to support incident read for reporting on HAM store app\n\t\tif (GlidePluginManager.isActive('com.sn_hamp') && gs.hasRole('sn_hamp.ham_user')) {\n\t\t\treturn;\n\t\t}\n\t\tvar u = gs.getUserID();\n\t\tcurrent.addQuery(\"caller_id\", u).addOrCondition(\"opened_by\", u).addOrCondition(\"watch_list\", \"CONTAINS\", u);\n\t}\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Draft Item Query",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "sc_ic_item_staging",
+   "filter": "",
+   "condition": "!gs.hasRole(\"catalog_admin\")",
+   "order": "100",
+   "script": "var myCatalogCategories = getMyCatalogCategories();\n\nif (myCatalogCategories.length > 0) {\n\tvar query = 'sc_categoriesLIKE' + myCatalogCategories[0];\n\t\n\tfor (var i = 1; i < myCatalogCategories.length; i++) {\n\t\tquery += '^ORsc_categoriesLIKE' + myCatalogCategories[i];\n\t}\n\t\n\tcurrent.addEncodedQuery(query);\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Templates",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "sys_app_template",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n    if (gs.getSession().isInteractive()) {\n        var view_name = gs.action.getGlideURI().get('sysparm_view');\n        if (view_name && view_name == 'welcome_hub_template') {\n            var condition = current.addQuery('type', 'b8c9bf330f3030108c9c5019c4767eb6');\n        }\n    }\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Service Query",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "sc_cat_item_producer_service",
+   "filter": "",
+   "condition": "!gs.hasRole(\"catalog_admin\")",
+   "order": "100",
+   "script": "if ((gs.getSession().getClientData(\"executing_service_task_wf\") + '') !== \"true\" && !isServiceCatalogPath()) {\n\tcurrent.addEncodedQuery(\"categoryIN\" + getMyCatalogCategories());\n}\n\nfunction isServiceCatalogPath() {\n\tvar action = gs.action;\n\tvar glideURI = action ? action.getGlideURI() : false;\n\tif (glideURI) {\n\t\tvar filePath = glideURI.getFileFromPath() + \"\";\n\t\tif (filePath === 'service_catalog')\n\t\t\treturn true;\n\t}\n\treturn false;\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Track interaction for incident",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "incident",
+   "filter": "",
+   "condition": "!!global.RP",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\n\tif ('interaction' == global.RP.getParameterValue('sysparm_parent_table')) {\n\t\tvar session = GlideSession.get();\n\t\tsession.putClientData('inc_parent_interaction',\n\t\t\tglobal.RP.getParameterValue('sysparm_parent_sys_id'));\n\t\tsession.putClientData('inc_txn_req', GlideTransaction.get().getRequest());\n\t}\n\t\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Limit by copy role",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "spotlight_copy_log",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n    var USER_HAS_COPY_DOMAIN_ROLE = gs.getUser().hasRole('pa_spotlight_copy_domain');\n    var USER_HAS_COPY_BREAKDOWN_ROLE = gs.getUser().hasRole('pa_spotlight_copy_breakdown');\n\n\tif (USER_HAS_COPY_BREAKDOWN_ROLE && USER_HAS_COPY_DOMAIN_ROLE)\n        return;\n\n    if (USER_HAS_COPY_BREAKDOWN_ROLE)\n        current.addQuery('type', 'breakdown');\n    else if (USER_HAS_COPY_DOMAIN_ROLE)\n        current.addQuery('type', 'domain');\n\telse\n        current.addQuery('type', ''); //This checking prevents showing ACL warning message since the user doesn't have copy privilege to see spotlight copy log\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Multisourrce Load More Error Message",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "cmdb_multisource_query_result",
+   "filter": "",
+   "condition": "",
+   "order": "200",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\n\ttry {\t\n\t\tif(RP){\n\t\t\tvar loadMoreErrorMsg = RP.getParameterValue(\"LoadMoreErrorMsg\");\n\n\t\t\tif(loadMoreErrorMsg && loadMoreErrorMsg !== \"\"){\n\t\t\t\tgs.addErrorMessage(loadMoreErrorMsg);\n\t\t\t}\n\t\t}\n    } catch (e) {\n        //ignore error\n    }\n})(current, previous);\n\n\n\n"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Show Heading",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "sys_cs_channel",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\ttry {\n\t\t// getGlideURI() can throw so catch if it is null\n\t\tvar uri = gs.action.getGlideURI();\n\t\tif (uri.toString().includes('sys_cs_channel_list')) {\n\t\t\tgs.addInfoMessage(gs.getMessage('You can use the channels that are preconfigured in your instance or add a new one'));\n\t\t}\n\t} catch (e) {\n\t\t// ignored\n\t}\n\n})(current, previous);\n"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "user query",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "sys_user",
+   "filter": "",
+   "condition": "gs.getSession().isInteractive() && !(gs.hasRole(\"admin\") || gs.hasRole(\"user_admin\"))",
+   "order": "100",
+   "script": "current.addActiveQuery();"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "guided_tour_get_sys_property_values",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before_display",
+   "table": "sys_embedded_tour_guide",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\n\t\n    g_scratchpad.standard_ui_enabled = gs.getProperty('com.snc.guided_tours.standard_ui.enable', 'false') === 'true';\n    g_scratchpad.sp_enabled = gs.getProperty('com.snc.guided_tours.sp.enable', 'false') === 'true';\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Only Active Datasource References",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "ais_datasource",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tvar sourceQuery = \"source=\";\n\tvar activeQuery = \"active=\";\n\tvar query = current.getEncodedQuery();\n\tif (query.contains(sourceQuery) && !query.contains(activeQuery)){\n\t\tcurrent.addActiveQuery();\n\t}\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Checked out item message",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before_display",
+   "table": "sc_cat_item",
+   "filter": "state=published^checked_out=true^EQ",
+   "condition": "",
+   "order": "100"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Query Builder Load More Notification",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "cmdb_qb_result_base",
+   "filter": "",
+   "condition": "current.getEncodedQuery().contains(\"query\") && new QueryBuilderResultStatus().showLoadButtons(current.getEncodedQuery())",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tvar url = gs.getUrlOnStack();\n\t// If it is inside the Query Builder UI, we don't want to show the message\n\tif(url) {\n\t\t//Clear any existing info message - this avoids duplicating the message on page refresh\n\t\tgs.flushMessages();\n\t\tgs.addInfoMessage(gs.getMessage(\"This list is showing a portion of the result. Click 'Load More Results' or 'Load All Results' to get more results.\"));\n\t}\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Only Active Datasource",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "ais_search_source",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tcurrent.addQuery(\"datasource.active=true\");\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Upsell banner",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "sys_cs_context_profile",
+   "filter": "",
+   "condition": "!new GlidePluginManager().isActive('com.glide.cs.chatbot')",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tif(gs.action.getGlideURI().toString().includes('sys_cs_context_profile_list.do')) {\n\t\tgs.addInfoMessage(gs.getMessage('To create a new chat experience, please upgrade to access all features. Contact your Account Executive for more information.'));\n\t}\n})(current, previous);\n"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "group query",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "sys_user_group",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "if (!gs.hasRole(\"admin\") && gs.getSession().isInteractive()) {\r\n  current.addQuery(\"active\", \"true\");\r\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Hide items for admin homepage",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "st_sys_catalog_items_and_variable_sets",
+   "filter": "",
+   "condition": "!gs.hasRole(\"maint\")",
+   "order": "100",
+   "script": "(function() {\n    current.addNullQuery('sc_catalogs').addOrCondition(\"sc_catalogs\", \"DOES NOT CONTAIN\", \"0b22fd2ad7021100b9a5c7400e610319\");\n})();"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Hide admin homepage categories",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "sc_category",
+   "filter": "",
+   "condition": "!gs.hasRole(\"maint\")",
+   "order": "100",
+   "script": "hideAdminHomeItems();\nfunction hideAdminHomeItems() {\n    if (!isUITransaction())\n\t\treturn;\n\n    current.addNullQuery('sc_catalog').addOrCondition(\"sc_catalog\", \"!=\", \"0b22fd2ad7021100b9a5c7400e610319\");\n\n}\n\nfunction isUITransaction () {\n\tvar transaction = GlideTransaction.get();\n    if (!transaction)\n        return false;\n\n    var page = transaction.getPageName();\n    \n    if (!page)\n        return false;\n\n    if (page != \"sc_category_list\" && page != \"xmlhttp\" && page != \"angular\" && page != \"com.glideapp.servicecatalog_cat_item_view\" && page.indexOf('api/now/') == -1) \n        return false;\n\t\n\treturn true;\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Identify Indexed Sources never run",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "ais_datasource",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n\n    if (gs.isInteractive()) {\n        var index = gs.action.getGlideURI().toString().indexOf('ais_datasource_list');\n\n        if (index == 0) {\n\t\t\tgs.flushMessages();\n\t\t\tvar icon = \"<span style=\\\"background-image: url('indicator-incident.svg');background-repeat: no-repeat;padding-right: 16px;\\\">&nbsp;</span>\";\n\t\t\tgs.addInfoMessage(gs.getMessage(\"{0} Indexed Sources marked with this icon have never been fully processed. Edit each and click Index All Tables to ensure the content is available to be searched\",[icon]));\n        }\n    }\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Hide items for admin homepage",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "sc_cat_item",
+   "filter": "",
+   "condition": "!gs.hasRole(\"maint\")",
+   "order": "100",
+   "script": "(function() {\n    var transaction = GlideTransaction.get();\n    if (!transaction)\n        return;\n\n    var page = transaction.getPageName();\n\n    if (!page || (page.indexOf(\"sc_cat_item\") == -1 &&\n            page.indexOf('sys_report_template') == -1 /*Remove admin item from reports as well */ &&\n            page.indexOf('globalsearch') == -1 &&\n            page.indexOf('textsearch') == -1) &&\n        page.indexOf('xmlhttp') &&\n        page.indexOf('catalog_find') &&  /*Remove admin items from globalsearch as well */\n        page.indexOf('angular') &&\n        page.indexOf('api/now/') &&\n        page.indexOf('com.glideapp.servicecatalog_cat_item_view'))    /*Remove admin items from lookup as well */\n        return;\n\n    current.addNullQuery('sc_catalogs').addOrCondition(\"sc_catalogs\", \"DOES NOT CONTAIN\", \"0b22fd2ad7021100b9a5c7400e610319\");\n})();"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Add warning message on custom table",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "ua_custom_table_inventory",
+   "filter": "",
+   "condition": "GlideSession.get().isInteractive()",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n\n    try {\n\n        if (this.hasOwnProperty('RP') && RP.isHomePage())\n            return;\n\n        if (!this.hasOwnProperty('ListProperties') || JSUtil.nil(ListProperties))\n            return;\n\n        if (JSUtil.nil(ListProperties.getTable()))\n            return;\n\n        if (ListProperties.getTable() + '' != 'ua_custom_table_inventory')\n            return;\n\n        if (ListProperties.isRelatedList())\n            return;\n\n        if (ListProperties.isEmbeddedList())\n            return;\n\n        var isComplianceRequired = sn_lef.GlideEntitlement.isLicenseComplianceRequired();\n        if (!isComplianceRequired)\n            gs.addInfoMessage(gs.getMessage(\"In a non-production environment, your subscription allocation counts will not match with production.\"), \"InfoWillNotMatchProd\");\n    } catch (e) {\n        //ignore error\n    }\n\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Multisource Load More Notification",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "cmdb_multisource_query_result",
+   "filter": "",
+   "condition": "current.getEncodedQuery().contains(\"execution_id\") && new MultisourceResultStatus().showLoadButtons(current.getEncodedQuery())",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tvar url = gs.getUrlOnStack();\n\t\n\t// If it is inside the Multisource UI, we don't want to show the message\n\tif(url) {\n\t\tgs.addInfoMessage(gs.getMessage(\"This list is showing a portion of the results. Click 'Load More Results' or 'Load All Results' to get more results.\"));\n\t}\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Validate creation of CC records",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before_display",
+   "table": "sys_alias",
+   "filter": "configuration_templateISNOTEMPTY^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n    var aliasSysId = current.getUniqueValue();\n    var credentialSysId = getCredentialFromAliasConnection(aliasSysId);\n\tvar createdAt;\n\tvar difference;\n\tvar MAX_TIME_DIFF_CREATED = 10;\n    if (credentialSysId) {\n        var credentialGR = new GlideRecord('oauth_2_0_credentials');\n\t\tcredentialGR.get(credentialSysId);\n\t\tvar oauthEntityProfile = credentialGR.getValue('oauth_entity_profile');\n\t\tif (oauthEntityProfile) {\n\t\t\tvar oauthReqProfileGR = new GlideRecord('oauth_requestor_profile');\n\t\t\toauthReqProfileGR.addQuery('requestor_id', credentialSysId);\n\t\t\toauthReqProfileGR.query();\n\t\t\tif(oauthReqProfileGR.next()) {\n\t\t\t\tvar oauthReqProfileSysId = oauthReqProfileGR.getUniqueValue();\n\t\t\t\tvar oauthCredentialGR = new GlideRecord('oauth_credential');\n\t\t\t\toauthCredentialGR.addQuery('oauth_requestor_profile', oauthReqProfileSysId);\n\t\t\t\toauthCredentialGR.orderByDesc('sys_created_on');\n\t\t\t\toauthCredentialGR.query();\n\t\t\t\tif(oauthCredentialGR.next()) {\n\t\t\t\t\tcreatedAt = new GlideDateTime(oauthCredentialGR.getValue('sys_created_on'));\n\t\t\t\t\tdifference = getTimeDifferenceWithCurrentTime(createdAt);\n\t\t\t\t\t// max created time difference = 10 secs\n\t\t\t\t\tif(difference < MAX_TIME_DIFF_CREATED) {\n\t\t\t\t\t\tgs.addInfoMessage(gs.getMessage('Connection and credential are created successfully.'));\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t} else {\n            credentialGR = new GlideRecord('discovery_credentials');\n            credentialGR.get(credentialSysId);\n\t\t\tcreatedAt = new GlideDateTime(credentialGR.getValue('sys_created_on'));\n\t\t\tdifference = getTimeDifferenceWithCurrentTime(createdAt);\n\t\t\t// max created time difference = 10 secs\n\t\t\tif(difference < MAX_TIME_DIFF_CREATED) {\n\t\t\t\tgs.addInfoMessage(gs.getMessage('Connection and credential are created successfully.'));\n\t\t\t}\n\t\t}\n    }\n\t\n\tfunction getTimeDifferenceWithCurrentTime(startTime) {\n        var currentTime = new GlideDateTime();\n        var duration = GlideDateTime.subtract(startTime, currentTime);\n        var differenceInSec = (duration.getNumericValue() / 1000);\n\t\treturn differenceInSec;\n\t}\n\t\n\tfunction getCredentialFromAliasConnection(aliasSysId) {\n        var connectionName = getConnectionFromConfigTemplate();\n        if (connectionName) {\n            var connectionGR = new GlideRecord('sys_connection');\n            connectionGR.addQuery(\"connection_alias\", aliasSysId);\n            connectionGR.addQuery(\"name\", connectionName);\n            connectionGR.addActiveQuery();\n            connectionGR.setWorkflow(false);\n            connectionGR.query();\n            if (connectionGR.next()) {\n                return connectionGR.getValue('credential');\n            }\n        }\n\t\treturn null;\n    }\n\t\n\tfunction getConnectionFromConfigTemplate() {\n        var templateSysId = current.configuration_template;\n        var templateGR = new GlideRecord('sys_alias_templates');\n        templateGR.addQuery(\"sys_id\", templateSysId);\n        templateGR.setWorkflow(false);\n        templateGR.query();\n        if (templateGR.next()) {\n            var defaultData = templateGR.getValue('default_data_template');\n            try {\n                var defaultDataJSON = JSON.parse(defaultData);\n                return defaultDataJSON.connection.name;\n            } catch (err) {\n                gs.error(\"Error while getting connection name from configuration\");\n\t\t\t\treturn null;\n            }\n        } else {\n            gs.error(\"No valid configuration template found for sys_id:\" + templateSysId);\n\t\t\treturn null;\n        }\n    }\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "sys_sg_master_item_tableGetChoices",
+   "insert": false,
+   "update": false,
+   "query": true,
+   "when": "before",
+   "table": "global",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "function sys_sg_master_item_tableGetChoices() {\n\tif (current.screen == null || current.screen.data_item == null || current.screen.data_item.table == null)\n\t\treturn;\n\n    var table = current.screen.data_item.table;\n\tvar getTables = new InheritedTablesUtils();\n\tvar values = getTables.getInheritedTables(table);\n\tfor (var key in values)\n\t\tif (values[key].hasOwnProperty('table_name') && values[key].hasOwnProperty('label'))\n\t\t\tanswer.push(values[key].table_name, values[key].label);\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Create default level upon type creation",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "after",
+   "table": "cmn_skill_level_type",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\n\tvar gr = new GlideRecord('cmn_skill_level');\n\tgr.initialize();\n\tgr.setValue('name', 'Default');\n\tgr.setValue('value', 1);\n\tgr.setValue('description', 'Default Skill Level');\n\tgr.setValue('skill_level_type', current.sys_id);\n\tgr.insert();\n\t\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Check scope in solution name",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "ml_capability_definition_base",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tvar solutionLabel = current.getValue(\"solution_label\");\n\tvar solutionName = current.getValue(\"solution_name\");\n\tvar name = \"ml_\" + gs.getNewAppScopeCompanyPrefix() + '_'+ getScope(current) +'_' + getDomainName() +'_' + solutionLabel.toLowerCase().replace(/[^a-zA-Z0-9_]/g, '_');\n\n\twhile (name.indexOf(\"__\") != -1) {\n\t\tname = name.replace(/__/g, \"_\");\n\t}\n\n\t// Replace any trailing underscores\n\twhile (name != '' && name.charAt(name.length - 1) == '_') {\n\t\tname = name.substring(0, name.length - 1);\n\t}\n\t\n\tvar source = current.getValue(\"request_source\");\n\tif (JSUtil.areEqual(source, 'api')) {\n\t\tname = generateUniqueName(name);\n\t}\n\n\tif (!isSolutionDefinitionPresent(name)) {\n\t\tif (name != solutionName)\n\t\t\tcurrent.setValue('solution_name',name);\n\t} else {\n\t\tgs.addErrorMessage(\"Solution name should be unique\");\n\t\tcurrent.setAbortAction(true);\n\t}\n\t\n\tfunction isSolutionDefinitionPresent(solutionName) {\n\t\tif (!solutionName)\n\t\t\treturn false;\n\t\tvar gr = new GlideRecord('ml_capability_definition_base');\n\t\tgr.addQuery('solution_name',solutionName);\n\t\tgr.query();\n\t\tif(gr.hasNext()){\n\t\t\treturn true;\n\t\t}\n\t\treturn false;\n\t}\n\t\n\tfunction getScope(current) {\n\t\tvar scope = gs.getCurrentApplicationScope();\n\t\ttry {\n\t\t\t// use scope key in solution_properties json to create\n\t\t\t// solution name for api created solutions \n\t\t\tvar solutionProperties = current.getValue('solution_properties');\n\t\t\tif (JSUtil.notNil (solutionProperties)) {\n\t\t\t\tvar solutionPropertiesJson = JSON.parse(solutionProperties);\n\t\t\t\tif ('scope' in solutionPropertiesJson) {\n\t\t\t\t\tscope = solutionPropertiesJson.scope;\n\t\t\t\t}\n\t\t\t}\n\t\t} catch (ex) {\n\t\t\tscope = gs.getCurrentApplicationScope();\n\t\t}\n\t\treturn scope;\n\t}\n\t\n\tfunction getDomainName() {\n\t\t// The domain name prefix is by default global.\n\t\tvar domain_name = \"global\";\n\t\tvar domain_sys_id = current.getValue('sys_domain');\n\n\t\tif (domain_sys_id === null ) {\n\t\t\treturn domain_name;\n\t\t}\n\n\t\tvar name = current.sys_domain.name;\n\t\tif(JSUtil.notNil(name)) {\n\t\t\tdomain_name = name.toLowerCase().replace(/[^a-zA-Z0-9_]/g, '_');\n\t\t}\n\n\t\treturn domain_name;\n\t}\n\t\n\tfunction generateUniqueName(name) {\n\t\tvar existingNames = getExistingSolutionNamesStartingWith(name);\n\t\t// this while loop will execute for 100 iterations and\n\t\t// try to generate a unique name\n\t\twhile (JSUtil.contains(existingNames, name)) {\n\t\t\tvar lastIndexOfSeparator = name.lastIndexOf(\"_\");\n\t\t\tvar suffix = name.substring(lastIndexOfSeparator + 1);\n\t\t\tvar newSuffix = 1;\n\t\t\tif (!isNaN(suffix)) {\n\t\t\t\tnewSuffix = parseInt(suffix) + 1;\n\t\t\t\tname = name.substring(0, lastIndexOfSeparator);\n\t\t\t}\n\t\t\tname = name + '_' + newSuffix;\n\t\t}\n\t\treturn name;\n\t}\n\t\n\tfunction getExistingSolutionNamesStartingWith(name) {\n\t\tvar existingNames = [];\n\t\tvar gr = new GlideRecord('ml_capability_definition_base');\n\t\tgr.addQuery('solution_name','STARTSWITH', name);\n\t\t// we will try to get upto 100 names with the same prefix\n\t\t// if we are still not able to generate unique name, we will \n\t\t// throw exception\n\t\tgr.setLimit(100);\n\t\tgr.query();\n\t\twhile (gr.next()) {\n\t\t\texistingNames.push(gr.getValue('solution_name'));\n\t\t}\n\t\treturn existingNames;\n\t}\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Set unique table name on insert",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "sys_sg_universal_link_applet_mapping",
+   "filter": "source_table_nameISNOTEMPTY^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous) {\n\n    var gr = new GlideRecord(current.sys_class_name);\n    gr.addQuery('source_table_name', current.source_table_name);\n    gr.query();\n    if (gr.hasNext()) {\n        var msg = gs.getMessage(\"A {0} record with the selected table value already exists. Please update the existing record. Duplicate records cannot exist for a single table.\", current.sys_class_name);\n        gs.addErrorMessage(msg);\n        current.setAbortAction(true);\n    }\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Insert Order",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "sys_aw_my_list",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\t\n\tvar gr = new GlideRecord('sys_aw_my_list');\n\tgr.addEncodedQuery('sys_created_by=javascript:gs.getUserName()^active=true^ORDERBYDESCorder');\n\tgr.query();\n\t\n\tif (gr.next()) {\n\t\tcurrent.order = parseInt(gr.getValue('order'), 10) + 10;\n\t} \n\telse {\n\t\tcurrent.order = 10;\n\t}\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Generate Safe Input Variable Name",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "sys_app_template_input_var",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\n\t// If the name is changed for any reason a info message will be displayed to the user, as well as, logged.\n\tvar templateAPI = new sn_templates.TemplateScriptableAPI();\n\tvar cleanVarName = templateAPI.generateCleanFlowVariableName(current.name);\n\n\tif (cleanVarName !== current.getValue('name')) {\t\n\t\t// Inform the user that a change in the variable name was made.\n\t\tvar infoMessage = gs.getMessage(\"Template Input Variable name was modified. new name: '{0}', previous name: '{1}'\", [cleanVarName, current.name]);\n\t\tgs.addInfoMessage(infoMessage);\n\n\t\t// Set the name to be the clean variable name.\n\t\tcurrent.name = cleanVarName;\n\t}\n\t\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Create TemplateDetails Record",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "after",
+   "table": "sys_app_template",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\n\tvar templateDetailsGR = new GlideRecord('sys_app_template_detail');\n\t\n\ttemplateDetailsGR.newRecord();\n\ttemplateDetailsGR.setValue('template', current.sys_id);\n\t\n\tif (!templateDetailsGR.insert()) {\n\t\tvar errorMessage = gs.getMessage(\"Failed to create sys_app_template_detail record for template with sys_id: '{0}'\", [current.sys_id]);\n\t\tgs.addErrorMessage(errorMessage);\n\t}\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Duplicate Run Level Mapping Check",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "sys_run_level_op_toggle_m2m",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\n\tvar match = new GlideRecord('sys_run_level_op_toggle_m2m');\n\tmatch.addQuery('level', current.level);\n\tmatch.addQuery('toggle', current.toggle);\n\tmatch.addQuery('toggle_level', current.toggle_level);\n\tmatch.query();\n\tif (match.hasNext()) {\n\t\tcurrent.setAbortAction(true);\n\t\tgs.addErrorMessage(gs.getMessage(\"This Run Level Mapping is already defined.\"));\t\n\t}\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Auto-create name",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "sys_sync_history",
+   "filter": "",
+   "condition": "current.name.nil()",
+   "order": "100",
+   "script": "switch (current.type.toString()) {\n\tcase 'push':\n\tcurrent.name = gs.getMessage(\"Pushed to {0}\", current.instance.getDisplayValue());\n\tbreak;\n\t\t\n\tcase 'pull':\n\tcurrent.name = gs.getMessage(\"Pulled from {0}\", current.instance.getDisplayValue());\n\tbreak;\n\t\t\n\tdefault:\n\tcurrent.name = gs.getMessage(\"{0} on {1}\", current.type.getDisplayValue(), current.instance.getDisplayValue());\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Create m2m_kb_task record",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "after",
+   "table": "kb_knowledge",
+   "filter": "sourceISNOTEMPTY^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tif (current.sys_id && current.source) {\n\t\tvar gr = new GlideRecord(\"m2m_kb_task\");\n\t\tgr.initialize();\n\t\tgr.setValue('kb_knowledge',current.sys_id);\n\t\tgr.setValue('task',current.source);\n\t\tvar attachid = gr.insert();\n\t\tif(attachid) {\n      var message = gs.getMessage(\"This Knowledge Article:{0} has been saved as a draft and attached to the parent record: {1}\",[current.number, current.getDisplayValue('source')]);\n\t\t\tgs.addInfoMessage(message);\n\t\t}\n\t}\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Initialize Cloud Resources and LDC Count",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "after",
+   "table": "discovery_status",
+   "filter": "",
+   "condition": "current.discover == \"Cloud Resources\" &&  (current.state == \"Starting\" || current.state == \"Active\")",
+   "order": "100",
+   "script": "(function executeRule(current, previous) {\n\tvar i;\n\tvar finalCIsList;\n\tvar datacenterCount;\n\tvar statusSysID = current.getUniqueValue();\n\tvar scheduleSysID = current.getValue('dscheduler');\n\tvar cloudResourceDiscoveryUtil = new CloudResourceDiscoveryUtil();\n\tvar cloudResourceDiscoHandler = new CloudResourceDiscoveryCountHandler();\n\t\n\t/*\n\t*\tWhen a discovery is triggered for a schedule and if it's not a vCenter one's i.e., Schedule\n\t*\tassociated to a Cloud Service Account whose datacenter type is not \"cmdb_ci_vcenter_datacenter\",\n\t*\tthen for such kind of discovery run, we cache the discovered data into a cache table\n\t*\t(\"discoveyr_cloud_temp_results\" table) and resource counts are updated by another business\n\t*\trule (\"Update Cloud Resources Counts\") that is triggered when current Cloud Resource Discovery\n\t*\trun completes or get cancelled.\n\t*\t\n\t*\tIf at all discovery triggered for vCenter Schedules then we don't cache result but just update\n\t*\tthe resource counts at respective sensor(s) so in order to update, first we need have an entry for\n\t*\tthat CI (e.g., \"cmdb_ci_vm_instance\") and its count set to 0 so that the count is updated\n\t*\tby respective hooks added at both CAPI and Pattern levels.\n\t*/\n\t\n\tif (cloudResourceDiscoveryUtil.fetchDatacenterTypeFromSchedule(scheduleSysID) == 'cmdb_ci_vcenter_datacenter') {\n\t\tfinalCIsList = cloudResourceDiscoHandler.fetchAllChildCIsForParentCI('cmdb_ci');\n\t\t\n\t\t// Initialize the CI counts to 0 for each CI in \"Discovery Cloud Results\" table\n\t\tfor (i in finalCIsList)\n\t\t\tcloudResourceDiscoHandler.setCloudResourceCount(scheduleSysID, statusSysID, finalCIsList[i]+'', 0);\n\t}\n\t\n\tif (scheduleSysID) {\n\t\tdatacenterCount = new DiscoveryScheduleManager().getDatacenterCountForSchedule(scheduleSysID);\n\t\tcloudResourceDiscoHandler.setCloudResourceCount(scheduleSysID, statusSysID, 'cmdb_ci_logical_datacenter', datacenterCount);\n\t}\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Add Default Verification To Process",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "after",
+   "table": "pwd_process",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n    // Add your code here\n    var verificationMapGr = new GlideRecord('pwd_map_proc_to_verification');\n    verificationMapGr.initialize();\n    verificationMapGr.setValue('process', current.sys_id);\n    verificationMapGr.setValue('verification', '12c34f0deb6001006a668c505206fefd');\n    verificationMapGr.insert();\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Create Default Number Maintenance Field",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "after",
+   "table": "sys_db_object",
+   "filter": "",
+   "condition": "current.number_ref.nil()",
+   "order": "1000",
+   "script": "//This is only for UI initiated insert.  We take advantage of 'action' being \n// set incidentally earlier in the global space.  This is not ideal.  Something \n// more explicit would be great.\nvar action = GlideController.getGlobal(\"action\");\nif (action != null) {\n\tvar uri = action.getGlideURI();\n\tvar prefix = uri.get(\"sys_db_object.number_ref.prefix\");\n\tvar startNum = uri.get(\"sys_db_object.number_ref.number\");\n\tvar maxDigits = uri.get(\"sys_db_object.number_ref.maximum_digits\");\n\t\n\tvar numberRef = SNC.TableEditor.createDefaultNumberField(current, prefix, startNum, maxDigits);\n\tcurrent.number_ref = numberRef;\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Update VTB Card-Labels Count On Insert",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "after",
+   "table": "label_entry",
+   "filter": "table=vtb_card^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n    var gr = new GlideRecord(\"vtb_card\");\n    if (gr.get(current.table_key)) {\n        var count = parseInt(gr.getValue(\"labels_count\"));\n        gr.setValue(\"labels_count\", count + 1);\n        gr.update();\n    }\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Create sys_trigger record",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "spotlight_groups",
+   "filter": "",
+   "condition": "current.isNewRecord() && current.active",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n\n    current.trigger = createTriggerRecord(current);\n\n    function createTriggerRecord(current) {\n        var trigger = new GlideRecord(\"sys_trigger\");\n        trigger.initialize();\n        trigger.setValue(\"document\", current.sys_class_name);\n        trigger.setValue(\"document_key\", current.sys_id);\n        trigger.setValue(\"trigger_type\", current.run_type);\n        trigger.setValue(\"run_dayofweek\", current.run_dayofweek);\n        trigger.setValue(\"run_dayofmonth\", current.run_dayofmonth);\n        trigger.setValue(\"run_time\", current.run_time);\n        trigger.setValue(\"repeat\", current.run_period);\n        trigger.setValue(\"job_id\", \"81c92ce9c0a8016400e5f0d2f784ea78\");\n        var jobName = current.name + \" - Job\";\n        trigger.setValue(\"name\", jobName);\n        var script = \"//This trigger calculates the scores for \" + current.name + \"\\n\";\n        script = script + \"SNC.SpotlightUtil.calculateSpotlightGroup('\" + current.sys_id + \"');\";\n        trigger.setValue(\"script\", script);\n        var nextAction = getNextActionForRunTypePeriodicalyAndOnce(trigger, current);\n        if (nextAction != null)\n            trigger.setValue(\"next_action\", nextAction);\n\n        var triggerSysID = trigger.insert();\n        return triggerSysID;\n    }\n\n    //Need to set the next_action only for those 2 run types, all other types will \n    //be handled by the BR on sys_trigger table\n    function getNextActionForRunTypePeriodicalyAndOnce(trigger, current) {\n        var type = current.run_type;\n        var gdt = new GlideDateTime();\n        //In case of trigger once or trigger repeat\n        if (type == 0 || type == 1) {\n            var rdt = new GlideDateTime(current.run_start);\n            if (rdt.getDate() == null)\n                rdt = new GlideDateTime();\n\n            //If run_start is in the future then we want to start on run_start\n            if (rdt.getNumericValue() > gdt.getNumericValue())\n                return rdt;\n\n            //If run_start is in the past then reschedule to prevent job executing now\n            trigger.setValue(\"next_action\", rdt);\n            return getRescheduledNextAction(trigger);\n        }\n        return null;\n    }\n\n\n    function getRescheduledNextAction(trigger) {\n        var m = GlideARecurrence.get(trigger);\n        if (m == null)\n            return;\n\n        return m.next();\n    }\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Check for model protection policy",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "m2m_sys_nlu_model_sys_entity",
+   "filter": "model.sys_policy=read^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n\n    gs.addErrorMessage(gs.getMessage('Invalid insert. This NLU model is read only.'));\n    current.setAbortAction(true);\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Create secondary intent-entity map",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "after",
+   "table": "m2m_sys_nlu_intent_entity",
+   "filter": "intent.primary_intentISEMPTY^EQ",
+   "condition": "",
+   "order": "200",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n\n    var tables = NLUConstants.tables;\n\n    var srcModelId = current.intent.model;\n    if (srcModelId && !NLUModel.isInCloning(srcModelId)) {\n        var srcIntentId = current.getValue('intent');\n        var srcEntityId = current.getValue('entity');\n\n        var tgtModelGr = new NLUModel(srcModelId).getTranslatedModels();\n        while (tgtModelGr.next()) {\n            var tgtModelId = tgtModelGr.getUniqueValue();\n            var tgtIntentGr = NLUTranslateUtil.getTranslatedRecord(tables.SYS_NLU_INTENT, tgtModelId, srcIntentId);\n            if (!tgtIntentGr) continue;\n\n            var tgtEntityId = null;\n            var tgtEntityGr = NLUTranslateUtil.getTranslatedRecord(tables.SYS_NLU_ENTITY, tgtModelId, srcEntityId);\n            if (!tgtEntityGr) {\n                var srcEntityGr = new GlideRecord(tables.SYS_NLU_ENTITY);\n                if (srcEntityGr.get(srcEntityId))\n                    tgtEntityId = NLUImportUtil.createRecord(tables.SYS_NLU_ENTITY, srcEntityGr, null, true);\n            } else {\n                tgtEntityId = tgtEntityGr.getUniqueValue();\n            }\n            if (tgtEntityId)\n                new NLUIntent(tgtIntentGr.getUniqueValue()).createIntentEntityMap(tgtEntityId, current.relationship);\n        }\n    }\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Update sys_certificate attributes",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "after",
+   "table": "sys_attachment",
+   "filter": "",
+   "condition": "current.table_name == \"sys_certificate\"",
+   "order": "10000",
+   "script": "var cgr = new GlideRecord(\"sys_certificate\");\r\nif(cgr.get(current.table_sys_id)) {\r\n  cgr.subject = \"unknown\";\r\n  cgr.update();\r\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Generate API Key",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "mid_webserver_api_key_credentials",
+   "filter": "",
+   "condition": "",
+   "order": "1",
+   "script": "(function executeRule(current, previous) {\n    if (!gs.nil(current.getValue(\"authentication_key\"))) {\n        // this field should be left empty on insertion (enforced in UI by making it read only)\n        gs.addErrorMessage(gs.getMessage(\"Authentication key field should be left empty on creation of a new API Key\"));\n        current.setAbortAction(true);\n    }\n    current.setDisplayValue(\"authentication_key\", gs.generateGUID());\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "When insert populate name if empty",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "cxs_res_context_config",
+   "filter": "nameISEMPTY^EQ",
+   "condition": "current.name.nil()",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tif(current.name.nil())\n\t\tcurrent.name = current.cxs_search_res_config.name;\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Promoted Topic Limit",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "sys_cs_context_profile_promotion",
+   "filter": "",
+   "condition": "new global.CustomChatExperienceScripts().getPromotedTopicCount(current.getValue(\"context_profile\")) >= 6;",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\t\n\tvar gr = new GlideRecord(\"sys_cs_context_profile_promotion\");\n\tgr.addQuery(\"context_profile\", current.getValue(\"context_profile\"));\n\tgr.query();\n\treturn gr.getRowCount() < 6;\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Table Rotation - Enforce Base",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "sys_table_rotation",
+   "filter": "",
+   "condition": "!gs.tableExists(current.name) || (/[0-9]$/).test(current.name) || gs.isDatabaseView(current.name) || new GlideDBObjectManager.get().getAbsoluteBase(current.name) != current.name",
+   "order": "100",
+   "script": "current.setAbortAction(true);\nif (!gs.tableExists(current.name))\n\tgs.addErrorMessage(gs.getMessage(\"Table does not exist: {0}\", current.name));\nelse if ((/[0-9]$/).test(current.name))\n\tgs.addErrorMessage(gs.getMessage(\"Table name cannot end with a number\"));\nelse if (gs.isDatabaseView(current.name))\n\tgs.addErrorMessage(gs.getMessage(\"Table is a Database View which cannot be rotated or extended: {0}\", current.name));\nelse\n\tgs.addErrorMessage(gs.getMessage(\"Only base tables can be setup for rotation - the base table for {0} is {1}\",[current.name, GlideDBObjectManager.get().getAbsoluteBase(current.name)]));"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Change Phase Events Before",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "change_phase",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "  if (current.order.isNil() ||  current.order == 100) {  \r\n      var phases = current.name.getChoices(null);\r\n      var order = 100; \r\n      var name = current.name.toString();\r\n      for (var i = 0; i < phases.size(); i++) {\r\n         var phase = phases.get(i);\r\n         if (name == phase)\r\n            break;\r\n         order += 100;\r\n      }\r\n      current.order.setValue(order);\r\n  }\r\n"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Create Images and properties",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "after",
+   "table": "sys_cs_provider_application",
+   "filter": "providerLIKESlack^EQ",
+   "condition": "",
+   "order": "200",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n    var shouldCreateRecrods = gs.getProperty('sn_va_slack.enable_slack_branding', 'false') == 'true';\n    if (shouldCreateRecrods && GlidePluginManager.isActive('sn_va_slack')) {\n        var slackBotConfig = new SlackBotConfig();\n        var inboundId = slackBotConfig.getInboundId(current.message_auth);\n        if (slackBotConfig.isProductionBot(inboundId)) {\n\n            var gr = new GlideRecord(\"sys_cs_custom_adapter_property\");\n            gr.initialize();\n            gr.setValue('name', 'bot_name');\n            gr.setValue('document_record', current.getUniqueValue());\n            gr.setValue('document_table', 'sys_cs_provider_application');\n            gr.insert();\n\n            var gr1 = new GlideRecord('sys_cs_custom_adapter_property');\n            gr1.initialize();\n            gr1.setValue('name', 'bot_icon');\n            gr1.setValue('document_record', current.getUniqueValue());\n            gr1.setValue('document_table', 'sys_cs_provider_application');\n            gr1.insert();\n\n            var imgName = 'slack_' + current.getUniqueValue() + '.png';\n            var gr2 = new GlideRecord('db_image');\n            gr2.initialize();\n            gr2.setValue('name', imgName);\n            gr2.insert();\n\n\n        }\n\n    }\n\n\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Add VariableMapper",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "sys_decision_input",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tif (current.attributes != \"\")\n\t\tcurrent.attributes += \",\";\n\t\n\tcurrent.attributes += \"element_mapping_provider=com.glide.decision_table.data.DecisionTableVariableMapper\"\n\t// Add your code here\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Remove Classification Parameter ",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "ecc_queue",
+   "filter": "name=Pattern Launcher: Credentialless Discovery Network Device^queue=output^topic=HorizontalDiscoveryProbe^EQ",
+   "condition": "",
+   "order": "115",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tvar payload = current.payload;\n\tif (!payload)\n\t\treturn;\n\tpayload = payload.replace(/<parameter name=\"classification_probe\" value=.*?\\/>/, '');\n\tcurrent.setValue('payload', payload);\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "All metadata permissions",
+   "insert": true,
+   "update": false,
+   "query": false,
+   "when": "before",
+   "table": "sys_appcollab_permission_m2m",
+   "filter": "",
+   "condition": "current.permission.type == 'all_metadata'",
+   "order": "50",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n\n    var gr = new GlideRecord('sys_development_permission_set');\n    gr.addQuery('type', 'permission_restricted');\n    gr.query();\n\n    var pm2mGr = new GlideRecord('sys_appcollab_permission_m2m');\n    var descriptorId = current.descriptor;\n\n    while (gr.next()) {\n        var permissionId = gr.sys_id;\n\n        pm2mGr.initialize();\n        pm2mGr.addQuery('descriptor', descriptorId);\n        pm2mGr.addQuery('permission', permissionId);\n        pm2mGr.query();\n\n        if (!pm2mGr.hasNext()) {\n            pm2mGr.initialize();\n            pm2mGr.setWorkflow(false);\n            pm2mGr.descriptor = descriptorId;\n            pm2mGr.permission = permissionId;\n            pm2mGr.insert();\n        }\n    }\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Create ML update request schedule",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "after",
+   "table": "ml_solution",
+   "filter": "capability=clustering_trainer^ORcapability=similarity_trainer^state=solution_complete^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tvar solDef = new MLGroupbyUtils().getGlideRecord(current.ml_capability_definition);\n\tnew MLRequestSchedule().deleteExistingUpdateRequestSchedule(solDef.sys_id);\n\tnew MLRequestSchedule().insertUpdateRequestSchedule(solDef.sys_id, solDef.solution_name, solDef.update_frequency.toString());\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Reclassify",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "discovery_classy_proc",
+   "filter": "",
+   "condition": "current.table.changes();",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\t// find any related application instances in the old table and update them to the new table...\n\tvar old_table = '' + previous.table;\n\tvar new_table = '' + current.table;\n\tvar gr = new GlideRecord(old_table);\n\tgr.addQuery('classifier', current.getUniqueValue());\n\tgr.query();\n\twhile (gr.next()) {\n\t\tgr.sys_class_name = new_table;\n\t\tgr.update();\n\t}\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Maintain order when step made inactive",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "after",
+   "table": "sys_embedded_tour_step",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n\t\n\tvar gr, gr1;\n\tvar stepType = current.step_type.toString();\n\t\n\tif (stepType === 'step' || stepType === '') {\n        if (current.active == false && current.order == -1) {\n            gr = new GlideRecord('sys_embedded_tour_step');\n            gr.addQuery('guide', current.guide);\n            gr.addQuery('active', true);\n            gr1 = gr.addQuery('step_type', 'step');\n            gr1.addOrCondition('step_type', '');\n            gr.orderBy('order');\n            gr.query();\n            var i = 1;\n            while (gr.next()) {\n                gr.order = i;\n                gr.update();\n                i++;\n            }\n        }\n    }\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Read only Type when not initial state",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "change_request",
+   "filter": "typeVALCHANGES^chg_modelISEMPTY^EQ",
+   "condition": "gs.getProperty(ChangeRequestSNC.ENFORCE_DATA_REQ_PROP) === \"true\" && !new ChangeRequest(previous).isInitialState()",
+   "order": "90",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tgs.addErrorMessage(gs.getMessage(\"Type is read only for in-progress Change Requests\"));\n\tcurrent.setAbortAction(true);\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Warn Outbound HTTP log level change",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "after",
+   "table": "sys_properties",
+   "filter": "nameSTARTSWITHglide.outbound_http_log.override.level^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n    var value = current.value;\n    if (value == 'all' || value == 'elevated') {\n        gs.addInfoMessage(gs.getMessage(\"Use caution when enabling the All and Elevated log levels as they can capture sensitive data such as authorization headers or session cookies. Revert back to the Basic log level after troubleshooting.\"));\n    }\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Set intent name same as primary",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "after",
+   "table": "sys_nlu_intent",
+   "filter": "nameVALCHANGES^primary_intentISEMPTY^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\n\tvar gr = new GlideRecord(\"sys_nlu_intent\");\n\tgr.addQuery(\"primary_intent\", current.sys_id);\n\tgr.setValue(\"name\", current.name);\n\tgr.updateMultiple();\t\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Restrict multiple content fields on edit",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sn_actsub_activitytype_template_field",
+   "filter": "positionCHANGESTOcontent^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n\n    var gr = new GlideRecord(ActivityConstants.TABLE_ACTIVITY_TYPE_TEMPLATE_FIELD);\n    gr.addQuery(\"template\", current.template);\n    gr.addQuery(\"position\", ActivityConstants.POSITION_CONTENT);\n    gr.query();\n    if (gr.next()) {\n        gs.addErrorMessage(gs.getMessage(\"Only one field can be displayed as content on the activity tile.\"));\n        current.setAbortAction(true);\n    }\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Sync table name of variables",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sc_cat_item_producer",
+   "filter": "",
+   "condition": "current.table_name.changes()",
+   "order": "100",
+   "script": "function onBefore(current, previous) {\n\tnew SNCCatalogUtil().syncVariableTableName(current.getUniqueValue(), null);\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Make quantity received empty",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "before_display",
+   "table": "alm_transfer_order_line_task",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "// For tasks of stage = 'received', check if the consumable needs to be received in multiple quantity. If true then set 'quantity_received' to empty when the task is open\n\tif(current.getValue('stage') === 'received' && (current.transfer_order_line.model.sys_class_name.toString() === 'cmdb_consumable_product_model' ||  current.transfer_order_line.model.asset_tracking_strategy.toString() === 'track_as_consumable') && parseInt(current.getValue('state')) === 1){\n\tcurrent.quantity_received = '';\n\tcurrent.setWorkflow(false);\n\tcurrent.update();\n}\n"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Resume On-Call workflows",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "after",
+   "table": "task",
+   "filter": "assigned_toISNOTEMPTY^assigned_toVALCHANGES^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n    var escRespGr = new GlideRecord('on_call_escalation_response');\n    escRespGr.addQuery('source', current.getUniqueValue());\n    escRespGr.addQuery('user', current.assigned_to);\n    escRespGr.query();\n    while (escRespGr.next()) {\n        new Workflow().broadcastEvent(escRespGr.wf_context, 'resume');\n    }\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Update Workspace DA Mapping",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "link_generator_mapping",
+   "filter": "type=agent_workspace^ORtypeCHANGESFROMagent_workspace^workspace_decoratorISNOTEMPTY^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\t\n\tnew linkGeneratorWorkspace().updateWorkspaceDecoratorForLinkMapping(current);\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Delete update set after push back out",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "after",
+   "table": "sys_sync_history",
+   "filter": "",
+   "condition": "current.type == \"push_commit\" && current.stage == \"backedout\"",
+   "order": "100",
+   "script": "var update_set = new GlideRecord(\"sys_update_set\");\nif (update_set.get(current.update_set))\n\tupdate_set.deleteRecord();"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Service Discovery - Device Complete",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "after",
+   "table": "discovery_device_history",
+   "filter": "",
+   "condition": "current.workflow_state == 'completed' || current.workflow_state == 'rejected' || current.workflow_state == 'offline'",
+   "order": "100",
+   "script": "function onAfter(current, previous) {\n    var gr = new GlideRecord('sa_deferred_service_discovery');\n    gr.addQuery('discovery_status',current.status);\n    gr.query();\n    if (gr.next()) {\n        gs.print(\"Deferred Service Discovery found\");\n        var clientId = gr.getValue('client_id');\n        var dh = new SNC.DomainHelper();\n        var entryPointId = gr.getValue('entry_point');\n        dh.adjustDomainByCiSysId(entryPointId);\n        if (clientId != null) {\n            if(current.status.state !== \"Completed\")\n\t\t        return;\n            var patternDebuggerManager = new SNC.PatternDebuggerManager();\n            patternDebuggerManager.handleHostDetectionResult(gr.getUniqueValue(),clientId);\n        } \n        else {\n\t\t\t// if last state is Active, Windows Cluster VIP, we need to trigger the probe that\n\t\t\t// finds physical IPs and do some maintenance of relevant tables\n\t\t\tif (current.last_state == 'Active, Windows Cluster VIP') {\n\t\t\t\tgs.print(\"Cluster VIP identified: \" + gr.getValue('ip_address'));\n\t\t\t\t// duplicate the relevant record in sa_deferred_service_discovery\n\t\t\t\tgs.print(\"Inserting new record to sa_deferred_service_discovery for IP \" + gr.getValue('ip_address'));\n\t\t\t\tvar newSaDefferedStatus = new GlideRecord('sa_deferred_service_discovery');\n\t\t\t\tnewSaDefferedStatus.setValue('entry_point',gr.getValue('entry_point'));\n\t\t\t\tnewSaDefferedStatus.setValue('additional_parameters',gr.getValue('additional_parameters'));\n\t\t\t\tnewSaDefferedStatus.setValue('ip_address',gr.getValue('ip_address'));\n\t\t\t\tvar newRecord = newSaDefferedStatus.insert();\n\t\t\t\tgs.print(\"New record inserted to sa_deferred_service_discovery\");\n\t\t\t\t// clear the discovery status field in sa_endpoint_status\n\t\t\t\tvar saEndpointStatus = new GlideRecord(\"sa_endpoint_status\");\n\t\t\t\tsaEndpointStatus.addQuery(\"endpoint_id\",gr.getValue(\"entry_point\"));\n\t\t\t\tsaEndpointStatus.query();\n\t\t\t\tif (saEndpointStatus.next()) {\n\t\t\t\t\tgs.print(\"Updating the sa_endpoint_status table entry of endpoint: \" + gr.getValue(\"entry_point\"));\n\t\t\t\t\tsaEndpointStatus.setValue(\"discovery_status\", null);\n\t\t\t\t\tsaEndpointStatus.update();\n\t\t\t\t    \n\t\t\t\t\t// launch the probe that finds physical IPs\n\t\t\t\t\t\n\t\t\t\t\t// Use the common MID selector to find MID\n\t\t\t\t\tvar selector = new CommonMIDServerSelector();\n\t\t\t\t\tvar mid = selector.findAgent(gr.getValue('ip_address'), null, 'ServiceMapping');\n\t\t\t\t\t\n\t\t\t\t\t// If MID is not found, return\n\t\t\t\t\tif (mid == null) {\n\t\t\t\t\t    gs.log(\"No MID server found for IP \" + gr.getValue('ip_address'));\n\t\t\t\t\t    saEndpointStatus.setValue(\"error\", \"No MID server found for IP \" + gr.getValue('ip_address'));\n\t\t\t\t\t    saEndpointStatus.update();\n\t\t\t\t\t    gr.deleteRecord();\n\t\t\t\t\t    dh.restoreCurrentSessionParams();\n                        return;\n\t\t\t\t\t}\n\n\t\t\t\t\tvar midServer = \"mid.server.\" + mid;\n\t\t\t\t\t\n\t\t\t\t\tvar discoveryStatusGr = new GlideRecord(\"discovery_status\");\n\t\t\t\t\t// GlideRecord.get 1 arg form falls back to 'name' if not found by sys_id, 2 arg form throws exception if arg2 is null.\n\t\t\t\t\tif (current.status)\n\t\t\t\t\t\tdiscoveryStatusGr.get('sys_id', current.status);\n\t\t\t\t\tif (discoveryStatusGr.isValid()) {\n\t\t\t\t\t\tgs.print(\"Launching probe: Windows - Get Physical Address for VIP\");\n\t\t\t\t\t\tvar probe = new SncProbe.get('Windows - Get Physical Address for VIP');\n\t\t\t\t\t\tprobe.setSource(gr.getValue('ip_address'));\n\t\t\t\t\t\tprobe.addParameter(\"endpoint_id\", gr.getValue(\"entry_point\"));\n\t\t\t\t\t\tprobe.addParameter(\"deferred\", newRecord);\n\t\t\t\t\t\tprobe.setTopic('WMIRunner');\n\t\t\t\t\t\tprobe.create(midServer);\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\t// Delete the old record\n\t\t\t\tgr.deleteRecord();\n\t\t\t\t\n\t\t\t}\n            // var discoveryRunner = new SNC.ServiceWatchTaskManager();\n            // For now we do not report on discovery completion at this point since it created identity matching collisions with horizontal discovery.\n            // discoveryRunner.startDeferredDiscovery(gr.getUniqueValue(), current.status);\n        }\n        dh.restoreCurrentSessionParams();\n\n    }\n \t\n\t\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Close skip previous tasks",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "alm_transfer_order_line_task",
+   "filter": "state=3^ORstate=7^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "/** All tasks for the in-flight TOLs are created at once and these tasks should be closed in the order mentioned. \n\tWhen a task with higher order than some other tasks is closed, This business rule will close skip the tasks whose order is less than the current closing task.\n\tThis business rule will only run when there are more than 2 open/pending/work in progress tasks for the TOL. This ensures that the business rule will run only for in-flight TOLs as for any new TOL that is created, will have a workflow associated with it and thus creating one task at a time.\n**/\n\ncloseSkipPreviousTasks();\n\nfunction closeSkipPreviousTasks() {\n    var taskCount = getOpenTaskCount();\n    var firstOpenTaskGr = getFirstOpenTask();\n\n    if (!gs.nil(firstOpenTaskGr)) {\n        if (taskCount >= 2 && firstOpenTaskGr.getValue('order') < current.getValue('order')) {\n            // Close skip the tasks whose order is less than the current\n            closeBeforeTasks();\n        }\n    }\n\n    function closeBeforeTasks() {\n        var tolTaskGr = new GlideRecord('alm_transfer_order_line_task');\n        tolTaskGr.addQuery('transfer_order_line', current.transfer_order_line);\n        // state = 1 = Open, state = 2 = Work In Progress, state = -5 = Pending\n        tolTaskGr.addQuery('state', 'IN', '-5,1,2');\n        tolTaskGr.addQuery('order', '<', parseInt(current.order));\n\t\ttolTaskGr.orderBy('order');\n        tolTaskGr.query();\n        while (tolTaskGr.next()) {\n            tolTaskGr.setValue('state', 7);\n            tolTaskGr.update();\n        }\n\t\t\n    }\n\n    function getFirstOpenTask() {\n        var tolTaskGr = new GlideRecord('alm_transfer_order_line_task');\n        tolTaskGr.addQuery('transfer_order_line', current.transfer_order_line);\n        // state = 1 = Open, state = 2 = Work In Progress, state = -5 = Pending\n        tolTaskGr.addQuery('state', 'IN', '-5,1,2');\n        tolTaskGr.orderBy('order');\n        tolTaskGr.setLimit(1);\n        tolTaskGr.query();\n        if (tolTaskGr.next()) {\n            return tolTaskGr;\n        }\n        return null;\n    }\n\n    function getOpenTaskCount() {\n        taskCount = 0;\n        var taskGr = new GlideAggregate('alm_transfer_order_line_task');\n        taskGr.addQuery('transfer_order_line', current.transfer_order_line);\n        // state = 1 = Open, state = 2 = Work In Progress, state = -5 = Pending\n        taskGr.addQuery('state', 'IN', '-5,1,2');\n        taskGr.addAggregate('COUNT', 'order');\n        taskGr.orderByAggregate('COUNT', 'order');\n        taskGr.setGroup(false);\n        taskGr.query();\n        if (taskGr.next()) {\n            taskCount = parseInt(taskGr.getAggregate('COUNT', 'order'));\n        }\n        return taskCount;\n    }\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "ContractHistory",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "after",
+   "table": "ast_contract",
+   "filter": "",
+   "condition": "!current.isInManageLifecycle && (current.starts.changes() || current.ends.changes() || current.terms_and_conditions.changes())",
+   "order": "115",
+   "script": "var cmu = new ContractManagementUtils();\nif (!gs.nil(current.oldStartDate) || !gs.nil(current.oldEndDate)) {\n    cmu.appendContractHistory(previous, current.oldStartDate, current.oldEndDate);\n} else if (!previous.starts.nil() || !previous.ends.nil() || !previous.terms_and_conditions.nil()) {\n    cmu.appendContractHistory(previous);\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Check form screen configuration",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "after",
+   "table": "sys_sg_form_screen",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /* null when async */) {\n\tvar dynamicMode = 'dynamic';\n\tvar formSegmentTable = 'sys_sg_form_segment';\n\tvar formScreenColumnName = 'form';\n\tvar dynamicSegmentProtection = new DynamicSegmentProtection();\n\n\tvar mode = dynamicSegmentProtection.defineConfigurationMode(current.sys_class_name, current.sys_id);\n\tif (mode == dynamicMode)\n\t\tcheckDynamicConfiguration(current);\n\n\tfunction checkDynamicConfiguration(formScreenGR) {\n\t\tvar orderColumn = 'order';\n\t\tvar formSegmentGR = new GlideRecord(formSegmentTable);\n\t\tformSegmentGR.addQuery(formScreenColumnName, formScreenGR.sys_id);\n\t\tformSegmentGR.orderBy(orderColumn);\n\t\tformSegmentGR.query();\n\t\tvar index = 0;\n\t\twhile (formSegmentGR.next()) {\n\t\t\tif (formSegmentGR.sys_class_name == formSegmentTable) {\n\t\t\t\tvar message = gs.getMessage('Misconfiguration found in {0}: {1}.', [formSegmentTable, formSegmentGR.sys_id]);\n\t\t\t\tdynamicSegmentProtection.checkStaticSegment(formSegmentGR, index, message);\n\t\t\t}\n\n\t\t\tindex++;\n\t\t}\n\t}\n})(current, previous);\n"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Prevent application inconsistency",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sys_update_set",
+   "filter": "",
+   "condition": "current.application.changes()",
+   "order": "50",
+   "script": "\n\t\t\tvar updateXmlGR = new GlideRecord('sys_update_xml');\n\t\t\tupdateXmlGR.addQuery('update_set', current.sys_id);\n\t\t\tupdateXmlGR.setLimit(1);\n\t\t\tupdateXmlGR.query();\n\t\t\tif (updateXmlGR.hasNext()) {\n\t\t\t\tcurrent.setAbortAction(true);\n\t\t\t\tgs.addErrorMessage(gs.getMessage('You cannot change the application of an update set that contains updates'));\n\t\t\t}\n\t\t\t"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Backout history version for push",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "after",
+   "table": "sys_sync_history",
+   "filter": "",
+   "condition": "current.type != \"pull\" && current.stage == \"backedout\"",
+   "order": "100",
+   "script": "//Set all to not_pushed\nvar push = new SNC.PushAPI();\npush.updateHistoryVersionStateForBackedOutHistory(current.sys_id, current.type);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Set active field in ts_index_group",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "after",
+   "table": "ts_index_name",
+   "filter": "",
+   "condition": "current.state.changes() || current.format.changes()",
+   "order": "200",
+   "script": "var grGroups = new GlideRecord('ts_index_group');\ngrGroups.addEncodedQuery('tablesLIKE' + current.table);\ngrGroups.query();\nvar tsUtil = new GlideTSUtil();\nwhile (grGroups.next() ) {\n\tvar groupGR = getIndexGroupRecord(grGroups.name);\n\tif (groupGR && groupGR.tables) {\n\t\tvar active = tsUtil.isIndexGroupActive(grGroups.tables);\n\t\tif (active != groupGR.getBooleanAttribute('active')) {\n\t\t\ttsUtil.flushIndexGroupCache();\n\t\t\tbreak;\n\t\t}\n\t}\n}\n\nfunction getIndexGroupRecord(name) {\n\tvar gr = new GlideRecord('ts_index_group');\n\tgr.addQuery('name', name);\n\tgr.query();\n\tif (gr.next())\n\t    return gr;\n\t\n\treturn null;\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Tracks approval source",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sysapproval_approver",
+   "filter": "state=approved^ORstate=rejected^EQ",
+   "condition": "current.state.changes()",
+   "order": "100",
+   "script": "var controller = new GlideController();\nvar approvalSource = controller.getGlobal(\"approvalSource\");\nvar emailGlobal = undefined;\nif (typeof email !== \"undefined\")\n   emailGlobal = email;\nif (approvalSource == \"email\" || typeof emailGlobal !== \"undefined\")\n\tcurrent.approval_source = \"email\";\n\nelse {\n\tvar device = GlideMobileExtensions.getDeviceType();\n\tif (device == \"m\" || device == \"mobile\")\n\t\tcurrent.approval_source = \"ui.mobile\";\n\telse if (device == \"tablet\")\n\t\tcurrent.approval_source = \"ui.tablet\";\n\telse\n\t\tcurrent.approval_source = \"ui.desktop\";\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Prevent updates",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "label_group_m2m",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "gs.addErrorMessage(gs.getMessage('This type of record is not intended to be updated'));\ncurrent.setAbortAction(true);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Handle updates moving between sets",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sys_update_xml",
+   "filter": "",
+   "condition": "previous.update_set != current.update_set",
+   "order": "100",
+   "script": "processUpdateSetChange();\n\nfunction processUpdateSetChange() {\n\tvar newUpdateSet = new GlideRecord('sys_update_set');\n\tnewUpdateSet.get(current.update_set);\n\n\tif (current.application.nil() && newUpdateSet.application == 'global')\n\t\tcurrent.application = 'global';\n\tif (newUpdateSet.application.scope != current.application.scope) {\n\t\tcurrent.update_set = previous.update_set;\n\t\tcurrent.setAbortAction(true);\n\t\tgs.addErrorMessage(\"Cannot move update to a set for a different scope\");\n\t\treturn;\n\t}\n\n\tvar versions = new GlideRecord('sys_update_version');\n\tversions.addQuery(\"name\", current.name);\n\tversions.addQuery(\"source\", previous.update_set);\n\tversions.addQuery(\"source_table\", \"sys_update_set\");\n\tversions.query();\n\n\t//Don't use updateMultiple here\n\twhile (versions.next()) {\n\t\tversions.setValue(\"source\", current.update_set);\n\t\tversions.update();\n\t}\n}\n"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Affected ci notifications",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "async",
+   "table": "task",
+   "filter": "",
+   "condition": "javascript:new AffectedUtils().hasAffected(current, \"task_ci\", \"task\");",
+   "order": "200",
+   "script": "if (current != null) {\n\tvar thisTask = current.sys_id;\n\tvar noNotify = {};\n\tvar visited = {};\n\tvar maxLevel = parseInt(gs.getProperty('NotifyAffectedCI.max_rel_level'));\n\tvar maxCis = parseInt(gs.getProperty('NotifyAffectedCI.max_cis', '100000'));\n\t// max_events determines how many cis may be tracked in the noNotify array\n\t// increasing to a very large number ( > ~100K) might use too much memory\n\tvar maxEvents = parseInt(gs.getProperty('NotifyAffectedCI.max_events', '50000'));\n\tvar legacySubscriptionModel = gs.getProperty('glide.notification.use_legacy_subscription_model');\n\t// Need to limit size of the array in memory used to track visited CIs\n\tvar maxArrSize = parseInt(gs.getProperty('NotifyAffectedCI.max_visited_arr_size', '50000'));\n\n\tvar eventCount = 0;\n\tvar ciAffectedNotificationTypes = getCIAffectedNotificationTypes();\n\tvar ciCount = 0;\n\tvar ciBatchSize = 100;\n\t\n\tvar affectedItem = new GlideRecord('task_ci');\n\taffectedItem.addQuery('task', thisTask);\n\taffectedItem.query();\n\tvar nextLevel = [];\n\twhile (affectedItem.next()) {\n\t\tciCount++;\n\n\t\tif (maxCisReached())\n\t\t\tbreak;\n\n\t\tvar itemSysID = affectedItem.ci_item + '';\n\t\tif (!visited[itemSysID]) {\n\t\t\tnextLevel.push(itemSysID);\n\t\t\tmarkAsVisited(itemSysID);\n\t\t}\n\t}\n\t// send notifications for subscribed cis in nextlevel array\n\tnotifySubscribers(nextLevel);\n\t// walk the relationships of nextLevel Cis and notify\n\tif (!maxCisReached())\n\t\tnotifyParentsByLevel(nextLevel, 1);\n\n}\n\n\nfunction notifyParentsByLevel(cis, currentLevel) {\n\tif (currentLevel > maxLevel || cis.length < 1) return;\n\t\n\tfor (var index = 0; index < cis.length; index += ciBatchSize) {\n\t\tvar nextCIs = [];\n\t\tif (eventCount >= maxEvents) break;\n\n\t\tvar batch = cis.slice(index, index + ciBatchSize);\n\n\t\tvar rel = new GlideRecord('cmdb_rel_ci');\n\t\trel.addQuery('child', 'IN', batch);\n\t\trel.addNotNullQuery('type');\n\t\trel.addNotNullQuery('parent');\n\t\trel.query();\n\t\twhile (rel.next()) {\n\t\t\tciCount++;\n\n\t\t\tif (maxCisReached())\n\t\t\t\tbreak;\n\n\t\t\tvar parentSysID = rel.parent + '';\n\t\t\tif (!visited[parentSysID]) {\n\t\t\t\tnextCIs.push(parentSysID);\n\t\t\t\tmarkAsVisited(parentSysID);\n\t\t\t}\n\t\t}\n\t\tnotifySubscribers(nextCIs);\n\n\t\tif(nextCIs.length > 0 && (currentLevel + 1) <= maxLevel && !maxCisReached())\n\t\t\tnotifyParentsByLevel(nextCIs, currentLevel + 1);\n\t}\n\n\t\n}\n\nfunction notifySubscribers(ciSysIds) {\n\tif (ciSysIds.length == 0)\n\t\treturn;\n\n\tvar ciList = [];\n\tfor (var index = 0; index < ciSysIds.length; index += ciBatchSize) {\n\t\tvar batch = ciSysIds.slice(index, index + ciBatchSize);\n\n\t\tciList = [];\n\t\tif(legacySubscriptionModel == 'true') {\n\t\t\tvar mGr = new GlideAggregate('cmn_notif_message');\n\t\t\tmGr.addQuery('configuration_item', 'IN', batch);\n\t\t\tmGr.addQuery('notification', 'IN', ciAffectedNotificationTypes);\n\t\t\tmGr.groupBy('configuration_item');\n\t\t\tmGr.query();\n\t\t\twhile (mGr.next()) {\n\t\t\t\tvar ci = mGr.configuration_item + '';\n\t\t\t\tciList.push(ci);\n\t\t\t}\n\t\t}\n\t\telse {\n\t\t\tvar nGr = new GlideAggregate('sys_notif_subscription');\n\t\t\tnGr.addActiveQuery();\n\t\t\tnGr.addQuery('affected_record', 'IN', batch);\n\t\t\tnGr.addQuery('notification', 'IN', ciAffectedNotificationTypes);\n\t\t\tnGr.groupBy('affected_record');\n\t\t\tnGr.query();\n\t\t\twhile (nGr.next()) {\n\t\t\t\tvar ar = nGr.affected_record + '';\n\t\t\t\tciList.push(ar);\n\t\t\t}\n\t\t}\n\t\tif (ciList.length > 0)\n            queueCis(ciList);\n\t}\n\n}\n\nfunction queueCis(ciList) {\n\tvar ciDisplayName = '', ciSysId = '';\n\tvar ciGr = new GlideRecord('cmdb_ci');\n\tciGr.addQuery('sys_id', 'IN', ciList);\n\tciGr.query();\n\twhile (ciGr.next()){\n\t\tciSysId = ciGr.sys_id;\n\t\tciDisplayName = ciGr.getDisplayValue();\n\t\tif (!noNotify[ciSysId]) {\n\t\t\tgs.eventQueue('ci.affected', current, ciSysId, ciDisplayName, 'cmdb_ci_affected');\n\t\t\tmarkAsNotified(ciSysId);\n\t\t\teventCount++;\n\t\t\tif (eventCount >= maxEvents) return;\n\t\t}\n\t}\n}\n\nfunction getCIAffectedNotificationTypes() {\n\tvar gr = new GlideRecord('sysevent_email_action');\n\tgr.addQuery('event_name', 'ci.affected');\n\tgr.addActiveQuery();\n\tgr.query();\n\tvar ids = '';\n\twhile (gr.next()) {\n\t\tids += gr.getValue('sys_id');\n\t\tif(gr.hasNext())\n\t\t\tids += ',';\n\t}\n\n\treturn ids;\n}\n\nfunction markAsVisited(ci) {\n\tvar size = Object.keys(visited).length;\n\tif (size < maxArrSize)\n\t\tvisited[ci] = true;\n}\n\nfunction markAsNotified(ci) {\n\tif (visited[ci])\n\t\treturn; // ci will not be visited twice so need to track\n\n\tnoNotify[ci] = true;\n}\n\nfunction maxCisReached() {\n\tif (isNaN(maxCis))\n\t\treturn false;\n\treturn ciCount > maxCis;\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Affected group notifications",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "async",
+   "table": "task",
+   "filter": "",
+   "condition": "javascript:new AffectedUtils().hasAffected(current, \"task_group\", \"task\");",
+   "order": "99",
+   "script": "if (current != null) {\n  var thisTask = current.sys_id;\n  var noNotify = new Object();\n  var logMessage = gs.getProperty(\"glide.affected_notifications.log.enable\", \"false\");\n\n  var affectedItem = new GlideRecord('task_group');\n  affectedItem.addQuery('task', thisTask);\n  affectedItem.query();\n  while (affectedItem.next()) {\n    var itemSysID = affectedItem.group;\n    var itemName = affectedItem.group.getDisplayValue();\n    if (!noNotify[itemSysID]) {\n      noNotify[itemSysID] = true;\n      if (logMessage == \"true\") {\n        gs.log('### Notifying subscribers of ' + itemName, 'Business Rule: Affected group notifications');\n      }\n      gs.eventQueue('group.affected', current, itemSysID, itemName);\n      notifyParents('sys_user_group', itemSysID, logMessage);\n    }\n  }\n}\n\nfunction notifyParents(table, itemSysID, logMessage) {\n   var item = new GlideRecord(table);\n   item.addQuery('sys_id', itemSysID);\n   item.query();\n   if (item.next()) {\n      if (item.parent) {\n         var parentSysID = item.parent;\n         var parentName = item.parent.getDisplayValue();\n         if (!noNotify[parentSysID]) {\n            if (logMessage == \"true\") {\n              gs.log('### Notifying subscribers of ' + parentName, 'Business Rule: Affected group notifications');\n            }\n            noNotify[parentSysID] = true;\n            gs.eventQueue('group.affected', current, parentSysID, parentName);\n            notifyParents(table, parentSysID, logMessage);\n         }\n      }\n   }\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Affected location notifications",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "async",
+   "table": "task",
+   "filter": "",
+   "condition": "javascript:new AffectedUtils().hasAffected(current, \"task_location\", \"task\");",
+   "order": "99",
+   "script": "if (current != null) {\n  var thisTask = current.sys_id;\n  var noNotify = new Object();\n  var logMessage = gs.getProperty(\"glide.affected_notifications.log.enable\", \"false\");\n\n  var affectedItem = new GlideRecord('task_location');\n  affectedItem.addQuery('task', thisTask);\n  affectedItem.query();\n  while (affectedItem.next()) {\n    var itemSysID = affectedItem.location;\n    var itemName = affectedItem.location.getDisplayValue();\n    if (!noNotify[itemSysID]) {\n      noNotify[itemSysID] = true;\n      if (logMessage == \"true\") {\n        gs.log('### Notifying subscribers of ' + itemName, 'Business Rule: Affected location notifications');\n      }\n      gs.eventQueue('location.affected', current, itemSysID, itemName);\n      notifyParents('cmn_location', itemSysID, logMessage);\n    }\n  }\n}\n\nfunction notifyParents(table, itemSysID, logMessage) {\n   var item = new GlideRecord(table);\n   item.addQuery('sys_id', itemSysID);\n   item.query();\n   if (item.next()) {\n      if (item.parent) {\n         var parentSysID = item.parent;\n         var parentName = item.parent.getDisplayValue();\n         if (!noNotify[parentSysID]) {\n            if (logMessage == \"true\") {\n              gs.log('### Notifying subscribers of ' + parentName, 'Business Rule: Affected location notifications');\n            }\n            noNotify[parentSysID] = true;\n            gs.eventQueue('location.affected', current, parentSysID, parentName);\n            notifyParents(table, parentSysID, logMessage);\n         }\n      }\n   }\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Able to disable parameterized testing",
+   "insert": false,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sys_atf_test",
+   "filter": "enable_parameterized_testingCHANGESTOfalse^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tvar hasParameters = current.parameters.hasVariables();\n\n\tvar gr = new GlideRecord('sys_atf_parameter_set');\n\tgr.addQuery('test', current.sys_id);\n\tgr.query();\n\tvar hasParameterSets = gr.hasNext();\n\n\tif (hasParameterSets || hasParameters) {\n\t\tcurrent.setAbortAction(true);\n\t\tgs.addErrorMessage(\"You must delete all parameters and parameter sets before disabling parameterized testing\");\n\t}\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Validate Change Success Score Properties",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sys_properties",
+   "filter": "",
+   "condition": "new sn_chg_score.ChangeSuccessScoreProperties().isSuccessScoreProperty(current)",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\n\tvar validationErrors = new sn_chg_score.ChangeSuccessScoreProperties().validateProperty(current);\n\tif (!validationErrors || !Array.isArray(validationErrors))\n\t\treturn;\n\n\tfor (var i = 0; i < validationErrors.length; i++)\n\t\tgs.addErrorMessage(validationErrors[i]);\n\n\tcurrent.setAbortAction(true);\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Validate duplicate search source",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "ais_search_profile_ais_search_source_m2m",
+   "filter": "",
+   "condition": "",
+   "order": "50",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n\n    var gr = new GlideRecord('ais_search_profile_ais_search_source_m2m');\n    gr.addQuery('profile', current.profile);\n    gr.addQuery('search_source', current.search_source);\n    gr.query();\n    if (gr.next()) {\n        gs.addErrorMessage(gs.getMessage('The selected search source was not added because it is already linked to this search profile.'));\n        current.setAbortAction(true);\n    }\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Clear Alias Override",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "scheduled_import_set",
+   "filter": "",
+   "condition": "!current.connection_override.nil()",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tvar dataSource = new GlideRecord('sys_data_source');\n    if (dataSource.get(current.getValue('data_source'))) {\n\t\tif (dataSource.type == 'data_stream' && current.connection_override.parent.sys_id.nil()) \n\t\t\tcurrent.setValue(\"connection_override\", \"\");\n\t}\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Save yyyy-MM-dd for Date Types",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sc_item_variable_assignment",
+   "filter": "",
+   "condition": "current.item_variable.type == 9 || current.item_variable.type == 10",
+   "order": "1000",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\t// Add your code here\n\tvar dt = current.item_variable.type == 9 ? new GlideDate() : new GlideDateTime();\n\tdt.setDisplayValue(current.getValue('value'));\n\tcurrent.setValue('value', dt.getValue());\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Avoid duplicate hostnames",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sys_cs_hostname_allow_list",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\n\tif (current.hostname != previous.hostname) {\t\n\t\tvar hostnameHelper = new global.AllowedHostnameHelper();\n\t\tif (hostnameHelper.checkHostnameExists(current.hostname)) {\n\t\t\tgs.addErrorMessage(gs.getMessage('This hostname already exists in the list.'));\n\t\t\tcurrent.setAbortAction(true);\n\t\t}\n\t}\t\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Allow to save signature before action",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sys_sg_button",
+   "filter": "save_signature_before_action_execution=true^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous) {\n\n\tif(!current.write_back_action_item || !(current.write_back_action_item.type.equals(\"script\"))) {\n\t\tgs.addErrorMessage(gs.getMessage(\"Save signature before action execution is not allowed unless action item type is script!\"));\n\t\tcurrent.save_signature_before_action_execution = false;\n\t}\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Initialize inputs and type_vals",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sys_pd_activity",
+   "filter": "activity_definitionVALCHANGES^EQ",
+   "condition": "",
+   "order": "100"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Check Domains",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "service_in_scope",
+   "filter": "",
+   "condition": "!(new global.SPMDomainUtils().isInSameDomain(current.service_scope.getRefRecord(), current.cmdb_ci_service.getRefRecord()))",
+   "order": "90",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\n\t// Add your code here\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Set Domain of NPS Result",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "asmt_nps_result",
+   "filter": "",
+   "condition": "GlidePluginManager.isActive('com.glide.domain')",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\t// nps result domain = assessable record domain\n\t//if assessable record's record is not domain separated, nps result domain = metric domain (if is global)\n\tvar sourceRecord = new GlideRecord(current.source_table);\n\tsourceRecord.get(current.source_id);\n\t\n\tif (tableHasColumn(current.source_table))\n\t\tcurrent.sys_domain = sourceRecord.sys_domain;\n\telse if (isGlobal(current.nps_metric.sys_domain))\n\t\tcurrent.sys_domain = current.nps_metric.sys_domain;\n\tfunction tableHasColumn(tableName) {\n\t\tvar gr = new GlideRecord(tableName);\n\t\tgr.initialize();\n\t\tvar ge = gr.getElement(\"sys_domain\");\n\t\treturn ge != null;\n\t}\n\tfunction isGlobal(domain) {\n\tif (domain.nil())\n\t\treturn true;\n\tif (domain.indexOf(\"global\") >= 0)\n\t\treturn true;\n\treturn false;\n}\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Create response channels",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "after",
+   "table": "sys_cs_auto_resolution_configuration",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\n\tif (AutoResolutionResponseChannelHelper.shouldCreateResponseChannels(current.sys_id))\n\t\tAutoResolutionResponseChannelHelper.createResponseChannelForARConfig(current.sys_id);\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Change Model: Set work start",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "change_request",
+   "filter": "chg_model=007c4001c343101035ae3f52c1d3aeb2^ORchg_model=e55d0bfec343101035ae3f52c1d3ae49^ORchg_model=62d10fa1c303101035ae3f52c1d3aec1^stateCHANGESTO-1^work_startISEMPTY^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tcurrent.work_start = new GlideDateTime();\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Auto assessment business rule",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "async",
+   "table": "incident",
+   "filter": "",
+   "condition": "(new global.AssessmentUtils().conditionCheck(current, 'stateCHANGESTO7^EQ'))",
+   "order": "300",
+   "script": "function onAsync(current){\n (new sn_assessment_core.AssessmentCreation()).conditionTrigger(current, '249e70b0875013005d90bba826cb0bbf'); \n }"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Set NLU Model Dirty (nlu_utterance)",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "after",
+   "table": "sys_nlu_utterance",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n\n    (new NLUModel(current.intent.model)).setDirty();\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Unset default all other models",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "after",
+   "table": "chg_model",
+   "filter": "default_change_modelCHANGESTOtrue^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tvar chgModelGr = new GlideRecord(\"chg_model\");\n\tchgModelGr.addQuery(\"sys_id\", \"!=\", current.sys_id);\n\tchgModelGr.addQuery(\"default_change_model\", \"1\");\n\tchgModelGr.addQuery(\"table_name\", current.getValue(\"table_name\"));\n\tchgModelGr.query();\n\twhile (chgModelGr.next()) {\n\t\tchgModelGr.setValue(\"default_change_model\", \"0\");\n\t\tchgModelGr.update();\n\t}\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Mandatory Closure Information",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "change_request",
+   "filter": "state=3^EQ",
+   "condition": "gs.getProperty(ChangeRequestSNC.ENFORCE_DATA_REQ_PROP) === \"true\" && current.chg_model.nil()",
+   "order": "900",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tvar abort = false;\n\tif (current.close_code.nil()) {\n\t\tabort = false;\n\t\tgs.addErrorMessage(gs.getMessage(\"Close code is mandatory when closing a Change Request\"));\n\t}\n\n\tif (current.close_notes.nil()) {\n\t\tabort = true;\n\t\tgs.addErrorMessage(gs.getMessage(\"Close notes are mandatory when closing a Change Request\"));\n\t}\n\n\tif (!current.close_code.nil() && !validCloseCode(current.close_code)) {\n\t\tabort = true;\n\t\tgs.addErrorMessage(gs.getMessage(\"Close code cannot be set to an invalid value: {0}\", current.close_code));\n\t}\n\t\n\tif (abort)\n\t\tcurrent.setAbortAction(true);\n})(current, previous);\n\nfunction validCloseCode(closeCode) {\n\tcloseCode = closeCode + \"\";\n\tif (!closeCode)\n\t\treturn true;\n\n\tvar choices = GlideChoiceList.getChoiceList(\"change_request\", \"close_code\");\n\tfor (var i = 0; i < choices.getSize(); i++)\n\t\tif (choices.getChoice(i).getValue() + \"\" === closeCode)\n\t\t\treturn true;\n\treturn false;\n}"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Block steps with same escalation level",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "cmn_rota_esc_step_def",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tvar gr = new GlideRecord('cmn_rota_esc_step_def');\n\tgr.addQuery('escalation_set', current.escalation_set);\n\tgr.addQuery('escalation_level', current.escalation_level);\n\tgr.setLimit(1);\n\tif (current.operation() == 'update')\n\t\tgr.addQuery('sys_id','!=', current.getUniqueValue());\n\tgr.query();\n\tif (gr.hasNext()) {\n\t\tvar msg = gs.getMessage('Step with escalation level - {0} already exists for escalation set {1}', [current.escalation_level, current.escalation_set.getDisplayValue()]);\n\t\tgs.addErrorMessage(msg);\n\t\tcurrent.setAbortAction(true);\n\t}\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Setting state based on dates",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sn_shn_notes",
+   "filter": "effective_immediatelyVALCHANGES^OReffective_onVALCHANGES^ORexpires_onVALCHANGES^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\t/*\n\tStatus - 1 :Active\n\t2 - Inactive\n\t3 - Expired\n\t*/\n\t\n\tif(current.effective_immediately == true){\n\t\tcurrent.effective_on = \"\";\n\t}\n\tvar now = new GlideDateTime().getValue();\n\t\n\t//Mark active if effective immediately is true and now < expiry\n\tif(current.getValue(\"effective_immediately\") == true && now < current.expires_on){\n\t\t current.status = 1;\n\t }else if(now >= current.expires_on){\n\t\t current.status = 3;\n\t }else if (current.getValue(\"effective_immediately\") == false && now < current.effective_on){\n\t\t //Mark inactive if now < effective on\n\t\t current.status = 2;\n\t }else if(current.getValue(\"effective_immediately\") == false && current.effective_on <= now){\n\t\t //Mark active if effective on < now\n\t\t current.status = 1;\n\t }\n\t\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Notify incorrect renewal duration",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "ast_contract",
+   "filter": "renewable=true^renewal_options!=^renewal_dateISNOTEMPTY^renewal_end_dateISNOTEMPTY^EQ",
+   "condition": "",
+   "order": "150",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tvar renOpt = {\n\t\t\"1 year\": { \"y\": 1, \"m\": 0, \"d\": 0 },\n\t\t\"2 years\": { \"y\": 2, \"m\": 0, \"d\": 0 },\n\t\t\"3 years\": { \"y\": 3, \"m\": 0, \"d\": 0 }\n\t};\n\n\tvar renLen = renOpt[current.renewal_options + \"\"];\n\n\tvar endDate = new GlideDate();\n\tendDate.setValue(current.renewal_end_date);\n\n\tvar compDate = new GlideDate();\n\tcompDate.setValue(current.renewal_date);\n\tif (renLen.y !== 0)\n\t\tcompDate.addYearsUTC(renLen.y);\n\tif (renLen.m !== 0)\n\t\tcompDate.addMonthsUTC(renLen.m);\n\tif (renLen.d !== 0)\n\t\tcompDate.addDaysUTC(renLen.d);\n\n\tcompDate.addDaysUTC(-1); // Last day of the year, not same day next year.\n\n\tif (!endDate.equals(compDate))\n\t\tgs.addInfoMessage(gs.getMessage(\"The date range between the Renewal start date and Renewal end date do not match the selected option.\"));\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Abort adding same flow twice",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "em_alert_man_m2m_rule_flow",
+   "filter": "active=true^EQ",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tgs.include('EvtMgmtAlertManagementCommons'); \n\tvar evtMgmtAlertManagementCommons = new EvtMgmtAlertManagementCommons(); \n\tif (evtMgmtAlertManagementCommons.activeFlowExist(current)) {\n\t\tgs.addErrorMessage(gs.getMessage(\"Abort adding action '{0}', same subflow can't be added twice.\", current.sub_flow.name));\n\t\tcurrent.setAbortAction(true);\n\t}\t\n\t// Add your code here\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Validate Type Metadata Combination",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "cmdb_policy_type",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\n\t/*\n\tSTRY53422744\n\tIt is possible that a policy may have automatic subflow (e.x. retire subflow) \n\tor manual process (e.x. manual attestation) or both. However, when creating or\n\tupdating policy type metadata, we should not allow a policy to neither have a subflow\n\tnor a manual process, i.e. a policy that does nothing. Complete state permutation and \n\tcorresponding logic flow can be found in STRY53422744.\n\t*/\n\t\n\tif(current.is_subflow_optional.toString() === 'true' && current.has_manual_process.toString() === 'false'){\n\t\tgs.addErrorMessage(gs.getMessage(\"Policy must have either a subflow or manual process.\"));\n\t\tcurrent.setAbortAction(true);\n\t}\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Prevent dup key and key table records",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sys_sg_custom_map_provider",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tvar existingCustomProvider = new GlideRecord(\"sys_sg_custom_map_provider\");\n\texistingCustomProvider.addQuery(\"key\", current.key);\n\texistingCustomProvider.addQuery(\"key_table\", current.key_table);\n\texistingCustomProvider.setLimit(1);\n\texistingCustomProvider.query();\n\t\n\tif(!existingCustomProvider.next()\n\t\t|| previous == null \n\t\t|| existingCustomProvider.getUniqueValue() === current.getUniqueValue())\n\t\treturn;\n\n\tcurrent.setAbortAction(true);\n\tgs.addErrorMessage(gs.getMessage(\"A custom map provider already exists for the specified key and key table.\"));\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Prevent duplicates",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "trigger_rule_table_cfg",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/ ) {\n\n\tvar gr = new GlideRecord(\"trigger_rule_table_cfg\");\n\tgr.addQuery(\"table\", current.getValue(\"table\"));\n\tgr.addQuery(\"sys_id\", \"!=\", current.getUniqueValue());\n\tgr.addActiveQuery();\n\tgr.query();\n\n\tif (gr.hasNext()) {\n\t\tcurrent.setAbortAction(true);\n\t\tgs.addErrorMessage(gs.getMessage(\"Trigger Rule Table Config table must be unique\"));\n\t}\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Abort if relationship same scope as list",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sys_ui_related_list_relationship_entry",
+   "filter": "",
+   "condition": "!current.isActionAborted() && current.sys_relationship.sys_scope.toString() === current.sys_ui_related_list.sys_scope.toString()",
+   "order": "110",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\t\n\tcurrent.setAbortAction(true);\n\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Validate schema namespace uniqueness",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sys_graphql_schema",
+   "filter": "",
+   "condition": "current.namespace.toString() !== previous.namespace.toString()",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tvar gr = new GlideAggregate(\"sys_graphql_schema\");\n\tgr.addQuery(\"namespace\", current.namespace);\n\tgr.addQuery(\"application_namespace\", current.application_namespace);\n\tgr.addAggregate(\"COUNT\");\n\tgr.query();\n\tif ((gr.next()) && (gr.getAggregate('COUNT') > 0)) {\n\t\tgs.addErrorMessage(\"Schema namespace \" + current.namespace + \" already exists for application namespace \" +\n\t\t\t\t\t\t\tcurrent.application_namespace);\n\t\tcurrent.setAbortAction(true);\n\t}\n})(current, previous);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Validate oauth scope in profile",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "oauth_entity_profile_scope",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*undefined when async or display*/) {\n\tif (current.oauth_entity_profile.oauth_entity != current.oauth_entity_scope.oauth_entity) {\n\t\tgs.addErrorMessage(gs.getMessage('Invalid scopes. The scopes must be from same provider as in profile.'));\n\t\tcurrent.setAbortAction(true);\n\t}\n})(current, typeof previous != 'undefined' ?  previous : null);"
+  }
+ },
+ {
+  "prompt": "",
+  "completion": {
+   "name": "Blacklist search source tables",
+   "insert": true,
+   "update": true,
+   "query": false,
+   "when": "before",
+   "table": "sys_search_source",
+   "filter": "",
+   "condition": "",
+   "order": "100",
+   "script": "(function executeRule(current, previous /*null when async*/) {\n\tvar tableName = String(current.source_table);\n\tvar blacklist = new SearchSourceTableBlacklist().get();\n\tif (blacklist.indexOf(tableName) > -1) {\n\t\tgs.addInfoMessage('Search sources cannot be created for blacklisted tables.');\n\t\tcurrent.setAbortAction(true);\n\t}\n})(current, previous);"
+  }
+ }
+]
