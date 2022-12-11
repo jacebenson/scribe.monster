@@ -69,7 +69,45 @@ ${input}
           'This will complete the script based on the code in the first line.',
       }
     })(),
-    explain: {
+    explain: (() => {
+      var explainPrompt
+      if (table === 'catalog_script_client') {
+        explainPrompt = `${strip(
+          input
+        )}\n"""\nThis runs on the catalog form.\nExplain it like I'm five years old in the form of a list.\n1.`
+      }
+      if (table === 'sys_script_client') {
+        explainPrompt = `${strip(
+          input
+        )}\n"""\nThe ${type} function runs on the form.\nExplain it like I'm five years old in the form of a list.\n1.`
+      }
+      if (table === 'sys_script') {
+        explainPrompt = `${strip(
+          input
+        )}\n"""\ncurrent is tied to the ${table} record.\nExplain it like I'm five years old in the form of a list.\n1.`
+      }
+      if (table === 'sys_script_include') {
+        explainPrompt = `${strip(
+          input
+        )}\n"""\nExplain this Script Include like I'm five years old in the form of a list.\n1.`
+      }
+      console.log({ function: 'prompts', table, explainPrompt })
+      return {
+        ai: {
+          model: 'text-davinci-002',
+          prompt: explainPrompt,
+          temperature: 0.7,
+          max_tokens: 400,
+          top_p: 1,
+          frequency_penalty: 0,
+          presence_penalty: 0,
+        },
+        endpoint: 'https://api.openai.com/v1/completions',
+        required: ['input', 'action'],
+        about: 'This explains the code in a list.',
+      }
+    })(),
+    /*{
       ai: {
         model: 'text-davinci-002',
         prompt: `"""\n${strip(input)}\n"""\nExplain this above code:\n1.`,
@@ -82,7 +120,7 @@ ${input}
       endpoint: 'https://api.openai.com/v1/completions',
       required: ['input', 'action'],
       about: 'This explains the code in a list.',
-    },
+    },*/
   }
 }
 export default prompts
