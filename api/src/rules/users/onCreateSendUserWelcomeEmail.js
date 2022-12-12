@@ -31,7 +31,7 @@ That's all to say, THANK YOU for trying this out!`,
           url: 'https://youtu.be/wVBuizJkhSA',
         },
         cta1: {
-          text: 'Try the extension',
+          text: 'Try/Rate/Review the extension',
           url: 'https://chrome.google.com/webstore/detail/scribemonster/jdibjdmndifkeafbhbajogekgeolmmfh?hl=en&authuser=0',
         },
         cta2: {
@@ -39,8 +39,8 @@ That's all to say, THANK YOU for trying this out!`,
           url: 'mailto:jace@benson.run',
         },
         cta3: {
-          text: 'Share on LinkedIn',
-          url: 'https://www.linkedin.com/sharing/share-offsite/?url=https://scribe.monster',
+          text: 'Reshare/Comment/Like on LinkedIn',
+          url: 'https://www.linkedin.com/posts/jacebenson_openai-openai-servicenow-activity-7006863532357009408-MZLn',
         },
         cta4: {
           text: 'Subscribe on YouTube',
