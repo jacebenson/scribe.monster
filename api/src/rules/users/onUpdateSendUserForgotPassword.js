@@ -16,8 +16,11 @@ module.exports = {
       let to = data.email
       let name = data.name
       let client = await email({ provider: 'mailgun' })
+      let domain = (await getProperty('domain')) || 'https://example.com'
+      let mgDomain =
+        (await getProperty('MAILGUN_DOMAIN')) || 'https://example.com'
       let code = data.resetToken
-      let resetLink = `https://${client.domain}/reset-password?resetToken=${data.resetToken}`
+      let resetLink = `https://${domain}/reset-password?resetToken=${data.resetToken}`
       let brand = (await getProperty('brand')) || 'Undefined'
       if (data.email === '') {
         // if data is blank, log the link for debugging
@@ -31,7 +34,7 @@ module.exports = {
       await client.send(
         {
           to: to,
-          from: `Tskr <jace@${client.domain}>`,
+          from: `Tskr <jace@${mgDomain}>`,
           'h:Reply-To': `jace@$tskr.io`, //not working
           subject: `Your password reset code`,
           html: rendered.html,
