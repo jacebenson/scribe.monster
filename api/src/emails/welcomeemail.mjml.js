@@ -57,7 +57,7 @@ let mjml = (
         <mj-text align="center" color="#fff" font-size="20px" font-family="Open Sans">
           ${name}, thanks for signing up
         </mj-text>
-        <mj-button background-color="#fff" color="#2f855a" href="${login.url}">${login.text}</mj-button>
+        <mj-button background-color="#fff" href="${login.url}" color="#2f855a">${login.text}</mj-button>
       </mj-column>
     </mj-section>
     <mj-raw>
