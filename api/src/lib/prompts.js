@@ -63,6 +63,7 @@ ${input}
           frequency_penalty: 0,
           presence_penalty: 0,
         },
+        prepend: input.split(' ')[0] + ' ',
         endpoint: 'https://api.openai.com/v1/completions',
         required: ['prompt', 'input', 'action'],
         about:
