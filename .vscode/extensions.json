@@ -1,6 +1,6 @@
 {
   "recommendations": [
-    "redwoodjs.redwood",
+    //"redwoodjs.redwood",
     "dbaeumer.vscode-eslint",
     "eamodio.gitlens",
     "ofhumanbondage.react-proptypes-intellisense",

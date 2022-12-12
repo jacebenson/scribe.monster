@@ -55,7 +55,7 @@ ${input}
       return {
         // everything else
         ai: {
-          prompt: `${input}\n\n"""\nRewite the code above based on this prompt, "${prompt}.":\n\n\n`,
+          prompt: `${input}\n\n"""\nRewite the code above with verbose comments around the logic based on this prompt, "${prompt}.":\n\n\n`,
           model: 'text-davinci-002',
           temperature: 1,
           max_tokens: 500,
