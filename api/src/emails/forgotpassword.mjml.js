@@ -1,8 +1,9 @@
 import mjml2html from 'mjml'
-export const render = ({ name, resetLink }) => {
-  return mjml2html(mjml(name, resetLink), {})
+export const render = ({ name, code, resetLink, brand }) => {
+  return mjml2html(mjml(name, code, resetLink, brand), {})
 }
-let mjml = (name, resetLink, brand) => {
+let mjml = (name, code, resetLink, brand) => {
+  console.log({ name, code, resetLink, brand })
   return `<mjml>
   <mj-body>
     <mj-raw>
@@ -22,6 +23,7 @@ let mjml = (name, resetLink, brand) => {
           ${name}, trouble signing in?
         </mj-text>
         <mj-button background-color="#fff" color="#2f855a" href="${resetLink}">Reset your password</mj-button>
+        <mt-text>Or use this code manually: ${code}</mj-text>
       </mj-column>
     </mj-section>
     <mj-raw>

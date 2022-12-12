@@ -16,7 +16,7 @@ module.exports = {
       let domain = (await getProperty('domain')) || 'https://example.com'
       let rendered = render({
         name: data.name,
-        login: { text: 'Log in', url: `${domain}/login` },
+        login: { text: 'Login', url: `${domain}/login` },
         brand,
         whatIsThis: `${brand} is a Chrome extension that give you the power of openAI.
 

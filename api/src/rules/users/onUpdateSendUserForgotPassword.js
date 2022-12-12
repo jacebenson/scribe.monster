@@ -13,15 +13,12 @@ module.exports = {
     try {
       if (!data.resetToken) return { data }
       if (new Date(data.resetTokenExpiresAt) < new Date()) return { data }
-      let to = data.email
       let name = data.name
       let client = await email({ provider: 'mailgun' })
       let domain = (await getProperty('domain')) || 'https://example.com'
-      let mgDomain =
-        (await getProperty('MAILGUN_DOMAIN')) || 'https://example.com'
       let code = data.resetToken
-      let resetLink = `https://${domain}/reset-password?resetToken=${data.resetToken}`
-      let brand = (await getProperty('brand')) || 'Undefined'
+      let resetLink = `${domain}/reset-password?resetToken=${data.resetToken}`
+      let brand = (await getProperty('brand')) || 'ScribeMonster'
       if (data.email === '') {
         // if data is blank, log the link for debugging
         // we dont have an email, so i guess, we can't recover teh account
@@ -33,9 +30,9 @@ module.exports = {
       let rendered = render({ name, code, resetLink, brand })
       await client.send(
         {
-          to: to,
-          from: `Tskr <jace@${mgDomain}>`,
-          'h:Reply-To': `jace@$tskr.io`, //not working
+          to: data.email,
+          from: `${brand} <jace@${client.domain}>`,
+          'h:Reply-To': `jace@$benson.run`, //not working
           subject: `Your password reset code`,
           html: rendered.html,
         },

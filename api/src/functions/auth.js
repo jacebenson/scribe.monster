@@ -3,16 +3,21 @@ import { DbAuthHandler } from '@redwoodjs/api'
 import { db } from 'src/lib/db'
 import { logger } from 'src/lib/logger'
 //import { executeAfterCreateRules, executeAfterUpdateRules, executeBeforeCreateRules } from 'src/lib/rules'
-import { createUser /*, updateUser*/ } from 'src/services/users/users'
+import { createUser, updateUser } from 'src/services/users/users'
 export const handler = async (event, context) => {
   const forgotPasswordOptions = {
     handler: async (user) => {
+      updateUser({
+        id: user.id,
+        input: {
+          resetToken: user.resetToken,
+        },
+      })
       logger.info(
         `${user.username} forgot password /reset-password?resetToken=${user.resetToken}`
       )
       if (user.email === '') throw 'No email on file'
       if (user.verified === null) throw 'Email not verified'
-      //await executeAfterUpdateRules('user', { record: user })
       return user
     },
     expires: 60 * 60 * 24 * 7,

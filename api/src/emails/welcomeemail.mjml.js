@@ -1,6 +1,31 @@
 import mjml2html from 'mjml'
-export const render = ({ name }) => {
-  return mjml2html(mjml(name), {})
+export const render = ({
+  name,
+  brand,
+  whatIsThis,
+  login,
+  welcomeImage,
+  introVideo,
+  cta1,
+  cta2,
+  cta3,
+  cta4,
+}) => {
+  return mjml2html(
+    mjml(
+      name,
+      brand,
+      whatIsThis,
+      login,
+      welcomeImage,
+      introVideo,
+      cta1,
+      cta2,
+      cta3,
+      cta4
+    ),
+    {}
+  )
 }
 let mjml = (
   name,
@@ -32,7 +57,7 @@ let mjml = (
         <mj-text align="center" color="#fff" font-size="20px" font-family="Open Sans">
           ${name}, thanks for signing up
         </mj-text>
-        <mj-button background-color="#fff" color="#2f855a" href="${login.url}"${login.text}</mj-button>
+        <mj-button background-color="#fff" color="#2f855a" href="${login.url}">${login.text}</mj-button>
       </mj-column>
     </mj-section>
     <mj-raw>
