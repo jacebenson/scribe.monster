@@ -107,14 +107,14 @@ export const handler = async (event /*, context*/) => {
       (await db.user.count({
         where,
       })) === 1
-    console.log({
+    /*console.log({
       hasValidKey,
       where: JSON.stringify(where),
       headers: event.headers,
       authString,
       username,
       extensionKey,
-    })
+    })*/
     if (!hasValidKey) {
       return respond({ code: 401, data: { error: 'Key not valid' } })
     }
@@ -128,7 +128,7 @@ export const handler = async (event /*, context*/) => {
       body: JSON.stringify({ ...promptConfig.ai }),
     })
     const data = await response.json()
-    console.log({ data })
+    //console.log({ data })
     if (data?.usage?.total_tokens) {
       await log(
         `${username} used ${data.usage.total_tokens}`,

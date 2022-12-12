@@ -2,8 +2,7 @@ import { db } from 'src/lib/db'
 import { logger } from 'src/lib/logger'
 let dog = console.log
 import prompts from 'src/lib/prompts'
-import { log } from 'src/lib/util'
-const AUTH = process.env.OPENAITOKEN
+
 function respond({ code, data }) {
   return {
     statusCode: code,
@@ -16,7 +15,7 @@ function respond({ code, data }) {
     body: JSON.stringify(data),
   }
 }
-export const handler = async (event, context) => {
+export const handler = async (event /*, context*/) => {
   try {
     logger.info('Invoked promptTraining function')
     logger.info('body', event.body)
@@ -39,7 +38,6 @@ export const handler = async (event, context) => {
         data: { error: 'Missing JSON Body' },
       })
     }
-
     var body = JSON.parse(event?.body)
     var input = body?.input
     var prompt = body?.prompt
@@ -56,6 +54,7 @@ export const handler = async (event, context) => {
       completion,
     })
     let promptConfig = prompts({ input, prompt, table, type })[action]
+
     if (!promptConfig) {
       return respond({
         code: 500,
@@ -95,62 +94,73 @@ export const handler = async (event, context) => {
     if (extensionKey === '') {
       return respond({ code: 401, data: { error: 'No password sent' } })
     }
-    var where = {
-      AND: [
-        { extensionKey: { equals: extensionKey } },
-        { username: { equals: username } },
-        //{ level: { OR: [{ equals: 'paid' }, { equals: 'free' }] } },
-      ],
-    }
-    var hasValidKey =
-      (await db.user.count({
-        where,
-      })) === 1
-    console.log({
+    var user = await db.user.findFirst({
+      where: {
+        AND: [
+          { username: { equals: username } },
+          { extensionKey: { equals: extensionKey } },
+        ],
+      },
+    })
+    console.log({ user })
+    /*console.log({
       hasValidKey,
       where: JSON.stringify(where),
       headers: event.headers,
       authString,
       username,
       extensionKey,
-    })
-    if (!hasValidKey) {
+    })*/
+    if (!user) {
       return respond({ code: 401, data: { error: 'Key not valid' } })
     }
-    //TODO: create promptTrainingData
-    let wherePrompt = {
+    let promptWhere = {
       AND: [
-        { prompt: { equals: '' } },
-        { table: { equals: '' } },
-        { action: { equals: '' } },
+        { prompt: { equals: prompt } },
+        { table: { equals: table } },
+        { action: { equals: action } },
       ],
     }
-    let dataPrompt = {
+    let promptData = {
       prompt: promptConfig.ai.prompt,
       table,
       action,
       type,
-      completion,
+      completion: completion,
+      userId: user.id,
     }
-    await db.promptTrainingData.upsert({ where: wherePrompt, dataPrompt })
+    console.log({ promptWhere, promptData })
+    var promptTraining = await db.promptTrainingData.findFirst({
+      where: promptWhere,
+    })
+    if (!promptTraining) {
+      //not found
+      var promptTrainingInsert = await db.promptTrainingData.create({
+        data: promptData,
+      })
+      console.log({ promptTrainingInsert })
+      return respond({
+        code: 200,
+        data: {
+          promptTrainingInsert,
+        },
+      })
+    }
+    console.log({ promptTraining })
+    //var upsertStatus = await db.promptTrainingData.upsert({
+    //  where: promptWhere,
+    //  update: promptData,
+    //  create: promptData,
+    //})
+    //console.log({ upsertStatus })
     return respond({
       code: 200,
       data: {
-        message: 'thank you',
+        promptTraining,
       },
     })
   } catch (error) {
-    logger.info('Error Caught promptTraining function')
-
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        data: 'promptTraining function',
-        error,
-      }),
-    }
+    console.log(error)
+    return respond({ code: 500, data: { error: 'Failed fetching data' } })
   }
 }

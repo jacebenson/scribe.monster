@@ -33,7 +33,7 @@ const Routes = () => {
       <Set wrap={Standard}>
         <Route path="/privacy" page={PrivacyPage} name="privacy" />
         <Route path="/logout" page={LogoutPage} name="logout" />
-        <Route path="/" page={HomePage} name="home" />
+        <Route path="/" page={HomePage} name="home" prerender />
         <Private unauthenticated="home">
           <Route path="/about" page={AboutPage} name="about" />
           <Route path="/my-profile" page={MyProfilePage} name="myProfile" />
