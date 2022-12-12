@@ -135,16 +135,16 @@ export const handler = async (event /*, context*/) => {
         `/functions/scribe`
       )
     }
-    let code = (function(){
-      if(promptConfig?.prepend){
-        return prepend + data?.choices?.[0]?.text
-      }
-      return data?.choices?.[0]?.text;
-    })()
+    //let code = (function(){
+    //  if(promptConfig?.prepend){
+    //    return prepend + data?.choices?.[0]?.text
+    //  }
+    //  return data?.choices?.[0]?.text;
+    //})()
     return respond({
       code: 200,
       data: {
-        code,
+        code: data?.choices?.[0]?.text,
         tokens: data?.usage?.total_tokens,
         raw: { ...data },
         config: {
