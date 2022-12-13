@@ -2,14 +2,16 @@ import fetch from 'node-fetch'
 
 import { db } from 'src/lib/db'
 import { logger } from 'src/lib/logger'
-let dog = console.log
+let dog = (props) => {
+  console.log({ function: 'scribe', props })
+}
 import prompts from 'src/lib/prompts'
 import { log } from 'src/lib/util'
 const AUTH = process.env.OPENAITOKEN
 
 function respond({ code, data }) {
   return {
-    statusCode: code,
+    statusCode: code || 418,
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
@@ -19,74 +21,57 @@ function respond({ code, data }) {
     body: JSON.stringify(data),
   }
 }
+function respondError(error) {
+  respond({ code: 500, data: { error } })
+}
+function respondFailedAuth(error) {
+  respond({ code: 401, data: { error } })
+}
 export const handler = async (event /*, context*/) => {
   try {
     logger.info('Invoked scribe function')
     logger.info('body', event.body)
-    dog('event', event.httpMethod)
-    if (event.httpMethod == 'OPTIONS') {
-      return respond({
-        code: 200,
-        data: { message: 'This is allowed from all places' },
-      })
+    let method = event.httpMethod
+    let body = event.body || null
+    if (method == 'OPTIONS') {
+      return respond({ code: 200, data: { message: 'success' } })
     }
-    if (event.httpMethod !== 'POST') {
-      return respond({
-        code: 500,
-        data: { error: 'We expect a POST' },
-      })
+    if (!body) return respondError({ error: 'Missing JSON Body' })
+    if (method !== 'POST') {
+      return respondError({ error: 'We expect a POST' })
     }
-    if (!event.body) {
-      return respond({
-        code: 500,
-        data: { error: 'Missing JSON Body' },
-      })
+    let parsedBody = JSON.parse(body)
+    let coercedBody = {
+      input: parsedBody?.input || '',
+      prompt: parsedBody?.prompt || '',
+      action: parsedBody?.action || '',
+      table: parsedBody?.table || '',
+      type: parsedBody?.type || '',
     }
-    var body = JSON.parse(event?.body)
-    var input = body?.input
-    var prompt = body?.prompt
-    var action = body?.action || 'edit'
-    var table = body?.table
-    var type = body?.type
-    dog({
-      input,
-      prompt,
-      action,
-      table,
-      type,
-    })
-    let promptConfig = prompts({ input, prompt, table, type })[action]
-
+    let promptConfig = prompts({ ...coercedBody })[coercedBody.action]
+    console.log({ promptConfig })
     if (!promptConfig) {
-      return respond({
-        code: 500,
-        data: {
-          error: 'Action invalid, try, edit, complete, or explain.',
-        },
-      })
+      let error = 'Action invalid, try, edit, complete, or explain.'
+      return respondError({ error })
     }
-    dog({ promptConfig: promptConfig.required })
+    console.log({ message: 'before required fields' })
     for (
       let requiredFieldCount = 0;
       requiredFieldCount < promptConfig.required.length;
       requiredFieldCount++
     ) {
-      let typeOfField = typeof body[promptConfig.required[requiredFieldCount]]
+      let field = promptConfig.required[requiredFieldCount]
+      let parsedBodyField = parsedBody[field]
+      let typeOfField = typeof parsedBodyField
       if (typeOfField === 'undefined') {
-        return respond({
-          code: 500,
-          data: {
-            error: `Missing ${promptConfig.required[requiredFieldCount]}`,
-          },
-        })
+        let error = `Missing ${promptConfig.required[requiredFieldCount]}`
+        return respond({ code: 500, data: { error } })
       }
     }
+
     // post is good.  now lets see if the user can auth...
     if (!event.headers.authorization) {
-      return respond({
-        code: 401,
-        data: { error: 'No Authentication sent' },
-      })
+      return respondFailedAuth({ error: 'No Authentication sent' })
     }
     var authString = event.headers.authorization.split('Basic ')[1]
     var [username, ...extensionKey] = new Buffer(authString, 'base64')
@@ -107,14 +92,6 @@ export const handler = async (event /*, context*/) => {
       (await db.user.count({
         where,
       })) === 1
-    /*console.log({
-      hasValidKey,
-      where: JSON.stringify(where),
-      headers: event.headers,
-      authString,
-      username,
-      extensionKey,
-    })*/
     if (!hasValidKey) {
       return respond({ code: 401, data: { error: 'Key not valid' } })
     }
@@ -128,23 +105,23 @@ export const handler = async (event /*, context*/) => {
       body: JSON.stringify({ ...promptConfig.ai }),
     })
     const data = await response.json()
-    //console.log({ data })
     if (data?.usage?.total_tokens) {
       await log(
         `${username} used ${data.usage.total_tokens}`,
         `/functions/scribe`
       )
     }
-    //let code = (function(){
-    //  if(promptConfig?.prepend){
-    //    return prepend + data?.choices?.[0]?.text
-    //  }
-    //  return data?.choices?.[0]?.text;
-    //})()
+    let code = (function () {
+      if (promptConfig?.prepend) {
+        return promptConfig?.prepend + data?.choices?.[0]?.text
+      }
+      return data?.choices?.[0]?.text
+    })()
     return respond({
       code: 200,
       data: {
-        code: data?.choices?.[0]?.text,
+        code,
+        //code: data?.choices?.[0]?.text,
         tokens: data?.usage?.total_tokens,
         raw: { ...data },
         config: {
@@ -155,6 +132,6 @@ export const handler = async (event /*, context*/) => {
     })
   } catch (error) {
     console.log(error)
-    return respond({ code: 500, data: { error: 'Failed fetching data' } })
+    return respondError({ error: 'Failed fetching data' })
   }
 }

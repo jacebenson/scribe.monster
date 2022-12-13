@@ -1,17 +1,27 @@
 const strip = require('strip-comments')
 export const prompts = ({ input, prompt, action, table, type }) => {
+  console.log({
+    function: 'prompts',
+    props: { input, prompt, action, table, type },
+  })
   return {
-    /*edit: {
-      ai: {
-        input: input,
-        instruction: prompt,
-        temperature: 0,
-        model: 'code-davinci-edit-001',
-      },
-      endpoint: 'https://api.openai.com/v1/edits',
-      required: ['input', 'instruction', 'action'],
-      about: 'This will edit the script.',
-    },*/
+    ask: (() => {
+      return {
+        ai: {
+          prompt,
+          model: 'text-davinci-002',
+          temperature: 0.7,
+          max_tokens: 500,
+          top_p: 1,
+          frequency_penalty: 0,
+          presence_penalty: 0,
+          stop: ['END'],
+        },
+        endpoint: 'https://api.openai.com/v1/completions',
+        required: ['prompt', 'action'],
+        about: 'This will edit the script.',
+      }
+    })(),
     edit: {
       ai: {
         prompt: `Update this code based following this prompt, "${prompt}":
@@ -55,15 +65,18 @@ ${input}
       return {
         // everything else
         ai: {
-          prompt: `${input}\n"""\nRewite the code above with verbose comments around the logic based on this prompt, "${prompt}.":\n${input.split(' ')[0]}`,
+          prompt: `${input}\n"""\nRewite the code above with verbose comments around the logic based on this prompt, "${prompt}.":\n${
+            input.split(' ')[0]
+          }`,
           model: 'text-davinci-002',
           temperature: 1,
           max_tokens: 500,
           top_p: 1,
           frequency_penalty: 0,
           presence_penalty: 0,
+          stop: ['END'],
         },
-        prepend: input.split(' ')[0] + ' ',
+        prepend: input.split(' ')[0],
         endpoint: 'https://api.openai.com/v1/completions',
         required: ['prompt', 'input', 'action'],
         about:
