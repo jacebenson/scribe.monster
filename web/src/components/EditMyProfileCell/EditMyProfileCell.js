@@ -95,15 +95,23 @@ export const Success = ({ myProfile }) => {
       required: 'This is required',
     },
     {
+      name: 'username',
+      prettyName: 'Username',
+      required: 'This is required',
+    },
+    {
       name: 'email',
       prettyName: 'Email (required to send you details)',
       required: 'Yep',
+      type: 'secret',
+      defaultValue: myProfile.email,
     },
     {
       name: 'extensionKey',
       prettyName: 'Key',
-      type: 'string',
+      type: 'secret',
       placeholder: 'if empty, access will be denied from extension',
+      defaultValue: myProfile.extensionKey,
     },
   ]
   if (!process.env.AUTH0_DOMAIN) {

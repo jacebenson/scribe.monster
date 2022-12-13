@@ -108,6 +108,20 @@ const FormComponent = ({
         />
       )
     }
+    if (field.type === 'secret') {
+      {
+        /**Difference between this and password is this data is available to the form */
+      }
+      html = (
+        <PasswordField
+          key={field.name}
+          field={field}
+          errors={errors}
+          register={register}
+          defaultValue={record?.[field.name] || field.defaultValue}
+        />
+      )
+    }
     if (field.type === 'reference') {
       try {
         html = (

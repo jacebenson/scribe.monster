@@ -8,9 +8,10 @@ import {
   FormErrorMessage,
 } from '@chakra-ui/react'
 
-const PasswordField = ({ field, errors, register }) => {
+const SecretField = ({ field, errors, register }) => {
   const [show, setShow] = React.useState(false)
   const handleClick = () => setShow(!show)
+
   return (
     <FormControl
       key={field.name}
@@ -52,4 +53,4 @@ const PasswordField = ({ field, errors, register }) => {
   )
 }
 
-export default PasswordField
+export default SecretField
