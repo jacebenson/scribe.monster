@@ -170,8 +170,9 @@ export const Success = ({ modelInstance }) => {
       name: 'prompt',
       prettyName: 'Prompt',
       required: 'This is required',
-      type: 'textarea',
+      type: 'editor',
       rows: 10,
+      height: '10vh',
     },
     {
       name: 'temperature',

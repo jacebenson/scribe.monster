@@ -115,7 +115,7 @@ export const handler = async (event /*, context*/) => {
     const data = await response.json()
     if (data?.usage?.total_tokens) {
       await log(
-        `${username} used ${data.usage.total_tokens}`,
+        `${username},${coercedBody.action},${coercedBody.table},${data.usage.total_tokens}`,
         `/functions/scribe`
       )
     }

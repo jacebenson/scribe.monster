@@ -4235,6 +4235,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@monaco-editor/loader@npm:^1.3.2":
+  version: 1.3.2
+  resolution: "@monaco-editor/loader@npm:1.3.2"
+  dependencies:
+    state-local: ^1.0.6
+  peerDependencies:
+    monaco-editor: ">= 0.21.0 < 1"
+  checksum: 36aefe7eaff44c636e7078876bed572a693537d8315dd1659bf1fa207f151dbd2c16a2463f596df8e863cd61c99e6985412c94af0d5480801002d7217d973284
+  languageName: node
+  linkType: hard
+
+"@monaco-editor/react@npm:^4.4.6":
+  version: 4.4.6
+  resolution: "@monaco-editor/react@npm:4.4.6"
+  dependencies:
+    "@monaco-editor/loader": ^1.3.2
+    prop-types: ^15.7.2
+  peerDependencies:
+    monaco-editor: ">= 0.25.0 < 1"
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 3a8ab7fbf52bacea58a2799449d65a1aa1848da04ad0bb84ab220a27fba480f7813496ab8aa2300d5e8eb5e8d6d760082d625238181395d8a30e554e5ad515f4
+  languageName: node
+  linkType: hard
+
 "@mrmlnc/readdir-enhanced@npm:^2.2.1":
   version: 2.2.1
   resolution: "@mrmlnc/readdir-enhanced@npm:2.2.1"
@@ -23672,6 +23697,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"state-local@npm:^1.0.6":
+  version: 1.0.7
+  resolution: "state-local@npm:1.0.7"
+  checksum: 8dc7daeac71844452fafb514a6d6b6f40d7e2b33df398309ea1c7b3948d6110c57f112b7196500a10c54fdde40291488c52c875575670fb5c819602deca48bd9
+  languageName: node
+  linkType: hard
+
 "state-toggle@npm:^1.0.0":
   version: 1.0.3
   resolution: "state-toggle@npm:1.0.3"
@@ -25865,6 +25897,7 @@ __metadata:
     "@chakra-ui/storybook-addon": ^1.0.3
     "@emotion/react": ^11
     "@emotion/styled": ^11
+    "@monaco-editor/react": ^4.4.6
     "@redwoodjs/auth": ^3.5.0
     "@redwoodjs/forms": ^3.5.0
     "@redwoodjs/router": ^3.5.0

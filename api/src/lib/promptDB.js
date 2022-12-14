@@ -2,7 +2,6 @@ import { db } from './db'
 
 const vm = require('node:vm')
 
-const strip = require('strip-comments')
 export const prompts = async ({ input, prompt, action, table, type }) => {
   //console.log({
   //  function: 'promptDB',

@@ -15,6 +15,7 @@ import {
   Switch,
   Textarea,
 } from '@chakra-ui/react'
+import Editor, { DiffEditor, useMonaco, loader } from '@monaco-editor/react'
 
 import { useAuth } from '@redwoodjs/auth'
 
@@ -227,7 +228,8 @@ const FormComponent = ({
               onChange: field?.onChange,
             })}
             defaultValue={
-              record?.[field.name].toString() || field.defaultValue.toString()
+              record?.[field.name]?.toString() ||
+              field?.defaultValue?.toString()
             }
           />
           <FormErrorMessage>
@@ -256,7 +258,51 @@ const FormComponent = ({
               onChange: field?.onChange,
             })}
             defaultValue={
-              record?.[field.name].toString() || field.defaultValue.toString()
+              record?.[field.name]?.toString() || field.defaultValue?.toString()
+            }
+          />
+          <FormErrorMessage>
+            {errors[field.name] && errors[field.name].message}
+          </FormErrorMessage>
+        </FormControl>
+      )
+    }
+    if (field.type === 'editor') {
+      html = (
+        <FormControl
+          pt={field.pt}
+          key={field.name}
+          isInvalid={errors[field.name]}
+        >
+          <FormLabel htmlFor={field.name}>{field.prettyName}</FormLabel>
+          {/*<Editor
+            height={field?.height || '20vh'}
+            defaultLanguage={'javascript'}
+            defaultValue={
+              record?.[field.name]?.toString() || field.defaultValue?.toString()
+            }
+            id={field.name}
+            placeholder={field.placeholder || '...' || ''}
+            readOnly={field.readOnly || false}
+            {...register(field.name, {
+              required: field?.required || false,
+              minLength: field.minLength,
+              onChange: field?.onChange,
+            })}
+          />*/}
+          <Textarea
+            fontFamily={'monospace'}
+            id={field.name}
+            rows={field?.rows}
+            placeholder={field.placeholder || '...' || ''}
+            readOnly={field.readOnly || false}
+            {...register(field.name, {
+              required: field?.required || false,
+              minLength: field.minLength,
+              onChange: field?.onChange,
+            })}
+            defaultValue={
+              record?.[field.name]?.toString() || field.defaultValue?.toString()
             }
           />
           <FormErrorMessage>
