@@ -21,6 +21,7 @@
     "@redwoodjs/web": "^3.5.0",
     "chance": "^1.1.8",
     "gsap": "^3.9.1",
+    "humanize-string": "2.1.0",
     "js-cookie": "^3.0.1",
     "prop-types": "15.7.2",
     "react": "17.0.2",

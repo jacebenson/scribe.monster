@@ -13,6 +13,7 @@ import {
   Spacer,
   Flex,
   Switch,
+  Textarea,
 } from '@chakra-ui/react'
 
 import { useAuth } from '@redwoodjs/auth'
@@ -206,6 +207,62 @@ const FormComponent = ({
         <pre key={field.name}>
           {JSON.stringify(record?.[field.name], null, '  ')}
         </pre>
+      )
+    }
+    if (field.type === 'number') {
+      html = (
+        <FormControl
+          pt={field.pt}
+          key={field.name}
+          isInvalid={errors[field.name]}
+        >
+          <FormLabel htmlFor={field.name}>{field.prettyName}</FormLabel>
+          <Input
+            id={field.name}
+            placeholder={field.placeholder || '...' || ''}
+            readOnly={field.readOnly || false}
+            {...register(field.name, {
+              required: field?.required || false,
+              minLength: field.minLength,
+              onChange: field?.onChange,
+            })}
+            defaultValue={
+              record?.[field.name].toString() || field.defaultValue.toString()
+            }
+          />
+          <FormErrorMessage>
+            {errors[field.name] && errors[field.name].message}
+          </FormErrorMessage>
+        </FormControl>
+      )
+    }
+    if (field.type === 'textarea') {
+      html = (
+        <FormControl
+          pt={field.pt}
+          key={field.name}
+          isInvalid={errors[field.name]}
+        >
+          <FormLabel htmlFor={field.name}>{field.prettyName}</FormLabel>
+          <Textarea
+            fontFamily={'monospace'}
+            id={field.name}
+            rows={field?.rows}
+            placeholder={field.placeholder || '...' || ''}
+            readOnly={field.readOnly || false}
+            {...register(field.name, {
+              required: field?.required || false,
+              minLength: field.minLength,
+              onChange: field?.onChange,
+            })}
+            defaultValue={
+              record?.[field.name].toString() || field.defaultValue.toString()
+            }
+          />
+          <FormErrorMessage>
+            {errors[field.name] && errors[field.name].message}
+          </FormErrorMessage>
+        </FormControl>
       )
     }
     return html

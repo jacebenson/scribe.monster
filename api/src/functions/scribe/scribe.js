@@ -5,7 +5,8 @@ import { logger } from 'src/lib/logger'
 let dog = (props) => {
   console.log({ function: 'scribe', props })
 }
-import prompts from 'src/lib/prompts'
+//import prompts from 'src/lib/prompts'
+import prompts from 'src/lib/promptDB'
 import { log } from 'src/lib/util'
 const AUTH = process.env.OPENAITOKEN
 
@@ -48,11 +49,11 @@ export const handler = async (event /*, context*/) => {
       table: parsedBody?.table || '',
       type: parsedBody?.type || '',
     }
-    let promptConfig = prompts({ ...coercedBody })[coercedBody.action]
-    console.log({ promptConfig })
+    let promptConfig = await prompts({ ...coercedBody }) //[coercedBody.action]
+    //console.log({ promptConfig })
     if (!promptConfig) {
       let error = 'Action invalid, try, edit, complete, or explain.'
-      return respondError({ error })
+      return respond({ code: 500, data: { error } })
     }
     console.log({ message: 'before required fields' })
     for (
@@ -61,8 +62,11 @@ export const handler = async (event /*, context*/) => {
       requiredFieldCount++
     ) {
       let field = promptConfig.required[requiredFieldCount]
+      console.log({ field })
       let parsedBodyField = parsedBody[field]
+      console.log({ parsedBodyField })
       let typeOfField = typeof parsedBodyField
+      console.log({ typeOfField })
       if (typeOfField === 'undefined') {
         let error = `Missing ${promptConfig.required[requiredFieldCount]}`
         return respond({ code: 500, data: { error } })
@@ -94,6 +98,10 @@ export const handler = async (event /*, context*/) => {
       })) === 1
     if (!hasValidKey) {
       return respond({ code: 401, data: { error: 'Key not valid' } })
+    }
+    console.log({ ai: promptConfig.ai })
+    if (!promptConfig.ai.prompt) {
+      respond({ code: 500, error: 'CRAP' })
     }
     const response = await fetch(promptConfig.endpoint, {
       method: 'POST',

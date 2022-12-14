@@ -20,7 +20,7 @@ datasource db {
 
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  //url      = env("TEST_DATABASE_URL")
+  // url      = env("TEST_DATABASE_URL")
 }
 
 model Property {
@@ -128,4 +128,27 @@ model PromptTrainingData {
   userId      Int
 
   @@unique([prompt, table, action])
+}
+
+model ModelInstance {
+  id               String   @id @default(cuid())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  name             String   @unique
+  version          Float    @default(1)
+  description      String   @default("This action")
+  endpoint         String   @default("https://api.openai.com/v1/completions")
+  required         String   @default("action")
+  cost             Float    @default(0.02)
+  price            Float    @default(0.20)
+  model            String   @default("text-davinci-002")
+  prompt           String
+  temperature      Float    @default(0.7)
+  maxTokens        Int      @default(500)
+  topP             Int      @default(1)
+  bestOf           Int      @default(1)
+  n                Int      @default(1)
+  stop             String   @default("END")
+  frequencyPenalty Float    @default(0)
+  presencePenalty  Float    @default(0)
 }
