@@ -23,7 +23,7 @@
   },
   "scripts": {
     "start": "rw dev",
-    "postgres:up": "docker-compose up -d",
+    "postgres:up": "docker-compose up",
     "postgres:down": "docker-compose down",
     "test": "yarn postgres:down && yarn postgres:up && yarn rw test"
   },

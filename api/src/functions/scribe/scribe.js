@@ -1,13 +1,17 @@
 import fetch from 'node-fetch'
 
 import { db } from 'src/lib/db'
-import { logger } from 'src/lib/logger'
-let dog = (props) => {
-  console.log({ function: 'scribe', props })
-}
-//import prompts from 'src/lib/prompts'
+//import { logger } from 'src/lib/logger'
 import prompts from 'src/lib/promptDB'
 import { log } from 'src/lib/util'
+import { createScribeRequest } from 'src/services/scribeRequests/scribeRequests'
+
+let logger = {
+  info: (props) => {
+    console.log({ function: 'scribe', props })
+  },
+}
+
 const AUTH = process.env.OPENAITOKEN
 
 function respond({ code, data }) {
@@ -22,12 +26,6 @@ function respond({ code, data }) {
     body: JSON.stringify(data),
   }
 }
-function respondError(error) {
-  respond({ code: 500, data: { error } })
-}
-function respondFailedAuth(error) {
-  respond({ code: 401, data: { error } })
-}
 export const handler = async (event /*, context*/) => {
   try {
     logger.info('Invoked scribe function')
@@ -37,9 +35,11 @@ export const handler = async (event /*, context*/) => {
     if (method == 'OPTIONS') {
       return respond({ code: 200, data: { message: 'success' } })
     }
-    if (!body) return respondError({ error: 'Missing JSON Body' })
+    if (!body) {
+      return respond({ code: 500, data: { error: 'Missing JSON Body' } })
+    }
     if (method !== 'POST') {
-      return respondError({ error: 'We expect a POST' })
+      return respond({ code: 500, data: { error: 'We expect a POST' } })
     }
     let parsedBody = JSON.parse(body)
     let coercedBody = {
@@ -75,7 +75,7 @@ export const handler = async (event /*, context*/) => {
 
     // post is good.  now lets see if the user can auth...
     if (!event.headers.authorization) {
-      return respondFailedAuth({ error: 'No Authentication sent' })
+      return respond({ code: 401, data: { error: 'No Authentication sent' } })
     }
     var authString = event.headers.authorization.split('Basic ')[1]
     var [username, ...extensionKey] = new Buffer(authString, 'base64')
@@ -92,11 +92,10 @@ export const handler = async (event /*, context*/) => {
         //{ level: { OR: [{ equals: 'paid' }, { equals: 'free' }] } },
       ],
     }
-    var hasValidKey =
-      (await db.user.count({
-        where,
-      })) === 1
-    if (!hasValidKey) {
+    var user = await db.user.findFirst({
+      where,
+    })
+    if (!user) {
       return respond({ code: 401, data: { error: 'Key not valid' } })
     }
     console.log({ ai: promptConfig.ai })
@@ -113,11 +112,24 @@ export const handler = async (event /*, context*/) => {
       body: JSON.stringify({ ...promptConfig.ai }),
     })
     const data = await response.json()
-    if (data?.usage?.total_tokens) {
+    let totalTokens = data?.usage?.total_tokens
+    let promptTokens = data?.usage?.prompt_tokens
+    let completionTokens = data?.usage?.completion_tokens
+    console.log({ function: 'scribe post fetch', data })
+    if (totalTokens) {
       await log(
-        `${username},${coercedBody.action},${coercedBody.table},${data.usage.total_tokens}`,
+        `${username},${coercedBody.action},${coercedBody.table},${totalTokens}`,
         `/functions/scribe`
       )
+      //await db.scribeRequest.create()
+      await createScribeRequest({
+        input: {
+          userId: user.id,
+          modelInstanceId: promptConfig.modelInstance,
+          queryTokens: promptTokens,
+          responseTokens: completionTokens,
+        },
+      })
     }
     let code = (function () {
       if (promptConfig?.prepend) {
@@ -140,6 +152,6 @@ export const handler = async (event /*, context*/) => {
     })
   } catch (error) {
     console.log(error)
-    return respondError({ error: 'Failed fetching data' })
+    return respond({ code: 500, data: { error: 'Failed fetching data' } })
   }
 }

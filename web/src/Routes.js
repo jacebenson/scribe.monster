@@ -18,6 +18,7 @@ import ModelInstancesLayout from 'src/layouts/ModelInstancesLayout'
 import PreferencesLayout from 'src/layouts/PreferencesLayout'
 import PromptTrainingDatasLayout from 'src/layouts/PromptTrainingDatasLayout'
 import PropertiesLayout from 'src/layouts/PropertiesLayout'
+import ScribeRequestsLayout from 'src/layouts/ScribeRequestsLayout'
 import UsersLayout from 'src/layouts/UsersLayout'
 import AboutPage from 'src/pages/AboutPage'
 import HomePage from 'src/pages/HomePage'
@@ -118,6 +119,14 @@ const Routes = () => {
               <Route path="/model-instances/{id}/edit" page={ModelInstanceEditModelInstancePage} name="editModelInstance" />
               <Route path="/model-instances/{id}" page={ModelInstanceEditModelInstancePage} name="modelInstance" />
               <Route path="/model-instances" page={ModelInstanceModelInstancesPage} name="modelInstances" />
+            </Private>
+          </Set>
+          <Set wrap={ScribeRequestsLayout} title="ScribeRequests" titleTo="scribeRequests" buttonLabel="New ScribeRequest" buttonTo="newScribeRequest">
+            <Private unauthenticated="home" role={['admin']}>
+              <Route path="/scribe-requests/new" page={ScribeRequestNewScribeRequestPage} name="newScribeRequest" />
+              {/*<Route path="/scribe-requests/{id}/edit" page={ScribeRequestEditScribeRequestPage} name="editScribeRequest" />*/}
+              <Route path="/scribe-requests/{id}" page={ScribeRequestEditScribeRequestPage} name="scribeRequest" />
+              <Route path="/scribe-requests" page={ScribeRequestScribeRequestsPage} name="scribeRequests" />
             </Private>
           </Set>
         </Private>

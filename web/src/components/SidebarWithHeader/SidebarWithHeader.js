@@ -129,6 +129,12 @@ const SidebarContent = ({ brand, onClose, ...rest }) => {
       role: 'admin',
       navigateTo: 'modelInstances',
     },
+    {
+      name: 'Requests',
+      icon: MdSettingsApplications,
+      role: 'admin',
+      navigateTo: 'scribeRequests',
+    },
     //{ name: 'Logout', icon: MdLogout, navigateTo: 'logout' },
   ].filter((item) => {
     if (item?.requireAuth === true && isAuthenticated) {

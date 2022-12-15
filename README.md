@@ -1,3 +1,23 @@
+# Notes
+
+## When creating new tables
+
+1. create schema
+2. verify you're connected to the test database!
+3. yarn rw prisma push
+4. yarn rw g scaffold modelName
+5. update ./web/Routes.js
+   - Move the routes to the bottom of the file.
+   - Copy the page for the edit route into the modelName route
+   - Fix the SCaffold thing..
+6. add it to the SidebarWithHeader.js
+7. update the new and edit components to cast the inputs
+   - plural.js - update references to use accessor of oh
+5. remove stuff not used....
+  1.???
+
+
+
 Seedling is the beginning of your next project.  It builds on RedwoodJS with some conventions that will save you time at the cost of choice.  However, if you're prototyping you may not want to choose how auth, email, and automation are built in and would rather just write the code that adds value.
 
 # Technologies

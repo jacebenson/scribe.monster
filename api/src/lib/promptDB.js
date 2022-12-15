@@ -7,12 +7,18 @@ export const prompts = async ({ input, prompt, action, table, type }) => {
   //  function: 'promptDB',
   //  props: { input, prompt, action, table, type },
   //})
-  let instance = await db.modelInstance.findFirst({
-    where: { name: action },
-    orderBy: { version: 'desc' },
-  })
+  let where = { name: action }
+  let orderBy = { version: 'desc' }
+  console.log({ where, orderBy })
+  let instance = await db.modelInstance.findFirst({ where, orderBy })
   //console.log({ function: 'promptDB', instance })
-  console.log({ function: 'promptDB', prompt, dbFunc: instance.prompt })
+  if (!instance) throw 'No model with that name'
+  console.log({
+    function: 'promptDB',
+    prompt: prompt || null,
+    dbFunc: instance?.prompt,
+  })
+
   let context = vm.createContext({
     prompt,
     input: input.toString(),
@@ -40,6 +46,7 @@ export const prompts = async ({ input, prompt, action, table, type }) => {
       endpoint: instance.endpoint,
       about: instance.desciption,
       required: ['action'],
+      modelInstance: instance.id,
     }
     console.log({ function: 'promptDB', returnObj })
     return returnObj
