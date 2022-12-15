@@ -18,7 +18,7 @@ export const prompts = async ({ input, prompt, action, table, type }) => {
     prompt: prompt || null,
     dbFunc: instance?.prompt,
   })
-
+  let prepend
   let context = vm.createContext({
     prompt,
     input: input.toString(),
@@ -26,6 +26,7 @@ export const prompts = async ({ input, prompt, action, table, type }) => {
     action,
     type,
     model: instance.model,
+    prepend,
   })
   let script = new vm.Script(instance.prompt)
   //vm.createContext({ promptContext })

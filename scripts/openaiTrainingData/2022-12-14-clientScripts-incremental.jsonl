@@ -1,0 +1,1 @@
+{"prompt": "action: complete\ntype: onLoad\nprompt: Rename the phone field to \"contact number\"\nResponse:","completion": "function onLoad() {\n\tg_form.setLabelOf('phone', 'Contact Number');\n}\n"}
