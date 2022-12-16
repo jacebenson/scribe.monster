@@ -117,18 +117,13 @@ model Log {
 }
 
 //model TrainingData {
-//  id          String   @id @default(cuid())
-//  createdAt   DateTime @default(now())
-//  updatedAt   DateTime @updatedAt()
-//  prompt      String
-//  table       String
-//  action      String
-//  type        String
-//  completion  String
-//  submittedBy User     @relation(fields: [userId], references: [id])
-//  userId      Int
-//
-//  @@unique([prompt, table, action])
+//  id         String   @id @default(cuid())
+//  createdAt  DateTime @default(now())
+//  updatedAt  DateTime @updatedAt()
+//  metaData   Json     @default("{}")
+//  prompt     String
+//  completion String
+//  state      String[] @default(["new",""])
 //}
 
 model ModelInstance {
