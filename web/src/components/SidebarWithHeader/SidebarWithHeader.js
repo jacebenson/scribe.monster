@@ -117,12 +117,12 @@ const SidebarContent = ({ brand, onClose, ...rest }) => {
       role: 'admin',
       navigateTo: 'logs',
     },
-    {
-      name: 'PromptTraining',
-      icon: MdSettingsApplications,
-      role: 'admin',
-      navigateTo: 'promptTrainingDatas',
-    },
+    //{
+    //  name: 'PromptTraining',
+    //  icon: MdSettingsApplications,
+    //  role: 'admin',
+    //  navigateTo: 'promptTrainingDatas',
+    //},
     {
       name: 'Model Instances',
       icon: MdSettingsApplications,

@@ -44,23 +44,22 @@ model Message {
 }
 
 model User {
-  id                  Int                  @id @default(autoincrement())
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  name                String               @default("")
-  username            String               @unique @default("") // will have username OR subject keep masked
+  id                  Int             @id @default(autoincrement())
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  name                String          @default("")
+  username            String          @unique @default("") // will have username OR subject keep masked
   verifiedAt          DateTime? //               // used to verify account for password reset purposes and for actual access
-  level               String?              @default("free")
-  extensionKey        String?              @default("")
+  level               String?         @default("free")
+  extensionKey        String?         @default("")
   // as anyone with auth0 can say I have access to any domain
-  email               String?              @default("") // not needed for accounts.. but is needed for communications
-  hashedPassword      String?              @default("") //      // used for dbAuth
-  salt                String?              @default("") //      // used for dbAuth
+  email               String?         @default("") // not needed for accounts.. but is needed for communications
+  hashedPassword      String?         @default("") //      // used for dbAuth
+  salt                String?         @default("") //      // used for dbAuth
   resetToken          String? //                         // used for dbAuth
   resetTokenExpiresAt DateTime? //                       // used for dbAuth
-  GroupMember         GroupMember[]        @relation("UserGroupMember")
-  Preference          Preference[]         @relation("UserPreference")
-  PromptTrainingData  PromptTrainingData[]
+  GroupMember         GroupMember[]   @relation("UserGroupMember")
+  Preference          Preference[]    @relation("UserPreference")
   ScribeReqest        ScribeRequest[]
 }
 
@@ -117,19 +116,20 @@ model Log {
   source    String
 }
 
-model PromptTrainingData {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  prompt      String
-  table       String
-  action      String
-  type        String
-  completion  String
-  submittedBy User     @relation(fields: [userId], references: [id])
-  userId      Int
-
-  @@unique([prompt, table, action])
-}
+//model TrainingData {
+//  id          String   @id @default(cuid())
+//  createdAt   DateTime @default(now())
+//  updatedAt   DateTime @updatedAt()
+//  prompt      String
+//  table       String
+//  action      String
+//  type        String
+//  completion  String
+//  submittedBy User     @relation(fields: [userId], references: [id])
+//  userId      Int
+//
+//  @@unique([prompt, table, action])
+//}
 
 model ModelInstance {
   id               String          @id @default(cuid())

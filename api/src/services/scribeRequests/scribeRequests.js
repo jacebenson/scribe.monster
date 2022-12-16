@@ -32,7 +32,10 @@ export const createScribeRequest = async ({ input }) => {
 }
 
 export const scribeRequests = async ({ filter, skip, orderBy, q, take }) => {
-  console.log({ scribeRequests })
+  console.log({ function: 'scribeRequests', orderBy })
+  if (!orderBy) {
+    orderBy = { createdAt: 'desc' }
+  }
   try {
     let preferences = context.currentUser.preferences
     let _take = (() => {

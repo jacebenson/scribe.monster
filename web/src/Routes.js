@@ -16,7 +16,6 @@ import LogsLayout from 'src/layouts/LogsLayout'
 import MessagesLayout from 'src/layouts/MessagesLayout'
 import ModelInstancesLayout from 'src/layouts/ModelInstancesLayout'
 import PreferencesLayout from 'src/layouts/PreferencesLayout'
-import PromptTrainingDatasLayout from 'src/layouts/PromptTrainingDatasLayout'
 import PropertiesLayout from 'src/layouts/PropertiesLayout'
 import ScribeRequestsLayout from 'src/layouts/ScribeRequestsLayout'
 import UsersLayout from 'src/layouts/UsersLayout'
@@ -104,19 +103,9 @@ const Routes = () => {
             </Private>
           </Set>
 
-          <Set wrap={PromptTrainingDatasLayout} title="PromptTrainingDatas" titleTo="promptTrainingDatas" buttonLabel="New PromptTrainingData" buttonTo="newPromptTrainingData">
-            <Private unauthenticated="home" role={['admin']}>
-              <Route path="/prompt-training-datas/new" page={PromptTrainingDataNewPromptTrainingDataPage} name="newPromptTrainingData" />
-              {/*<Route path="/prompt-training-datas/{id}/edit" page={PromptTrainingDataEditPromptTrainingDataPage} name="editPromptTrainingData" />*/}
-              {/*<Route path="/prompt-training-datas/{id}" page={PromptTrainingDataPromptTrainingDataPage} name="promptTrainingData" />*/}
-              <Route path="/prompt-training-datas/{id}" page={PromptTrainingDataEditPromptTrainingDataPage} name="promptTrainingData" />
-              <Route path="/prompt-training-datas" page={PromptTrainingDataPromptTrainingDatasPage} name="promptTrainingDatas" />
-            </Private>
-          </Set>
           <Set wrap={ModelInstancesLayout} title="ModelInstances" titleTo="modelInstances" buttonLabel="New ModelInstance" buttonTo="newModelInstance">
             <Private unauthenticated="home" role={['admin']}>
               <Route path="/model-instances/new" page={ModelInstanceNewModelInstancePage} name="newModelInstance" />
-              <Route path="/model-instances/{id}/edit" page={ModelInstanceEditModelInstancePage} name="editModelInstance" />
               <Route path="/model-instances/{id}" page={ModelInstanceEditModelInstancePage} name="modelInstance" />
               <Route path="/model-instances" page={ModelInstanceModelInstancesPage} name="modelInstances" />
             </Private>

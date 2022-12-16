@@ -6,12 +6,13 @@ export const getProperty = async (entity) => {
   if (!record) return false
   return record.value
 }
-export const log = async (message, source) => {
+export const log = async (message, source, givenContext) => {
+  if (typeof givenContext === 'undefined') givenContext = {}
   if (typeof message === 'object') message = JSON.stringify(message)
   if (typeof source === 'undefined') {
     source = 'undefined'
   }
-  let safeContext = { ...context }
+  let safeContext = { ...context, ...givenContext }
   delete safeContext?.request?.headers?.cookie // removed to remove password data
   delete safeContext?.document // removed to remove password data
   delete safeContext?.event // removed to remove password data

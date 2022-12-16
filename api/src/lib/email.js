@@ -1,4 +1,4 @@
-import { getProperty } from 'src/lib/util'
+import { getProperty, log } from 'src/lib/util'
 
 let Mailgun = require('mailgun-js')
 
@@ -14,6 +14,9 @@ export const email = async ({ provider }) => {
     let client = new Mailgun({ apiKey, domain })
     let send = async (mail, callback) => {
       // if email is to example, don't send
+      if (typeof mail?.to == 'undefined') {
+        return { error: 'mail.to not defined in email.js' }
+      }
       if (mail?.to?.includes('@example.com'))
         return { error: 'Email contains @example.com' }
       if (!mail.from) {

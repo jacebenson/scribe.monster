@@ -7,7 +7,7 @@ module.exports = {
   order: 100,
   when: ['after'],
   operation: ['update'],
-  file: __filename,
+  file: __filename.split('/dist')[1],
   table: 'user',
   command: async function ({ data }) {
     try {
@@ -22,15 +22,16 @@ module.exports = {
       if (data.email === '') {
         // if data is blank, log the link for debugging
         // we dont have an email, so i guess, we can't recover teh account
-        console.log(
-          `${data.username} does not have an email, here's the password reset
-          ${resetLink}`
-        )
+        let message = `${data.username} does not have an email and reset their password`
+        let source = this.file
+        let givenContext = { message, resetLink }
+        await log(message, source, givenContext)
+        return
       }
       let rendered = render({ name, code, resetLink, brand })
       await client.send(
         {
-          to: data.email,
+          to: data?.email,
           from: `${brand} <jace@${client.domain}>`,
           'h:Reply-To': `jace@$benson.run`, //not working
           subject: `Your password reset code`,
