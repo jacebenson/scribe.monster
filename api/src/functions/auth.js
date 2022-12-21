@@ -8,18 +8,17 @@ import { createUser, updateUser } from 'src/services/users/users'
 export const handler = async (event, context) => {
   const forgotPasswordOptions = {
     handler: async (user) => {
-      if (user.email === '')
-        throw 'No email on file'(
-          //if (user.verified === null) throw 'Email not verified'
-          () => {
-            updateUser({
-              id: user.id,
-              input: {
-                resetToken: user.resetToken,
-              },
-            })
-          }
-        )()
+      if (user.email === '') throw 'No email on file'
+      //if (user.verified === null) throw 'Email not verified'
+      let updatedUser = await updateUser({
+        id: user.id,
+        input: {
+          resetToken: user.resetToken,
+        },
+      })
+
+      console.log({ function: 'auth.js', updatedUser })
+      return updatedUser
       return user
     },
     expires: 60 * 60 * 24 * 7,
