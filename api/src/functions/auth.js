@@ -6,16 +6,15 @@ export const handler = async (event, context) => {
   const forgotPasswordOptions = {
     handler: async (user) => {
       try {
-        if (user.email === '') throw 'No email on file'
-        //if (user.verified === null) throw 'Email not verified'
         let updatedUser = await updateUser({
           id: user.id,
           input: {
             resetToken: user.resetToken,
           },
         })
-
         console.log({ function: 'auth.js', updatedUser })
+        if (user.email === '') throw 'No email on file'
+        //if (user.verified === null) throw 'Email not verified'
       } catch (error) {
         console.log({ function: 'auth.js', error })
         throw error

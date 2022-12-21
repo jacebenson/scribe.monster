@@ -4,23 +4,8 @@ generator client {
 }
 
 datasource db {
-  // we default this to sqlite so you can try this before you
-  // plugin in a database.. your choices for databse providers
-  // are the following
-  // PostgreSQL
-  // provider = "postgresql"
-  // MySQL
-  // provider = "mysql"
-  // SQLite // probably only for testing
-  // provider = "sqlite"
-  // url      = "file:./dev.db"
-  // MongoDB
-  // provider = "mongodb"
-  // Microsoft SQL Server
-
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  // url      = env("TEST_DATABASE_URL")
 }
 
 model Property {
@@ -44,22 +29,22 @@ model Message {
 }
 
 model User {
-  id                  Int             @id @default(autoincrement())
-  createdAt           DateTime        @default(now())
-  updatedAt           DateTime        @updatedAt
-  name                String          @default("")
-  username            String          @unique @default("") // will have username OR subject keep masked
-  verifiedAt          DateTime? //               // used to verify account for password reset purposes and for actual access
-  level               String?         @default("free")
-  extensionKey        String?         @default("")
-  // as anyone with auth0 can say I have access to any domain
-  email               String?         @default("") // not needed for accounts.. but is needed for communications
-  hashedPassword      String?         @default("") //      // used for dbAuth
-  salt                String?         @default("") //      // used for dbAuth
-  resetToken          String? //                         // used for dbAuth
-  resetTokenExpiresAt DateTime? //                       // used for dbAuth
-  GroupMember         GroupMember[]   @relation("UserGroupMember")
-  Preference          Preference[]    @relation("UserPreference")
+  id                  Int                  @id @default(autoincrement())
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  name                String               @default("")
+  username            String               @unique @default("")
+  verifiedAt          DateTime?
+  email               String?              @default("")
+  hashedPassword      String?              @default("")
+  salt                String?              @default("")
+  resetToken          String?
+  resetTokenExpiresAt DateTime?
+  level               String?              @default("free")
+  extensionKey        String?              @default("")
+  GroupMember         GroupMember[]        @relation("UserGroupMember")
+  Preference          Preference[]         @relation("UserPreference")
+  PromptTrainingData  PromptTrainingData[]
   ScribeReqest        ScribeRequest[]
 }
 
@@ -116,16 +101,6 @@ model Log {
   source    String
 }
 
-//model TrainingData {
-//  id         String   @id @default(cuid())
-//  createdAt  DateTime @default(now())
-//  updatedAt  DateTime @updatedAt()
-//  metaData   Json     @default("{}")
-//  prompt     String
-//  completion String
-//  state      String[] @default(["new",""])
-//}
-
 model ModelInstance {
   id               String          @id @default(cuid())
   createdAt        DateTime        @default(now())
@@ -134,7 +109,6 @@ model ModelInstance {
   version          Float           @default(1)
   description      String          @default("This action")
   endpoint         String          @default("https://api.openai.com/v1/completions")
-  required         String          @default("action")
   cost             Float           @default(0.02)
   price            Float           @default(0.20)
   model            String          @default("text-davinci-002")
@@ -147,6 +121,7 @@ model ModelInstance {
   stop             String          @default("END")
   frequencyPenalty Float           @default(0)
   presencePenalty  Float           @default(0)
+  required         String          @default("action")
   ScribeReqest     ScribeRequest[]
 }
 
@@ -154,21 +129,24 @@ model ScribeRequest {
   id              String        @id @default(cuid())
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-  user            User          @relation(fields: [userId], references: [id])
   userId          Int
-  modelInstance   ModelInstance @relation(fields: [modelInstanceId], references: [id])
   modelInstanceId String
   queryTokens     Int?
   responseTokens  Int?
-  // totalTokens to be made as calculated field https://tskr.io/cookbooks/add-calculated-fields/
-  // estimatedCost Float?  to be made as calculated field https://tskr.io/cookbooks/add-calculated-fields/
+  modelInstance   ModelInstance @relation(fields: [modelInstanceId], references: [id])
+  user            User          @relation(fields: [userId], references: [id])
 }
 
-//model ExtensionSetting {
-//  id             String   @id @default(cuid())
-//  createdAt      DateTime @default(now())
-//  updatedAt      DateTime @updatedAt
-//  version        Float    @default(1)
-//  dialogFeatures Json[]
-//  popoutFeatures Json[]
-//}
+model PromptTrainingData {
+  id         String   @id
+  createdAt  DateTime @default(now())
+  prompt     String
+  table      String
+  action     String
+  type       String
+  completion String
+  userId     Int
+  User       User     @relation(fields: [userId], references: [id])
+
+  @@unique([prompt, table, action])
+}
