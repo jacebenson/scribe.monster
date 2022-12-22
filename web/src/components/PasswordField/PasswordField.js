@@ -26,6 +26,7 @@ const PasswordField = ({ field, errors, register }) => {
           defaultValue={field.defaultValue}
           placeholder={field.placeholder || 'Enter password'}
           disabled={field?.disabled}
+          readOnly={field?.readOnly || false}
           {...register(field.name, {
             //            required: field?.required || false,
             //            minLength: field.minLength,

@@ -110,6 +110,7 @@ export const Success = ({ myProfile }) => {
       name: 'extensionKey',
       prettyName: 'Key',
       type: 'secret',
+      readOnly: true,
       placeholder: 'if empty, access will be denied from extension',
       defaultValue: myProfile.extensionKey,
     },

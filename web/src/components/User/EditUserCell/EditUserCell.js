@@ -101,6 +101,7 @@ export const Success = ({ user }) => {
       name: 'extensionKey',
       prettyName: 'Key',
       type: 'string',
+      readOnly: true,
       placeholder: 'if empty, access will be denied from extension',
     },
   ]

@@ -106,6 +106,7 @@ const FormComponent = ({
           key={field.name}
           field={field}
           errors={errors}
+          readOnly={field.readOnly || false}
           register={register}
         />
       )
@@ -120,6 +121,7 @@ const FormComponent = ({
           field={field}
           errors={errors}
           register={register}
+          readOnly={field.readOnly || false}
           defaultValue={record?.[field.name] || field.defaultValue}
         />
       )
