@@ -29,22 +29,21 @@ model Message {
 }
 
 model User {
-  id                  Int                  @id @default(autoincrement())
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  name                String               @default("")
-  username            String               @unique @default("")
+  id                  Int             @id @default(autoincrement())
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  name                String          @default("")
+  username            String          @unique @default("")
   verifiedAt          DateTime?
-  email               String?              @default("")
-  hashedPassword      String?              @default("")
-  salt                String?              @default("")
+  email               String?         @default("")
+  hashedPassword      String?         @default("")
+  salt                String?         @default("")
   resetToken          String?
   resetTokenExpiresAt DateTime?
-  level               String?              @default("free")
-  extensionKey        String?              @default("")
-  GroupMember         GroupMember[]        @relation("UserGroupMember")
-  Preference          Preference[]         @relation("UserPreference")
-  PromptTrainingData  PromptTrainingData[]
+  level               String?         @default("free")
+  extensionKey        String?         @default("")
+  GroupMember         GroupMember[]   @relation("UserGroupMember")
+  Preference          Preference[]    @relation("UserPreference")
   ScribeReqest        ScribeRequest[]
 }
 
@@ -135,18 +134,4 @@ model ScribeRequest {
   responseTokens  Int?
   modelInstance   ModelInstance @relation(fields: [modelInstanceId], references: [id])
   user            User          @relation(fields: [userId], references: [id])
-}
-
-model PromptTrainingData {
-  id         String   @id
-  createdAt  DateTime @default(now())
-  prompt     String
-  table      String
-  action     String
-  type       String
-  completion String
-  userId     Int
-  User       User     @relation(fields: [userId], references: [id])
-
-  @@unique([prompt, table, action])
 }
