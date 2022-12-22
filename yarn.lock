@@ -4950,7 +4950,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redwoodjs/api@npm:3.7.1, @redwoodjs/api@npm:^3.7.1":
+"@redwoodjs/api@npm:3.7.1, @redwoodjs/api@npm:^3.2.0":
   version: 3.7.1
   resolution: "@redwoodjs/api@npm:3.7.1"
   dependencies:
@@ -4991,7 +4991,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redwoodjs/auth@npm:3.7.1, @redwoodjs/auth@npm:^3.7.1":
+"@redwoodjs/auth@npm:3.7.1, @redwoodjs/auth@npm:^3.2.0":
   version: 3.7.1
   resolution: "@redwoodjs/auth@npm:3.7.1"
   dependencies:
@@ -5049,7 +5049,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redwoodjs/core@npm:^3.7.1":
+"@redwoodjs/core@npm:^3.2.0":
   version: 3.7.1
   resolution: "@redwoodjs/core@npm:3.7.1"
   dependencies:
@@ -5147,7 +5147,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redwoodjs/forms@npm:^3.7.1":
+"@redwoodjs/forms@npm:^3.2.0":
   version: 3.7.1
   resolution: "@redwoodjs/forms@npm:3.7.1"
   dependencies:
@@ -5162,7 +5162,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redwoodjs/graphql-server@npm:3.7.1, @redwoodjs/graphql-server@npm:^3.7.1":
+"@redwoodjs/graphql-server@npm:3.7.1, @redwoodjs/graphql-server@npm:^3.2.0":
   version: 3.7.1
   resolution: "@redwoodjs/graphql-server@npm:3.7.1"
   dependencies:
@@ -5256,7 +5256,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redwoodjs/router@npm:3.7.1, @redwoodjs/router@npm:^3.7.1":
+"@redwoodjs/router@npm:3.7.1, @redwoodjs/router@npm:^3.2.0":
   version: 3.7.1
   resolution: "@redwoodjs/router@npm:3.7.1"
   dependencies:
@@ -5359,7 +5359,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redwoodjs/web@npm:3.7.1, @redwoodjs/web@npm:^3.7.1":
+"@redwoodjs/web@npm:3.7.1, @redwoodjs/web@npm:^3.2.0":
   version: 3.7.1
   resolution: "@redwoodjs/web@npm:3.7.1"
   dependencies:
@@ -8573,8 +8573,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "api@workspace:api"
   dependencies:
-    "@redwoodjs/api": ^3.7.1
-    "@redwoodjs/graphql-server": ^3.7.1
+    "@redwoodjs/api": ^3.2.0
+    "@redwoodjs/graphql-server": ^3.2.0
     crypto-js: ^4.1.1
     mailgun-js: ^0.22.0
     mjml: ^4.11.0
@@ -22710,7 +22710,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@redwoodjs/core": ^3.7.1
+    "@redwoodjs/core": ^3.2.0
   languageName: unknown
   linkType: soft
 
@@ -25883,10 +25883,10 @@ __metadata:
     "@emotion/react": ^11
     "@emotion/styled": ^11
     "@monaco-editor/react": ^4.4.6
-    "@redwoodjs/auth": ^3.7.1
-    "@redwoodjs/forms": ^3.7.1
-    "@redwoodjs/router": ^3.7.1
-    "@redwoodjs/web": ^3.7.1
+    "@redwoodjs/auth": ^3.2.0
+    "@redwoodjs/forms": ^3.2.0
+    "@redwoodjs/router": ^3.2.0
+    "@redwoodjs/web": ^3.2.0
     "@storybook/addons": ^6.4.19
     "@storybook/theming": ^6.4.19
     autoprefixer: ^10.4.0
