@@ -34,7 +34,6 @@ export const prompts = async ({
     type,
     model: instance.model,
     prepend,
-    prefix,
     suffix,
   })
   let script = new vm.Script(instance.prompt)
