@@ -2,7 +2,14 @@ import { db } from './db'
 
 const vm = require('node:vm')
 
-export const prompts = async ({ input, prompt, action, table, type }) => {
+export const prompts = async ({
+  input,
+  prompt,
+  action,
+  table,
+  type,
+  suffix,
+}) => {
   //console.log({
   //  function: 'promptDB',
   //  props: { input, prompt, action, table, type },
@@ -27,6 +34,8 @@ export const prompts = async ({ input, prompt, action, table, type }) => {
     type,
     model: instance.model,
     prepend,
+    prefix,
+    suffix,
   })
   let script = new vm.Script(instance.prompt)
   //vm.createContext({ promptContext })
@@ -43,6 +52,7 @@ export const prompts = async ({ input, prompt, action, table, type }) => {
         frequency_penalty: instance.frequencyPenalty,
         presence_penalty: instance.presencePenalty,
         stop: [instance.stop],
+        suffix: instance.suffix || null,
       },
       endpoint: instance.endpoint,
       about: instance.desciption,

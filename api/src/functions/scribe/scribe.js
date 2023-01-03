@@ -48,6 +48,7 @@ export const handler = async (event /*, context*/) => {
       action: parsedBody?.action || '',
       table: parsedBody?.table || '',
       type: parsedBody?.type || '',
+      suffix: parsedBody?.suffix || '',
     }
     let promptConfig = await prompts({ ...coercedBody }) //[coercedBody.action]
     //console.log({ promptConfig })
@@ -117,19 +118,19 @@ export const handler = async (event /*, context*/) => {
     let completionTokens = data?.usage?.completion_tokens
     console.log({ function: 'scribe post fetch', data })
     if (totalTokens) {
-      await log(
-        `${username},${coercedBody.action},${coercedBody.table},${totalTokens}`,
-        `/functions/scribe`
-      )
+      //await log(
+      //  `${username},${coercedBody.action},${coercedBody.table},${totalTokens}`,
+      //  `/functions/scribe`
+      //)
       //await db.scribeRequest.create()
-      await createScribeRequest({
-        input: {
-          userId: user.id,
-          modelInstanceId: promptConfig.modelInstance,
-          queryTokens: promptTokens,
-          responseTokens: completionTokens,
-        },
-      })
+      let input = {
+        userId: user.id,
+        modelInstanceId: promptConfig.modelInstance,
+        queryTokens: promptTokens,
+        responseTokens: completionTokens,
+      }
+      console.log({ input })
+      await createScribeRequest({ input })
     }
     let code = (function () {
       if (promptConfig?.prepend) {

@@ -18,7 +18,10 @@ let table = 'scribeRequest'
 
 export const createScribeRequest = async ({ input }) => {
   try {
-    let { data } = await executeBeforeCreateRulesV2({ table, data: input })
+    let { data } =
+      (await executeBeforeCreateRulesV2({ table, data: input })) || input
+
+    console.log({ function: 'createScribeRequest', table, data })
     let createdRecord = await db[table].create({ data })
 
     let { record } = await executeAfterCreateRulesV2({
