@@ -37,7 +37,7 @@ export const prompts = async ({
     prepend,
     suffix,
     field,
-    stop: [instance.stop],
+    stop: instance.stop,
   })
   let script = new vm.Script(instance.prompt)
   //vm.createContext({ promptContext })
