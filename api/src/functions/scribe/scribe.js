@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 import { db } from 'src/lib/db'
 //import { logger } from 'src/lib/logger'
 import prompts from 'src/lib/promptDB'
-import { log } from 'src/lib/util'
+//import { log } from 'src/lib/util'
 import { createScribeRequest } from 'src/services/scribeRequests/scribeRequests'
 
 let logger = {
@@ -49,6 +49,7 @@ export const handler = async (event /*, context*/) => {
       table: parsedBody?.table || '',
       type: parsedBody?.type || '',
       suffix: parsedBody?.suffix || '',
+      field: parsedBody?.field || '',
     }
     let promptConfig = await prompts({ ...coercedBody }) //[coercedBody.action]
     //console.log({ promptConfig })

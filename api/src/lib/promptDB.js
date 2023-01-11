@@ -9,6 +9,7 @@ export const prompts = async ({
   table,
   type,
   suffix,
+  field,
 }) => {
   //console.log({
   //  function: 'promptDB',
@@ -35,6 +36,8 @@ export const prompts = async ({
     model: instance.model,
     prepend,
     suffix,
+    field,
+    stop: [instance.stop],
   })
   let script = new vm.Script(instance.prompt)
   //vm.createContext({ promptContext })
@@ -50,7 +53,10 @@ export const prompts = async ({
         top_p: instance.topP,
         frequency_penalty: instance.frequencyPenalty,
         presence_penalty: instance.presencePenalty,
-        stop: [instance.stop],
+        stop: (() => {
+          if (context.stop) return [context.stop]
+          return [instance.stop]
+        })(),
         suffix: instance.suffix || null,
       },
       endpoint: instance.endpoint,
