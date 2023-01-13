@@ -17,7 +17,7 @@ const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
     lineOne: 'Scribe Monster',
     lineTwo: 'Unlock your scripting potential with Stew!',
   }
-  let message = `(This is backend for a Chrome Extension, sign up with your email and I'll send you an update when I have it available) Let Stew the scribe monster take the initiative and get started on your client scripts, business rules, script includes, code reviews, and design work.`
+  let message = `This is backend for a Chrome Extension, sign up with your email.  Let Stew the scribe monster take the initiative and get started on your client scripts, business rules, script includes, code reviews, and design work.`
   let imageToVideo = './header.png'
   let imageAltText =
     'Find me in ./web/src/components/AboutComponent/AboutComponent.js'
