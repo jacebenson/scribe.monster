@@ -9,6 +9,7 @@ import {
   Text,
   UnorderedList,
   Center,
+  List,
 } from '@chakra-ui/react'
 
 import { Link, routes, useLocation } from '@redwoodjs/router'
@@ -40,9 +41,8 @@ const PrivacyPage = () => {
       content: (
         <>
           <Text>
-            Jace Benson built the ScribeMonster extension as a Free extension.
-            This SERVICE is provided by Jace Benson at no cost and is intended
-            for use as is.
+            Jace Benson built the ScribeMonster extension and is intended for
+            use as is.
           </Text>
 
           <Text>
@@ -68,37 +68,205 @@ const PrivacyPage = () => {
       ),
     },
     {
-      id: 'information',
-      title: 'Information Collection and Use',
+      id: 'data-collected',
+      title: 'What data do we collect?',
       content: (
         <>
-          <Text>
-            For a better experience, while using our Service, I may require you
-            to provide us with certain personally identifiable information,
-            including but not limited to Email. The information that I request
-            will be retained on your device and is not collected by me in any
-            way.
-          </Text>
-          <Text>
-            The app does use third-party services that may collect information
-            used to identify you.
-          </Text>
-          <Text>
-            OpenAI does use a small amount their requests to retain their
-            models, however that can be opted out of and I{"'"}ve opted out of
-            that.
-          </Text>
-          <Text>
-            Link to the privacy policy of third-party service providers used by
-            the app
-          </Text>
-          <ChakraLink isExternal={''} href={'https://openai.com/privacy/'}>
-            OpenAI
-            <ExternalLinkIcon mx="2px" />
-          </ChakraLink>
+          <Text>We collect the following data:</Text>
+          <List as={'ul'} size={'md'} m={3}>
+            <ListItem>
+              Personal data, such as your name, email address, and payment
+              information.
+            </ListItem>
+            <ListItem>
+              Usage data, such as information about how you use our Service.
+            </ListItem>
+          </List>
         </>
       ),
     },
+    {
+      id: 'data-collection',
+      title: 'How do we collect your data?',
+      content: (
+        <>
+          You directly provide us with most of the data we collect. We collect
+          data and process data when you:
+          <List as={'ul'} size={'md'} m={3}>
+            <ListItem>Register your account with us</ListItem>
+            <ListItem>Use or view our Service via your browser</ListItem>
+            <ListItem>
+              Use or view our Service via the Google Chrome Extension
+            </ListItem>
+          </List>
+        </>
+      ),
+    },
+    {
+      id: 'data-use',
+      title: 'How do we use your data?',
+      content: (
+        <>
+          <Text>
+            We collect your data so that we can:
+            <List as={'ul'} size={'md'} m={3}>
+              <ListItem>Process your requests with OpenAI</ListItem>
+              <ListItem>
+                Send you email via mailgun to manage your account and provide
+                you with information about our Service
+              </ListItem>
+              <ListItem>
+                To monitor and analyze usage and trends with Umami Analytics
+              </ListItem>
+            </List>
+          </Text>
+          <Text>If you agree, we will share the following data with:</Text>
+          <List as={'ul'} size={'md'} m={3}>
+            <ListItem>
+              Prompts: OpenAI{' '}
+              <ChakraLink
+                target={'_blank'}
+                isExternal={''}
+                href={'https://openai.com/privacy'}
+              >
+                OpenAI{"'"}s Privacy Policy
+                <ExternalLinkIcon mx="2px" />
+              </ChakraLink>
+            </ListItem>
+            <ListItem>
+              Email: Mailgun
+              <ChakraLink
+                target={'_blank'}
+                isExternal={''}
+                href={'https://www.mailgun.com/privacy-policy'}
+              >
+                {' '}
+                Mailgun{"'"}s Privacy Policy
+                <ExternalLinkIcon mx="2px" />
+              </ChakraLink>
+            </ListItem>
+            <ListItem>
+              Page Analytics: Umami Analytics{' '}
+              <ChakraLink
+                target={'_blank'}
+                isExternal={''}
+                href={'https://umami.is/privacy'}
+              >
+                Umami Analytics{"'"}s Privacy Policy
+                <ExternalLinkIcon mx="2px" />
+              </ChakraLink>
+            </ListItem>
+          </List>
+        </>
+      ),
+    },
+    {
+      id: 'data-storage',
+      title: 'How do we store your data?',
+      content: (
+        <>
+          <Text>
+            We securely store your data at a third-party service provider. We
+            use Render.com to host our website and database. The region where
+            your data is stored is the Oregon, United States. Render.com{"'"}s
+            privacy policy can be found here:{' '}
+            <ChakraLink
+              target={'_blank'}
+              isExternal={''}
+              href={'https://render.com/privacy'}
+            >
+              Render.com{"'"}s Privacy Policy
+              <ExternalLinkIcon mx="2px" />
+            </ChakraLink>
+          </Text>
+        </>
+      ),
+    },
+    {
+      id: 'marketing',
+      title: 'Marketing',
+      content: (
+        <>
+          <Text>
+            We may use your data to send you marketing communications about our
+            Service. As we don{"'"}t currently have any marketing, we won{"'"}t
+            be sending you any marketing communications. When we do, you will be
+            able to opt out of receiving them.
+          </Text>
+        </>
+      ),
+    },
+    {
+      id: 'data-rights',
+      title: 'What are your data protection rights?',
+      content: (
+        <>
+          <Text>
+            We would like to make sure you are fully aware of all your data
+            protection rights. Every user is entitled to the following:
+          </Text>
+          <List as={'ul'} size={'md'} m={3}>
+            <ListItem>
+              <Box as={'u'}>The right to access</Box>
+              <Text>
+                You have the right to request us for copies of your personal
+                data. We may charge you a small fee for this service.
+              </Text>
+            </ListItem>
+            <ListItem>
+              <Box as={'u'}>The right to rectification</Box>
+              <Text>
+                You have the right to request that we correct any information
+                you believe is inaccurate. You also have the right to request
+                that we complete the information you believe is incomplete.
+              </Text>
+            </ListItem>
+            <ListItem>
+              <Box as={'u'}>The right to erasure</Box>
+              <Text>
+                You have the right to request that we erase your personal data,
+                under certain conditions.
+              </Text>
+            </ListItem>
+            <ListItem>
+              <Box as={'u'}>The right to restrict processing</Box>
+              <Text>
+                You have the right to request that we restrict the processing of
+                your personal data, under certain conditions.
+              </Text>
+            </ListItem>
+            <ListItem>
+              <Box as={'u'}>The right to object to processing</Box>
+              <Text>
+                You have the right to object to our processing of your personal
+                data, under certain conditions.
+              </Text>
+            </ListItem>
+            <ListItem>
+              <Box as={'u'}>The right to data portability</Box>
+              <Text>
+                You have the right to request that we transfer the data that we
+                have collected to another organization, or directly to you,
+                under certain conditions.
+              </Text>
+            </ListItem>
+          </List>
+          <Text>
+            If you make a request, we have one month to respond to you. If you
+            would like to exercise any of these rights, please{' '}
+            <ChakraLink
+              target={'_blank'}
+              isExternal={''}
+              href={'mailto:jace@benson.run'}
+            >
+              contact us via email
+              <ExternalLinkIcon mx="2px" />
+            </ChakraLink>
+          </Text>
+        </>
+      ),
+    },
+
     {
       id: 'cookies',
       title: 'Cookies',
@@ -111,64 +279,8 @@ const PrivacyPage = () => {
             internal memory.
           </Text>
           <Text>
-            This Site uses “cookies” for authentication and to track if you
-            allow the use of cookies on this site.
-          </Text>
-        </>
-      ),
-    },
-    {
-      id: 'service-providers',
-      title: 'Service Providers',
-      content: (
-        <>
-          <Text>
-            I may employ third-party companies and individuals due to the
-            following reasons:
-          </Text>
-
-          <UnorderedList>
-            <ListItem>
-              To facilitate our Service;{' '}
-              <ChakraLink isExternal={''} href={'https://openai.com/privacy/'}>
-                OpenAI
-                <ExternalLinkIcon mx="2px" />
-              </ChakraLink>
-            </ListItem>
-            <ListItem>To provide the Service on our behalf;</ListItem>
-            <ListItem>To perform Service-related services; or</ListItem>
-            <ListItem>
-              To assist us in analyzing how our Service is used.{' '}
-              <ChakraLink isExternal={''} href={'https://monitoring.jace.pro/'}>
-                Self hosted Umami
-                <ExternalLinkIcon mx="2px" />
-              </ChakraLink>
-              <ChakraLink isExternal={''} href={'https://umami.is/privacy'}>
-                Umami Privacy Policy
-                <ExternalLinkIcon mx="2px" />
-              </ChakraLink>
-            </ListItem>
-          </UnorderedList>
-          <Text>
-            I want to inform users of this Service that these third parties have
-            access to their Personal Information. The reason is to perform the
-            tasks assigned to them on our behalf. However, they are obligated
-            not to disclose or use the information for any other purpose.
-          </Text>
-        </>
-      ),
-    },
-    {
-      id: 'security',
-      title: 'Security',
-      content: (
-        <>
-          <Text>
-            I value your trust in providing us your Personal Information, thus
-            we are striving to use commercially acceptable means of protecting
-            it. But remember that no method of transmission over the internet,
-            or method of electronic storage is 100% secure and reliable, and I
-            cannot guarantee its absolute security.
+            This Site uses funcionality based “cookies” for authentication and
+            to track if you allow the use of cookies on this site.
           </Text>
         </>
       ),
@@ -190,23 +302,6 @@ const PrivacyPage = () => {
       ),
     },
     {
-      id: 'chilrens-privacy',
-      title: "Children's privacy",
-      content: (
-        <>
-          <Text>
-            These Services do not address anyone under the age of 13. I do not
-            knowingly collect personally identifiable information from children
-            under 13 years of age. In the case I discover that a child under 13
-            has provided me with personal information, I immediately delete this
-            from our servers. If you are a parent or guardian and you are aware
-            that your child has provided us with personal information, please
-            contact me so that I will be able to do the necessary actions.
-          </Text>
-        </>
-      ),
-    },
-    {
       id: 'changes-to-privacy-policy',
       title: 'Changes to This Privacy Policy',
       content: (
@@ -218,7 +313,7 @@ const PrivacyPage = () => {
             page.
           </Text>
 
-          <Text>This policy is effective as of 2022-12-07</Text>
+          <Text>This policy is effective as of 2023-01-12</Text>
         </>
       ),
     },

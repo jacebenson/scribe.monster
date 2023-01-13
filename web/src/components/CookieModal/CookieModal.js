@@ -38,7 +38,7 @@ const CookieModal = () => {
             <DrawerBody>
               <Box pb={4}>
                 <Text fontSize={{ base: 'sm' }} textAlign={'left'} maxW={'4xl'}>
-                  We use cookies and similiar technologies to allow you the
+                  We use cookies and similar technologies to allow you the
                   ability to log in, as well as track if you have accepted this
                   notice.
                 </Text>
