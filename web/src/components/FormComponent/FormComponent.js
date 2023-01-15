@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, StrictMode } from 'react'
 
 import {
   Input,
@@ -15,10 +15,10 @@ import {
   Switch,
   Textarea,
 } from '@chakra-ui/react'
-import Editor, { DiffEditor, useMonaco, loader } from '@monaco-editor/react'
 
 import { useAuth } from '@redwoodjs/auth'
 
+import MonacoEditor from '../MonacoEditor/MonacoEditor'
 import PasswordField from '../PasswordField/PasswordField'
 import ReferenceField from '../ReferenceField/ReferenceField'
 const FormComponent = ({
@@ -270,96 +270,71 @@ const FormComponent = ({
       )
     }
     if (field.type === 'editor') {
+      // useState
       html = (
-        <FormControl
-          pt={field.pt}
-          key={field.name}
-          isInvalid={errors[field.name]}
-        >
-          <FormLabel htmlFor={field.name}>{field.prettyName}</FormLabel>
-          {/*<Editor
-            height={field?.height || '20vh'}
-            defaultLanguage={'javascript'}
-            defaultValue={
-              record?.[field.name]?.toString() || field.defaultValue?.toString()
-            }
-            id={field.name}
-            placeholder={field.placeholder || '...' || ''}
+        <>
+          {/*from form component: {JSON.stringify(record?.[field.name])}*/}
+          <MonacoEditor
+            key={`${field.name}-editor`}
+            field={field}
+            errors={errors}
+            register={register}
             readOnly={field.readOnly || false}
-            {...register(field.name, {
-              required: field?.required || false,
-              minLength: field.minLength,
-              onChange: field?.onChange,
-            })}
-          />*/}
-          <Textarea
-            fontFamily={'monospace'}
-            id={field.name}
-            rows={field?.rows}
-            placeholder={field.placeholder || '...' || ''}
-            readOnly={field.readOnly || false}
-            {...register(field.name, {
-              required: field?.required || false,
-              minLength: field.minLength,
-              onChange: field?.onChange,
-            })}
-            defaultValue={
-              record?.[field.name]?.toString() || field.defaultValue?.toString()
-            }
+            record={record}
+            ref={React.createRef()}
           />
-          <FormErrorMessage>
-            {errors[field.name] && errors[field.name].message}
-          </FormErrorMessage>
-        </FormControl>
+        </>
       )
     }
     return html
   })
   return (
-    <Fragment>
-      <Box bg={'white'} p={3}>
-        {error?.graphQLErrors[0]?.message && (
-          <Alert status="error">
-            <AlertIcon />
-            {error?.graphQLErrors[0]?.message}
-          </Alert>
-        )}
+    <StrictMode>
+      <Fragment>
+        <Box key={'formComponentBox'} bg={'white'} p={3}>
+          {error?.graphQLErrors[0]?.message && (
+            <Alert status="error">
+              <AlertIcon />
+              {error?.graphQLErrors[0]?.message}
+            </Alert>
+          )}
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {fieldsHtml}
-          <Box>
-            {!children ? ( // if children is passed, we don't want to show the submit button }
-              <Fragment>
-                <Flex>
-                  <Button
-                    mt={4}
-                    colorScheme="green"
-                    isLoading={isSubmitting}
-                    type="submit"
-                  >
-                    Submit
-                  </Button>
-                  <Spacer />
-                  {hasRole([roles.deleteRecord].concat(['admin'])) && (
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {fieldsHtml}
+            <Box key={'_actions'}>
+              {!children ? ( // if children is passed, we don't want to show the submit button }
+                <Fragment>
+                  <Flex>
                     <Button
                       mt={4}
-                      colorScheme="red"
+                      colorScheme="green"
                       isLoading={isSubmitting}
-                      type="button"
-                      onClick={onDelete}
+                      type="submit"
                     >
-                      Delete
+                      Submit
                     </Button>
-                  )}
-                </Flex>
-              </Fragment>
-            ) : (
-              children
-            )}
-          </Box>
-        </form>
-      </Box>
-    </Fragment>
+                    <Spacer />
+                    {hasRole([roles.deleteRecord].concat(['admin'])) && (
+                      <Button
+                        mt={4}
+                        colorScheme="red"
+                        isLoading={isSubmitting}
+                        type="button"
+                        onClick={onDelete}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </Flex>
+                </Fragment>
+              ) : (
+                children
+              )}
+            </Box>
+          </form>
+        </Box>
+      </Fragment>
+    </StrictMode>
   )
 }
 
