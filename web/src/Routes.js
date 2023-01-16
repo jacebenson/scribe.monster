@@ -27,6 +27,7 @@ import Standard from './layouts/Standard/Standard'
 const Routes = () => {
   return (
     <Router>
+      <Route path="/resources" page={ResourcesPage} name="resources" />
       <Route path="/forgot-password" whileLoadingAuth={() => <>Loading...</>} page={ForgotPasswordPage} name="forgotPassword" />
       <Route path="/reset-password" page={ResetPasswordPage} name="resetPassword" />
       <Route path="/login" page={LoginPage} name="login" />
