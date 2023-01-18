@@ -194,7 +194,7 @@ export const handler = async (event /*, context*/) => {
       return data?.choices?.[0]?.text
     })()
     // if savePrompt is true, save the prompt
-    if (savePrompt?.value === 'true') {
+    if (savePrompt?.value === 'true' || true) {
       let promptToUpdate = await db.prompt.update({
         where: {
           id: promptID,
