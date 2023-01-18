@@ -110,7 +110,7 @@ export const handler = async (event /*, context*/) => {
     // lets look for a prompt that matches
     let promptLookup = await db.prompt.findFirst({
       where: {
-        prompt: coercedBody.prompt,
+        prompt: coercedBody.prompt || coercedBody.input,
         action: coercedBody.action,
       },
     })
@@ -143,7 +143,7 @@ export const handler = async (event /*, context*/) => {
       let promptToSave = await db.prompt.create({
         data: {
           user: { connect: { id: user.id } },
-          prompt: coercedBody.prompt,
+          prompt: coercedBody.prompt || coercedBody.input,
           action: coercedBody.action,
         },
       })
