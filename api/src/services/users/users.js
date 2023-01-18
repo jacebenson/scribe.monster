@@ -136,7 +136,4 @@ export const User = {
     db[table].findUnique({ where: { id: root.id } }).GroupMember(),
   Preference: (_obj, { root }) =>
     db[table].findUnique({ where: { id: root.id } }).Preference(),
-  tokens: (_args, { root }) => 100,
-  ageInDays: (_args, { root }) =>
-    Math.floor((new Date() - root.createdAt) / (1000 * 60 * 60 * 24)),
 }

@@ -5,7 +5,6 @@ import { db } from 'src/lib/db'
 import prompts from 'src/lib/promptDB'
 //import { log } from 'src/lib/util'
 import { createScribeRequest } from 'src/services/scribeRequests/scribeRequests'
-import { user } from 'src/services/users'
 
 const AUTH = process.env.OPENAITOKEN
 
