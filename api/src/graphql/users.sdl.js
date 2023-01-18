@@ -18,6 +18,8 @@ export const schema = gql`
     GroupMember: [GroupMember]!
       @requireAuth(roles: ["groupMemberRead", "admin"])
     Preference: [Preference]!
+    tokens: Int!
+    ageInDays: Int!
   }
 
   type Users {

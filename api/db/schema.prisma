@@ -45,6 +45,7 @@ model User {
   GroupMember         GroupMember[]   @relation("UserGroupMember")
   Preference          Preference[]    @relation("UserPreference")
   ScribeReqest        ScribeRequest[]
+  Prompt              Prompt[]
 }
 
 model Preference {
@@ -134,4 +135,17 @@ model ScribeRequest {
   responseTokens  Int?
   modelInstance   ModelInstance @relation(fields: [modelInstanceId], references: [id])
   user            User          @relation(fields: [userId], references: [id])
+}
+
+// I want to allow users to store their prompts and responses in the database
+// it will be an OPT-IN feature
+model Prompt {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  prompt    String
+  action    String   @default("")
+  response  String?
 }

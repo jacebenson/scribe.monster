@@ -83,6 +83,17 @@ export const handler = async (event /*, context*/) => {
     if (!hasValidKey) {
       return respond({ code: 401, data: { error: 'Key not valid' } })
     }
+    // if users 'validatedAt' is null, then we need to update it
+    var user = await db.user.findFirst({
+      where,
+    })
+    if (!user.verifiedAt) {
+      await db.user.update({
+        where: { id: user.id },
+        data: { verifiedAt: new Date() },
+      })
+    }
+
     return respond({
       code: 200,
       data: { message: 'success' },

@@ -46,10 +46,10 @@ if (process.env.AUTH0_DOMAIN) {
 }
 export const users = (() => {
   if (process.env.AUTH0_DOMAIN) {
-    console.log('auth0_domain defined....')
+    console.log('process.env.AUTH0_DOMAIN defined returning empty array')
     return []
   } else {
-    console.log('auth0_domain not defined')
+    console.log('using dbAuth, returning users')
     return [
       {
         name: 'Adam Admin',
@@ -58,6 +58,7 @@ export const users = (() => {
         hashedPassword:
           '5f5f56d40b9ae6bf2abfd7804e97e607f9d7432feebb6371849f2676a5058999',
         salt: '881aed4f5703af38eaaab6e788d8e860',
+        extensionKey: 'poorkey',
         GroupMember: {
           create: {
             groupId: 1,
@@ -101,6 +102,6 @@ export const users = (() => {
     ]
   }
 })()
-console.log(_users[0])
+//console.log(_users[0])
 _users.push({})
 export const bulkUsers = _users
