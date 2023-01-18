@@ -116,6 +116,12 @@ export const handler = async (event /*, context*/) => {
     })
     // if we find one, use it
     if (promptLookup) {
+      await createScribeRequest({
+        userId: user.id,
+        modelInstanceId: promptConfig.modelInstance,
+        queryTokens: 0,
+        responseTokens: 0,
+      })
       return respond({
         code: 200,
         data: {
