@@ -30,15 +30,15 @@ export const handler = async (event /*, context*/) => {
 
     let method = event.httpMethod
     let body = event.body || null
-    let allowedOrigins = [
-      'chrome-extension://jdibjdmndifkeafbhbajogekgeolmmfh',
-      'http://localhost:8910',
-      'http://scribe.monster',
-    ]
-    // if origin is not allowed, return 403
-    if (allowedOrigins.indexOf(event.headers.origin) === -1) {
-      return respond({ code: 403, data: { error: 'Origin not allowed' } })
-    }
+    //let allowedOrigins = [
+    //  'chrome-extension://jdibjdmndifkeafbhbajogekgeolmmfh',
+    //  'http://localhost:8910',
+    //  'http://scribe.monster',
+    //]
+    //// if origin is not allowed, return 403
+    //if (allowedOrigins.indexOf(event.headers.origin) === -1) {
+    //  return respond({ code: 403, data: { error: 'Origin not allowed' } })
+    //}
     if (method == 'OPTIONS') {
       return respond({ code: 200, data: { message: 'success' } })
     }
