@@ -1,5 +1,6 @@
-import { db } from 'src/lib/db'
 import { UserInputError } from '@redwoodjs/graphql-server'
+
+import { db } from 'src/lib/db'
 import {
   executeBeforeCreateRulesV2,
   executeAfterCreateRulesV2,
@@ -112,6 +113,7 @@ export const updateModelInstance = async ({ id, input }) => {
 }
 
 export const deleteModelInstance = async ({ id }) => {
+  console.log({ function: 'deleteModelInstance', id })
   try {
     let { where } = await executeBeforeDeleteRulesV2({
       table,

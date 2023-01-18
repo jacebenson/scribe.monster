@@ -35,6 +35,11 @@ const NewModelInstance = () => {
   }
 
   const onSave = (input) => {
+    console.log({ function: 'onSave', input })
+    if (!input.prompt) {
+      console.log('prompt not truthy')
+      return false
+    }
     const castInput = Object.assign(input, {
       version: parseInt(input.version),
       cost: parseFloat(input.cost),
@@ -101,8 +106,10 @@ const NewModelInstance = () => {
     {
       name: 'prompt',
       prettyName: 'Prompt',
-
-      required: 'This is required',
+      type: 'editor',
+      rows: 10,
+      height: '10vh',
+      //required: 'This is required',
     },
     {
       name: 'temperature',

@@ -32,5 +32,11 @@ export const schema = gql`
     "on GroupMember"
     user: Sort
     language: Sort
+    "on ModelInstance"
+    version: Sort
+    cost: Sort
+    price: Sort
+    temperature: Sort
+    maxTokens: Sort
   }
 `

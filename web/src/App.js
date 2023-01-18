@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { Auth0Client } from '@auth0/auth0-spa-js'
 import {
   ChakraProvider,

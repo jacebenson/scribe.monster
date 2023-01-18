@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, forwardRef } from 'react'
 
 import { useForm } from 'react-hook-form'
 
@@ -64,7 +64,7 @@ const UPDATE_MODEL_INSTANCE_MUTATION = gql`
   }
 `
 export const DELETE_MODEL_INSTANCE_MUTATION = gql`
-  mutation DeleteModelInstanceMutation($id: Int!) {
+  mutation DeleteModelInstanceMutation($id: String!) {
     deletedRow: deleteModelInstance(id: $id) {
       id
     }
@@ -118,9 +118,13 @@ export const Success = ({ modelInstance }) => {
       toast.success('ModelInstance deleted')
       navigate(routes.modelInstances())
     },
+    onError: (error) => {
+      toast.error(error.message)
+    },
   })
 
-  const onDelete = (id) => {
+  const onDelete = async (id) => {
+    console.log({ function: 'onDelete', id })
     if (confirm('Are you sure you want to delete ModelInstance ' + id + '?')) {
       deleteModelInstance({ variables: { id } })
     }
@@ -244,6 +248,7 @@ export const Success = ({ modelInstance }) => {
       />
 
       <FormComponent
+        key={`${modelInstance.id}-form`}
         record={modelInstance}
         fields={fields}
         roles={roles}
