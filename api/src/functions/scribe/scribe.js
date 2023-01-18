@@ -145,7 +145,7 @@ export const handler = async (event /*, context*/) => {
       let promptToSave = await db.prompt.create({
         data: {
           user: { connect: { id: user.id } },
-          prompt: coercedBody.prompt || coercedBody.input,
+          prompt: promptConfig.ai.prompt, //coercedBody.prompt || coercedBody.input,
           action: coercedBody.action,
         },
       })
