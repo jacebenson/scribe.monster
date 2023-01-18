@@ -141,7 +141,7 @@ export const handler = async (event /*, context*/) => {
     })
 
     let promptID = null
-    if (savePrompt?.value === 'true') {
+    if (savePrompt?.value === 'true' || true) {
       let promptToSave = await db.prompt.create({
         data: {
           user: { connect: { id: user.id } },
