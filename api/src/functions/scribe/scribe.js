@@ -112,6 +112,7 @@ export const handler = async (event /*, context*/) => {
       where: {
         prompt: promptConfig.ai.prompt,
         action: coercedBody.action,
+        response: { not: null },
       },
     })
     // if we find one, use it
