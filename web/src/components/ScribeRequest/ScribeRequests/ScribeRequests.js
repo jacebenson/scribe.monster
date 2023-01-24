@@ -23,7 +23,7 @@ export const initialColumns = [
     filterOut,
     dataType: 'timestamp',
     link: (givenId) => {
-      return routes.scribeRequest({ id: givenId })
+      return routes.scribeRequest({ cuid: givenId })
     },
   },
 
@@ -76,7 +76,7 @@ const ScribeRequestsList = () => {
   let [orderBy, setOrderBy] = useState({ createdAt: 'desc' }) // default order
   let [columns, setColumns] = useState(initialColumns) // default columns
   let [skip, setSkip] = useState(0) // default reocrds to jump
-  let [take, setTake] = useState(10) // default records to take
+  let [take, setTake] = useState(100) // default records to take
   let [query, setQuery] = useState(/*{ entity: 'email' }*/) // default query
   let [fuzzyQuery, setFuzzyQuery] = useState('') // default fuzzy query
   let roles = {
