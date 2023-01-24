@@ -12,7 +12,7 @@ export const initialColumns = [
     showMatching,
     filterOut,
     link: (givenId) => {
-      return routes.property({ id: givenId })
+      return routes.property({ cuid: givenId })
     },
   },
 
@@ -42,7 +42,7 @@ export const initialColumns = [
 ]
 
 const PropertiesList = () => {
-  let [orderBy, setOrderBy] = useState({ id: 'asc' }) // default order
+  let [orderBy, setOrderBy] = useState({ cuid: 'asc' }) // default order
   let [columns, setColumns] = useState(initialColumns) // default columns
   let [skip, setSkip] = useState(0) // default reocrds to jump
   let [take, setTake] = useState(10) // default records to take

@@ -1,7 +1,7 @@
 import LogCell from 'src/components/Log/LogCell'
 
-const LogPage = ({ id }) => {
-  return <LogCell id={id} />
+const LogPage = ({ cuid }) => {
+  return <LogCell cuid={cuid} />
 }
 
 export default LogPage

@@ -9,18 +9,18 @@ import { toast } from '@redwoodjs/web/toast'
 import FormComponent from 'src/components/FormComponent'
 
 export const QUERY = gql`
-  query EditScribeRequestById($id: String!) {
-    scribeRequest: scribeRequest(id: $id) {
-      id
+  query EditScribeRequestById($cuid: String!) {
+    scribeRequest: scribeRequest(cuid: $cuid) {
+      cuid
       createdAt
       updatedAt
-      userId
+      userCuid
       user {
-        id
+        cuid
         name
       }
       modelInstance {
-        id
+        cuid
         name
       }
       modelInstanceId
@@ -31,14 +31,14 @@ export const QUERY = gql`
 `
 const UPDATE_SCRIBE_REQUEST_MUTATION = gql`
   mutation UpdateScribeRequestMutation(
-    $id: String!
+    $cuid: String!
     $input: UpdateScribeRequestInput!
   ) {
-    updateScribeRequest(id: $id, input: $input) {
-      id
+    updateScribeRequest(cuid: $cuid, input: $input) {
+      cuid
       createdAt
       updatedAt
-      userId
+      userCuid
       #modelInstanceId
       queryTokens
       responseTokens
@@ -46,9 +46,9 @@ const UPDATE_SCRIBE_REQUEST_MUTATION = gql`
   }
 `
 export const DELETE_SCRIBE_REQUEST_MUTATION = gql`
-  mutation DeleteScribeRequestMutation($id: Int!) {
-    deletedRow: deleteScribeRequest(id: $id) {
-      id
+  mutation DeleteScribeRequestMutation($cuid: String!) {
+    deletedRow: deleteScribeRequest(cuid: $cuid) {
+      cuid
     }
   }
 `
@@ -74,15 +74,15 @@ export const Success = ({ scribeRequest }) => {
   )
 
   const onSubmit = (data) => {
-    onSave(data, scribeRequest.id)
+    onSave(data, scribeRequest.cuid)
   }
-  const onSave = (input, id) => {
+  const onSave = (input, cuid) => {
     const castInput = Object.assign(input, {
-      userId: parseInt(input.userId),
+      userCuid: parseInt(input.userCuid),
       queryTokens: parseInt(input.queryTokens),
       responseTokens: parseInt(input.responseTokens),
     })
-    updateScribeRequest({ variables: { id, input: castInput } })
+    updateScribeRequest({ variables: { cuid, input: castInput } })
   }
 
   const [deleteScribeRequest] = useMutation(DELETE_SCRIBE_REQUEST_MUTATION, {
@@ -92,14 +92,16 @@ export const Success = ({ scribeRequest }) => {
     },
   })
 
-  const onDelete = (id) => {
-    if (confirm('Are you sure you want to delete ScribeRequest ' + id + '?')) {
-      deleteScribeRequest({ variables: { id } })
+  const onDelete = (cuid) => {
+    if (
+      confirm('Are you sure you want to delete ScribeRequest ' + cuid + '?')
+    ) {
+      deleteScribeRequest({ variables: { cuid } })
     }
   }
   const fields = [
     {
-      name: 'userId',
+      name: 'userCuid',
       prettyName: 'User id',
       required: 'This is required',
       // If this is a reference you probably want this below
@@ -108,11 +110,11 @@ export const Success = ({ scribeRequest }) => {
       // and uncomment and edit below to your needs
       type: 'reference',
       display: 'name',
-      value: 'id',
-      defaultValue: scribeRequest.user.id,
+      value: 'cuid',
+      defaultValue: scribeRequest.user.cuid,
       defaultDisplay: scribeRequest.user.name,
       QUERY: gql`
-        query Find_referencedModelHere_FromScribeRequests(
+        query FindUserFromScribeRequests(
           $filter: String
           $skip: Int
           $take: Int
@@ -122,7 +124,7 @@ export const Success = ({ scribeRequest }) => {
             take
             skip
             results {
-              id
+              cuid
               name
             }
           }
@@ -140,8 +142,8 @@ export const Success = ({ scribeRequest }) => {
       // and uncomment and edit below to your needs
       type: 'reference',
       display: 'name',
-      value: 'id',
-      defaultValue: scribeRequest.modelInstance.id,
+      value: 'cuid',
+      defaultValue: scribeRequest.modelInstance.cuid,
       defaultDisplay: scribeRequest.modelInstance.name,
       QUERY: gql`
         query Find_referencedModelHere_FromScribeRequests(
@@ -154,7 +156,7 @@ export const Success = ({ scribeRequest }) => {
             take
             skip
             results {
-              id
+              cuid
               name
             }
           }
@@ -175,7 +177,7 @@ export const Success = ({ scribeRequest }) => {
       // and uncomment and edit below to your needs
       // type: 'reference',
       // display: 'name',
-      // value: 'id',
+      // value: 'cuid',
       // defaultValue: scriberequest._referencedModelHere_.id,
       // defaultDisplay: scriberequest._referencedModelHere_._displayColumn_,
       // QUERY: gql`
@@ -210,7 +212,7 @@ export const Success = ({ scribeRequest }) => {
   return (
     <Fragment>
       <MetaTags
-        title={`scribeRequest.id`}
+        title={`scribeRequest.cuid`}
         description="Replace me with 155 charactes about this page"
       />
 

@@ -1,10 +1,10 @@
 export const schema = gql`
   type ScribeRequest {
-    id: String!
+    cuid: String!
     createdAt: DateTime!
     updatedAt: DateTime!
     user: User!
-    userId: Int!
+    userCuid: String!
     modelInstance: ModelInstance!
     modelInstanceId: String!
     queryTokens: Int
@@ -29,19 +29,19 @@ export const schema = gql`
       q: String
     ): ScribeRequests! @requireAuth(roles: ["scribeRequestRead", "admin"])
 
-    scribeRequest(id: String!): ScribeRequest
+    scribeRequest(cuid: String!): ScribeRequest
       @requireAuth(roles: ["scribeRequestRead", "admin"])
   }
 
   input CreateScribeRequestInput {
-    userId: Int!
-    modelInstanceId: String!
+    userCuid: String!
+    modelInstanceCuid: String!
     queryTokens: Int
     responseTokens: Int
   }
 
   input UpdateScribeRequestInput {
-    userId: Int
+    userCuid: String
     modelInstanceId: String
     queryTokens: Int
     responseTokens: Int
@@ -51,10 +51,10 @@ export const schema = gql`
     createScribeRequest(input: CreateScribeRequestInput!): ScribeRequest!
       @requireAuth(roles: ["scribeRequestCreate", "admin"])
     updateScribeRequest(
-      id: String!
+      cuid: String!
       input: UpdateScribeRequestInput!
     ): ScribeRequest! @requireAuth(roles: ["scribeRequestUpdate", "admin"])
-    deleteScribeRequest(id: String!): ScribeRequest!
+    deleteScribeRequest(cuid: String!): ScribeRequest!
       @requireAuth(roles: ["scribeRequestDelete", "admin"])
   }
 `

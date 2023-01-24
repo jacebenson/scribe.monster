@@ -4,12 +4,13 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Property {
-  id        Int      @id @default(autoincrement())
+  cuid      String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   entity    String   @unique
@@ -18,7 +19,7 @@ model Property {
 }
 
 model Message {
-  id        Int      @id @default(autoincrement())
+  cuid      String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   language  String
@@ -29,7 +30,7 @@ model Message {
 }
 
 model User {
-  id                  Int             @id @default(autoincrement())
+  cuid                String          @id @default(cuid())
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   name                String          @default("")
@@ -49,19 +50,20 @@ model User {
 }
 
 model Preference {
-  id        Int      @id @default(autoincrement())
+  cuid      String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   entity    String
   value     String?
-  userId    Int
-  user      User     @relation("UserPreference", fields: [userId], references: [id], onDelete: Cascade)
+  userCuid  String
+  user      User     @relation("UserPreference", fields: [userCuid], references: [cuid], onDelete: Cascade)
 
-  @@unique([entity, userId])
+  @@unique([entity, userCuid])
+  @@index([userCuid])
 }
 
 model Group {
-  id          Int           @id @default(autoincrement())
+  cuid        String        @id @default(cuid())
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   name        String        @unique
@@ -71,30 +73,33 @@ model Group {
 }
 
 model GroupMember {
-  id        Int      @id @default(autoincrement())
+  cuid      String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    Int
-  groupId   Int
-  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  user      User     @relation("UserGroupMember", fields: [userId], references: [id], onDelete: Cascade)
+  userCuid  String
+  groupCuid String
+  group     Group    @relation(fields: [groupCuid], references: [cuid], onDelete: Cascade)
+  user      User     @relation("UserGroupMember", fields: [userCuid], references: [cuid], onDelete: Cascade)
 
-  @@unique([userId, groupId])
+  @@unique([userCuid, groupCuid])
+  @@index([groupCuid])
+  @@index([userCuid])
 }
 
 model GroupRole {
-  id        Int      @id @default(autoincrement())
+  cuid      String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   role      String
-  groupId   Int
-  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupCuid String
+  group     Group    @relation(fields: [groupCuid], references: [cuid], onDelete: Cascade)
 
-  @@unique([groupId, role])
+  @@unique([groupCuid, role])
+  @@index([groupCuid])
 }
 
 model Log {
-  id        String   @id @default(cuid())
+  cuid      String   @id @default(cuid())
   createdAt DateTime @default(now())
   context   Json
   message   String
@@ -102,7 +107,7 @@ model Log {
 }
 
 model ModelInstance {
-  id               String          @id @default(cuid())
+  cuid             String          @id @default(cuid())
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   name             String          @default("")
@@ -126,26 +131,31 @@ model ModelInstance {
 }
 
 model ScribeRequest {
-  id              String        @id @default(cuid())
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  userId          Int
-  modelInstanceId String
-  queryTokens     Int?
-  responseTokens  Int?
-  modelInstance   ModelInstance @relation(fields: [modelInstanceId], references: [id])
-  user            User          @relation(fields: [userId], references: [id])
+  cuid              String        @id @default(cuid())
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  userCuid          String?
+  modelInstanceCuid String
+  queryTokens       Int?
+  responseTokens    Int?
+  modelInstance     ModelInstance @relation(fields: [modelInstanceCuid], references: [cuid])
+  user              User?         @relation(fields: [userCuid], references: [cuid])
+
+  @@index([modelInstanceCuid])
+  @@index([userCuid])
 }
 
 // I want to allow users to store their prompts and responses in the database
 // it will be an OPT-IN feature
 model Prompt {
-  id        String   @id @default(cuid())
+  cuid      String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  userCuid  String?
+  user      User?    @relation(fields: [userCuid], references: [cuid])
   prompt    String
   action    String   @default("")
   response  String?
+
+  @@index([userCuid])
 }

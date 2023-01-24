@@ -1,6 +1,6 @@
 export const schema = gql`
   type ModelInstance {
-    id: String!
+    cuid: String!
     createdAt: DateTime!
     updatedAt: DateTime!
     name: String!
@@ -39,7 +39,7 @@ export const schema = gql`
       q: String
     ): ModelInstances! @requireAuth(roles: ["modelInstanceRead", "admin"])
 
-    modelInstance(id: String!): ModelInstance
+    modelInstance(cuid: String!): ModelInstance
       @requireAuth(roles: ["modelInstanceRead", "admin"])
   }
 
@@ -87,10 +87,10 @@ export const schema = gql`
     createModelInstance(input: CreateModelInstanceInput!): ModelInstance!
       @requireAuth(roles: ["modelInstanceCreate", "admin"])
     updateModelInstance(
-      id: String!
+      cuid: String!
       input: UpdateModelInstanceInput!
     ): ModelInstance! @requireAuth(roles: ["modelInstanceUpdate", "admin"])
-    deleteModelInstance(id: String!): ModelInstance!
+    deleteModelInstance(cuid: String!): ModelInstance!
       @requireAuth(roles: ["modelInstanceDelete", "admin"])
   }
 `

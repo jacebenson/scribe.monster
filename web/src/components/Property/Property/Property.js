@@ -35,9 +35,9 @@ const Property = ({ property }) => {
     },
   })
 
-  const onDeleteClick = (id) => {
-    if (confirm('Are you sure you want to delete property ' + id + '?')) {
-      deleteProperty({ variables: { id } })
+  const onDeleteClick = (cuid) => {
+    if (confirm('Are you sure you want to delete property ' + cuid + '?')) {
+      deleteProperty({ variables: { cuid } })
     }
   }
 
@@ -80,7 +80,7 @@ const Property = ({ property }) => {
       </div>
       <nav className="rw-button-group">
         <Link
-          to={routes.editProperty({ id: property.id })}
+          to={routes.editProperty({ cuid: property.cuid })}
           className="rw-button rw-button-blue"
         >
           Edit
@@ -88,7 +88,7 @@ const Property = ({ property }) => {
         <button
           type="button"
           className="rw-button rw-button-red"
-          onClick={() => onDeleteClick(property.id)}
+          onClick={() => onDeleteClick(property.cuid)}
         >
           Delete
         </button>

@@ -16,7 +16,7 @@ export default async ({ args }) => {
 
         GroupMember: {
           create: {
-            groupId: 1,
+            group: { connect: { name: 'Administrators' } },
           },
         },
       },

@@ -34,9 +34,9 @@ const User = ({ user }) => {
     },
   })
 
-  const onDeleteClick = (id) => {
-    if (confirm('Are you sure you want to delete user ' + id + '?')) {
-      deleteUser({ variables: { id } })
+  const onDeleteClick = (cuid) => {
+    if (confirm('Are you sure you want to delete user ' + cuid + '?')) {
+      deleteUser({ variables: { cuid } })
     }
   }
 
@@ -91,7 +91,7 @@ const User = ({ user }) => {
       </div>
       <nav className="rw-button-group">
         <Link
-          to={routes.editUser({ id: user.id })}
+          to={routes.editUser({ cuid: user.cuid })}
           className="rw-button rw-button-blue"
         >
           Edit

@@ -23,10 +23,10 @@ function respond({ code, data }) {
 export const handler = async (event /*, context*/) => {
   try {
     console.log('Invoked scribe function')
-    console.log('body', event.body)
+    //console.log('body', event.body)
     //console.log('context', context)
-    console.log('event.httpMethod', event.httpMethod)
-    console.log('event.headers', event.headers)
+    //console.log('event.httpMethod', event.httpMethod)
+    //console.log('event.headers', event.headers)
 
     let method = event.httpMethod
     let body = event.body || null
@@ -119,8 +119,8 @@ export const handler = async (event /*, context*/) => {
     if (promptLookup) {
       await createScribeRequest({
         input: {
-          userId: user.id,
-          modelInstanceId: promptConfig.modelInstance,
+          userCuid: user.cuid,
+          modelInstanceCuid: promptConfig.modelInstance,
           queryTokens: 0,
           responseTokens: 0,
         },
@@ -136,23 +136,23 @@ export const handler = async (event /*, context*/) => {
     // if user prefers to save prompts, save it
     let savePrompt = await db.preference.findFirst({
       where: {
-        userId: user.id,
+        userCuid: user.cuid,
         entity: 'savePrompts',
       },
     })
-
+    //console.log({ cuid: user.cuid, savePrompt })
     let promptID = null
-    if (savePrompt?.value === 'true' || true) {
-      let promptToSave = await db.prompt.create({
-        data: {
-          user: { connect: { id: user.id } },
-          prompt: promptConfig.ai.prompt,
-          action: coercedBody.action,
-        },
-      })
-      console.log({ promptToSave })
-      promptID = promptToSave.id
-    }
+    //if (savePrompt?.value === 'true' || true) {
+    let promptToSave = await db.prompt.create({
+      data: {
+        user: { connect: { cuid: user.cuid } },
+        prompt: promptConfig.ai.prompt,
+        action: coercedBody.action,
+      },
+    })
+    //console.log({ promptToSave })
+    promptID = promptToSave.cuid
+    //}
     // if user prefers to save requests
 
     if (!promptConfig.ai.prompt) {
@@ -179,8 +179,8 @@ export const handler = async (event /*, context*/) => {
       //)
       //await db.scribeRequest.create()
       let input = {
-        userId: user.id,
-        modelInstanceId: promptConfig.modelInstance,
+        userCuid: user.cuid,
+        modelInstanceCuid: promptConfig.modelInstance,
         queryTokens: promptTokens,
         responseTokens: completionTokens,
       }
@@ -188,23 +188,28 @@ export const handler = async (event /*, context*/) => {
       await createScribeRequest({ input })
     }
     let code = (function () {
+      console.log({ function: 'code', prepend: promptConfig?.prepend, data })
+      if (data?.error) {
+        return data?.error?.message
+      }
       if (promptConfig?.prepend) {
         return promptConfig?.prepend + data?.choices?.[0]?.text
       }
       return data?.choices?.[0]?.text
     })()
     // if savePrompt is true, save the prompt
-    if (savePrompt?.value === 'true' || true) {
-      let promptToUpdate = await db.prompt.update({
-        where: {
-          id: promptID,
-        },
-        data: {
-          response: code,
-        },
-      })
-      console.log({ promptToUpdate })
-    }
+    //if (savePrompt?.value === 'true' || true) {
+    console.log({ promptID })
+    let promptToUpdate = await db.prompt.update({
+      where: {
+        cuid: promptID,
+      },
+      data: {
+        response: code,
+      },
+    })
+    console.log({ promptToUpdate })
+    //}
     return respond({
       code: 200,
       data: {
@@ -219,7 +224,7 @@ export const handler = async (event /*, context*/) => {
       },
     })
   } catch (error) {
-    console.log(error)
+    console.log({ error })
     return respond({ code: 500, data: { error: 'Failed fetching data' } })
   }
 }

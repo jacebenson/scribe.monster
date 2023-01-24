@@ -9,9 +9,9 @@ import { toast } from '@redwoodjs/web/toast'
 import FormComponent from 'src/components/FormComponent'
 
 export const QUERY = gql`
-  query EditLogById($id: String!) {
-    log: log(id: $id) {
-      id
+  query EditLogById($cuid: String!) {
+    log: log(cuid: $cuid) {
+      cuid
       createdAt
       message
       source
@@ -20,9 +20,9 @@ export const QUERY = gql`
   }
 `
 const UPDATE_LOG_MUTATION = gql`
-  mutation UpdateLogMutation($id: String!, $input: UpdateLogInput!) {
-    updateLog(id: $id, input: $input) {
-      id
+  mutation UpdateLogMutation($cuid: String!, $input: UpdateLogInput!) {
+    updateLog(cuid: $cuid, input: $input) {
+      cuid
       createdAt
       message
       source
@@ -31,9 +31,9 @@ const UPDATE_LOG_MUTATION = gql`
   }
 `
 export const DELETE_LOG_MUTATION = gql`
-  mutation DeleteLogMutation($id: String!) {
-    deletedRow: deleteLog(id: $id) {
-      id
+  mutation DeleteLogMutation($cuid: String!) {
+    deletedRow: deleteLog(cuid: $cuid) {
+      cuid
     }
   }
 `
@@ -56,10 +56,10 @@ export const Success = ({ log }) => {
   })
 
   const onSubmit = (data) => {
-    onSave(data, log.id)
+    onSave(data, log.cuid)
   }
-  const onSave = (input, id) => {
-    updateLog({ variables: { id, input } })
+  const onSave = (input, cuid) => {
+    updateLog({ variables: { cuid, input } })
   }
 
   const [deleteLog] = useMutation(DELETE_LOG_MUTATION, {
@@ -69,9 +69,9 @@ export const Success = ({ log }) => {
     },
   })
 
-  const onDelete = (id) => {
-    if (confirm('Are you sure you want to delete Log ' + id + '?')) {
-      deleteLog({ variables: { id } })
+  const onDelete = (cuid) => {
+    if (confirm('Are you sure you want to delete Log ' + cuid + '?')) {
+      deleteLog({ variables: { cuid } })
     }
   }
   const fields = [

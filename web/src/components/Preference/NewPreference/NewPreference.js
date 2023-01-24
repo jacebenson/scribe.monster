@@ -11,7 +11,7 @@ import FormComponent from 'src/components/FormComponent'
 const CREATE_PREFERENCE_MUTATION = gql`
   mutation CreatePreferenceMutation($input: CreatePreferenceInput!) {
     createPreference(input: $input) {
-      id
+      cuid
     }
   }
 `
@@ -35,7 +35,7 @@ const NewPreference = () => {
   }
 
   const onSave = (input) => {
-    const castInput = Object.assign(input, { userId: parseInt(input.user) })
+    const castInput = Object.assign(input, { userCuid: input.user })
     delete castInput.user
     createPreference({ variables: { input: castInput } })
   }
@@ -58,7 +58,7 @@ const NewPreference = () => {
       // uncomment and edit below to your needs
       type: 'reference',
       display: 'name',
-      value: 'id',
+      value: 'cuid',
       QUERY: gql`
         query FindUsersFromPreferences(
           $filter: String
@@ -70,7 +70,7 @@ const NewPreference = () => {
             take
             skip
             results {
-              id
+              cuid
               name
             }
           }

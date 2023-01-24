@@ -34,9 +34,9 @@ const ${singularPascalName} = ({ ${singularCamelName} }) => {
     },
   })
 
-  const onDeleteClick = (id) => {
-    if (confirm('Are you sure you want to delete ${singularCamelName} ' + id + '?')) {
-      delete${singularPascalName}({ variables: { id } })
+  const onDeleteClick = (cuid) => {
+    if (confirm('Are you sure you want to delete ${singularCamelName} ' + cuid + '?')) {
+      delete${singularPascalName}({ variables: { cuid } })
     }
   }
 
@@ -61,7 +61,7 @@ const ${singularPascalName} = ({ ${singularCamelName} }) => {
       </div>
       <nav className="rw-button-group">
         <Link
-          to={routes.${editRouteName}({ id: ${singularCamelName}.id })}
+          to={routes.${editRouteName}({ cuid: ${singularCamelName}.cuid })}
           className="rw-button rw-button-blue"
         >
           Edit
@@ -69,7 +69,7 @@ const ${singularPascalName} = ({ ${singularCamelName} }) => {
         <button
           type="button"
           className="rw-button rw-button-red"
-          onClick={() => onDeleteClick(${singularCamelName}.id)}
+          onClick={() => onDeleteClick(${singularCamelName}.cuid)}
         >
           Delete
         </button>

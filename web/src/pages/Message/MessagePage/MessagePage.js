@@ -1,7 +1,7 @@
 import MessageCell from 'src/components/Message/MessageCell'
 
-const MessagePage = ({ id }) => {
-  return <MessageCell id={id} />
+const MessagePage = ({ cuid }) => {
+  return <MessageCell cuid={cuid} />
 }
 
 export default MessagePage

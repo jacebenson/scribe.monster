@@ -19,7 +19,7 @@ export const initialColumns = [
     showMatching,
     filterOut,
     link: (givenId) => {
-      return routes.modelInstance({ id: givenId })
+      return routes.modelInstance({ cuid: givenId })
     },
   },
 
@@ -63,22 +63,6 @@ export const initialColumns = [
     showMatching,
     filterOut,
     dataType: 'integer',
-    // If this is a reference
-    // you may want to show a field
-    // instead of the number here.
-    // to do that remove type,
-    // updated your query on the cell to include the model
-    // update the accessor to a name not used by a column
-    // and add;
-    // canSort: false,
-    // reference: true,
-    // model: '_insertSingularModelHere_',
-    // field: '_fieldFromModelHere_',
-    // link: (givenId) => {
-    //   // e.g. return routes._insertPluralModelHere_({ q: {"id": givenId}})
-    //   // e.g. return routes.users({ q: `{"id": }` })// link to a list w/the query
-    //   // e.g. return routes.user({ q: `{"id": }` })// link to the record
-    // },
   },
   {
     Header: 'Actions',
@@ -92,7 +76,7 @@ export const initialColumns = [
 ]
 
 const ModelInstancesList = () => {
-  let [orderBy, setOrderBy] = useState({ id: 'asc' }) // default order
+  let [orderBy, setOrderBy] = useState({ cuid: 'asc' }) // default order
   let [columns, setColumns] = useState(initialColumns) // default columns
   let [skip, setSkip] = useState(0) // default reocrds to jump
   let [take, setTake] = useState(10) // default records to take
@@ -119,7 +103,7 @@ const ModelInstancesList = () => {
         setQuery={setQuery}
         fuzzyQuery={fuzzyQuery}
         setFuzzyQuery={setFuzzyQuery}
-        displayColumn="id"
+        displayColumn="cuid"
         roles={roles}
       />
     </Fragment>

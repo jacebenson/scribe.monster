@@ -11,7 +11,7 @@ import FormComponent from 'src/components/FormComponent'
 const CREATE_GROUP_ROLE_MUTATION = gql`
   mutation CreateGroupRoleMutation($input: CreateGroupRoleInput!) {
     createGroupRole(input: $input) {
-      id
+      cuid
     }
   }
 `
@@ -35,8 +35,8 @@ const NewGroupRole = () => {
   }
 
   const onSave = (input) => {
-    const castInput = Object.assign(input, { groupId: parseInt(input.groupId) })
-    createGroupRole({ variables: { input: castInput } })
+    //const castInput = Object.assign(input, { groupCuid: input.group })
+    createGroupRole({ variables: { input /*: castInput*/ } })
   }
   let models = [
     'user',
@@ -63,13 +63,13 @@ const NewGroupRole = () => {
       options: crudRoles,
     },
     {
-      name: 'groupId',
+      name: 'groupCuid',
       prettyName: 'Group id',
       required: 'This is required',
       // uncomment and edit below to your needs
       type: 'reference',
       display: 'name',
-      value: 'id',
+      value: 'cuid',
       QUERY: gql`
         query FindUsersFromGroupRoleNew(
           $filter: String
@@ -81,7 +81,7 @@ const NewGroupRole = () => {
             take
             skip
             results {
-              id
+              cuid
               name
             }
           }

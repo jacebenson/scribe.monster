@@ -37,9 +37,7 @@ export const initialColumns = [
     model: 'user',
     field: 'name',
     link: (givenId) => {
-      //  // e.g. return routes._insertPluralModelHere_({ q: {"id": givenId}})
-      //  // e.g. return routes.users({ q: `{"id": }` })// link to a list w/the query
-      return routes.user({ id: givenId }) // link to the record
+      return routes.user({ cuid: givenId }) // link to the record
     },
   },
 
@@ -53,9 +51,7 @@ export const initialColumns = [
     model: 'modelInstance',
     field: 'name',
     link: (givenId) => {
-      //  // e.g. return routes._insertPluralModelHere_({ q: {"id": givenId}})
-      //  // e.g. return routes.users({ q: `{"id": }` })// link to a list w/the query
-      return routes.modelInstance({ id: givenId }) // link to the record
+      return routes.modelInstance({ cuid: givenId }) // link to the record
     },
   },
   {
@@ -104,7 +100,7 @@ const ScribeRequestsList = () => {
         setQuery={setQuery}
         fuzzyQuery={fuzzyQuery}
         setFuzzyQuery={setFuzzyQuery}
-        displayColumn="id"
+        displayColumn="cuid"
         roles={roles}
       />
     </Fragment>

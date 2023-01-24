@@ -11,7 +11,7 @@ import FormComponent from 'src/components/FormComponent'
 const CREATE_GROUP_MEMBER_MUTATION = gql`
   mutation CreateGroupMemberMutation($input: CreateGroupMemberInput!) {
     createGroupMember(input: $input) {
-      id
+      cuid
     }
   }
 `
@@ -36,8 +36,8 @@ const NewGroupMember = () => {
 
   const onSave = (input) => {
     const castInput = {
-      userId: parseInt(input.user),
-      groupId: parseInt(input.group),
+      userCuid: input.user,
+      groupCuid: input.group,
     }
     createGroupMember({ variables: { input: castInput } })
   }
@@ -50,7 +50,7 @@ const NewGroupMember = () => {
       // uncomment and edit below to your needs
       type: 'reference',
       display: 'name',
-      value: 'id',
+      value: 'cuid',
       QUERY: gql`
         query FindUsersFromGroupMembers(
           $filter: String
@@ -62,7 +62,7 @@ const NewGroupMember = () => {
             take
             skip
             results {
-              id
+              cuid
               name
             }
           }
@@ -77,7 +77,7 @@ const NewGroupMember = () => {
       // uncomment and edit below to your needs
       type: 'reference',
       display: 'name',
-      value: 'id',
+      value: 'cuid',
       QUERY: gql`
         query FindGroupFromGroupMembers(
           $filter: String
@@ -89,7 +89,7 @@ const NewGroupMember = () => {
             take
             skip
             results {
-              id
+              cuid
               name
             }
           }

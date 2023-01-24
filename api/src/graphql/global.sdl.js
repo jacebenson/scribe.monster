@@ -11,6 +11,7 @@ export const schema = gql`
     filter: String
   }
   input OrderByInput {
+    cuid: Sort
     "on everything"
     id: Sort
     "on everything"

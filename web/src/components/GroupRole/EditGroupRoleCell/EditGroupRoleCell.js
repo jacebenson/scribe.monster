@@ -10,35 +10,38 @@ import FormComponent from 'src/components/FormComponent'
 import FormSkeleton from 'src/components/FormSkeleton/FormSkeleton'
 
 export const QUERY = gql`
-  query EditGroupRoleById($id: Int!) {
-    groupRole: groupRole(id: $id) {
-      id
+  query EditGroupRoleById($cuid: String!) {
+    groupRole: groupRole(cuid: $cuid) {
+      cuid
       createdAt
       updatedAt
       role
-      groupId
+      groupCuid
       group {
         name
-        id
+        cuid
       }
     }
   }
 `
 const UPDATE_GROUP_ROLE_MUTATION = gql`
-  mutation UpdateGroupRoleMutation($id: Int!, $input: UpdateGroupRoleInput!) {
-    updateGroupRole(id: $id, input: $input) {
-      id
+  mutation UpdateGroupRoleMutation(
+    $cuid: String!
+    $input: UpdateGroupRoleInput!
+  ) {
+    updateGroupRole(cuid: $cuid, input: $input) {
+      cuid
       createdAt
       updatedAt
       role
-      groupId
+      groupCuid
     }
   }
 `
 export const DELETE_GROUP_ROLE_MUTATION = gql`
-  mutation DeleteGroupRoleMutation($id: Int!) {
-    deletedRow: deleteGroupRole(id: $id) {
-      id
+  mutation DeleteGroupRoleMutation($cuid: String!) {
+    deletedRow: deleteGroupRole(cuid: $cuid) {
+      cuid
     }
   }
 `
@@ -66,9 +69,11 @@ export const Success = ({ groupRole }) => {
   const onSubmit = (data) => {
     onSave(data, groupRole.id)
   }
-  const onSave = (input, id) => {
-    const castInput = Object.assign(input, { groupId: parseInt(input.groupId) })
-    updateGroupRole({ variables: { id, input: castInput } })
+  const onSave = (input, cuid) => {
+    const castInput = Object.assign(input, {
+      groupCuid: input.group,
+    })
+    updateGroupRole({ variables: { cuid, input: castInput } })
   }
 
   const [deleteGroupRole] = useMutation(DELETE_GROUP_ROLE_MUTATION, {
@@ -78,9 +83,13 @@ export const Success = ({ groupRole }) => {
     },
   })
 
-  const onDelete = (id) => {
-    if (confirm('Are you sure you want to delete GroupRole ' + id + '?')) {
-      deleteGroupRole({ variables: { id } })
+  const onDelete = (cuid) => {
+    if (
+      confirm(
+        'Are you sure you want to delete GroupRole ' + groupRole.cuid + '?'
+      )
+    ) {
+      deleteGroupRole({ variables: { cuid: groupRole.cuid } })
     }
   }
   let models = [
@@ -108,7 +117,7 @@ export const Success = ({ groupRole }) => {
       options: crudRoles,
     },
     {
-      name: 'groupId',
+      name: 'group',
       prettyName: 'Group id',
       required: 'This is required',
       // If this is a reference you probably want this below
@@ -117,8 +126,8 @@ export const Success = ({ groupRole }) => {
       // and uncomment and edit below to your needs
       type: 'reference',
       display: 'name',
-      value: 'id',
-      defaultValue: groupRole?.group?.id,
+      value: 'cuid',
+      defaultValue: groupRole?.group?.cuid,
       defaultDisplay: groupRole?.group?.name,
       QUERY: gql`
         query Find_referencedModelHere_FromGroupRoles(
@@ -130,7 +139,7 @@ export const Success = ({ groupRole }) => {
             take
             skip
             results {
-              id
+              cuid
               name
             }
           }

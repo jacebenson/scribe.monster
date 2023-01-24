@@ -41,7 +41,7 @@ const ShareButton = ({ column, row }) => {
         })
       }
     } catch (error) {
-      console.log(error)
+      console.log({ function: 'ShareButton', error })
     }
   }
   return (

@@ -2,7 +2,7 @@ import { Link, routes, navigate } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 
-import { DELETE_LOG_MUTATION } from 'src/components/Log/EditLogCell'
+import { DELETE_GROUP_MUTATION } from 'src/components/Group/EditGroupCell'
 /*
 const jsonDisplay = (obj) => {
   return (
@@ -25,19 +25,19 @@ const checkboxInputTag = (checked) => {
 }
 */
 const Log = ({ log }) => {
-  const [deleteLog] = useMutation(DELETE_LOG_MUTATION, {
+  const [deleteGroup] = useMutation(DELETE_GROUP_MUTATION, {
     onCompleted: () => {
-      toast.success('Log deleted')
-      navigate(routes.logs())
+      toast.success('Group deleted')
+      navigate(routes.groups())
     },
     onError: (error) => {
       toast.error(error.message)
     },
   })
 
-  const onDeleteClick = (id) => {
-    if (confirm('Are you sure you want to delete log ' + id + '?')) {
-      deleteLog({ variables: { id } })
+  const onDeleteClick = (cuid) => {
+    if (confirm('Are you sure you want to delete group ' + cuid + '?')) {
+      deleteGroup({ variables: { cuid } })
     }
   }
 
@@ -46,33 +46,37 @@ const Log = ({ log }) => {
       <div className="rw-segment">
         <header className="rw-segment-header">
           <h2 className="rw-heading rw-heading-secondary">
-            Log {log.id} Detail
+            Group {group.cuid} Detail
           </h2>
         </header>
         <table className="rw-table">
           <tbody>
             <tr>
               <th>Id</th>
-              <td>{log.id}</td>
+              <td>{group.cuid}</td>
             </tr>
             <tr>
               <th>Created at</th>
-              <td>{timeTag(log.createdAt)}</td>
+              <td>{timeTag(group.createdAt)}</td>
             </tr>
             <tr>
-              <th>Message</th>
-              <td>{log.message}</td>
+              <th>Updated at</th>
+              <td>{timeTag(group.updatedAt)}</td>
             </tr>
             <tr>
-              <th>Source</th>
-              <td>{log.source}</td>
+              <th>Name</th>
+              <td>{group.name}</td>
+            </tr>
+            <tr>
+              <th>Description</th>
+              <td>{group.description}</td>
             </tr>
           </tbody>
         </table>
       </div>
       <nav className="rw-button-group">
         <Link
-          to={routes.editLog({ id: log.id })}
+          to={routes.editGroup({ cuid: group.cuid })}
           className="rw-button rw-button-blue"
         >
           Edit
@@ -80,7 +84,7 @@ const Log = ({ log }) => {
         <button
           type="button"
           className="rw-button rw-button-red"
-          onClick={() => onDeleteClick(log.id)}
+          onClick={() => onDeleteClick(group.cuid)}
         >
           Delete
         </button>

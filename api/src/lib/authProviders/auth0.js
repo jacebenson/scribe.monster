@@ -21,10 +21,9 @@ export const getUser = async (
     let email = session?.['https://auth0.tskr.io/email']
     let name = session?.['https://auth0.tskr.io/name']
     let userData = await db.user.findUnique({
-      //where: { id: session.id },//dbAuth
       where: { username: session.sub },
       select: {
-        id: true,
+        cuid: true,
         name: true,
         email: true,
         Preference: {
@@ -35,11 +34,11 @@ export const getUser = async (
         GroupMember: {
           select: {
             createdAt: true,
-            id: true,
+            cuid: true,
             group: {
               select: {
                 name: true,
-                id: true,
+                cuid: true,
                 GroupRole: {
                   select: {
                     role: true,
@@ -63,10 +62,10 @@ export const getUser = async (
       .join(',')
       .split(',')
     let groups = userData?.GroupMember.map((member) => {
-      return { name: member?.group?.name, id: member?.group?.id }
+      return { name: member?.group?.name, cuid: member?.group?.cuid }
     }) // look up the roles of the groups the user is a member of
     let foundPreferences = await db.preference.findMany({
-      where: { userId: session.id },
+      where: { userCuid: session.id },
     })
     let preferences = {}
     foundPreferences.forEach((preference) => {
@@ -97,7 +96,7 @@ export const getUser = async (
             email: email,
             username: session?.sub,
           },
-          select: { id: true, name: true },
+          select: { cuid: true, name: true },
         })
       } catch (error) {
         throw new AuthenticationError('There was a problem logging in.')

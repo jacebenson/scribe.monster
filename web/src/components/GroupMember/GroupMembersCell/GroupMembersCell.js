@@ -41,7 +41,7 @@ export const beforeQuery = (props) => {
   }
 }
 // Looks like you have some foreign keys
-// ["userId","groupId"] you may want to update the query
+// ["userCuid","groupCuid"] you may want to update the query
 // below to include the related values
 export const QUERY = gql`
   query FindGroupMembers(
@@ -63,17 +63,17 @@ export const QUERY = gql`
       skip
       q
       results {
-        id
+        cuid
         createdAt
         updatedAt
-        userId
+        userCuid
         user {
-          id
+          cuid
           name
         }
-        groupId
+        groupCuid
         group {
-          id
+          cuid
           name
         }
       }
@@ -148,6 +148,7 @@ export const Success = ({
           New group member
         </Button>
       </Flex>
+      {query}
       <TableQuery
         query={query}
         setQuery={setQuery}

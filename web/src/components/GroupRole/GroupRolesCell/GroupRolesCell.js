@@ -62,13 +62,13 @@ export const QUERY = gql`
       skip
       q
       results {
-        id
+        cuid
         createdAt
         updatedAt
         role
-        groupId
+        groupCuid
         group {
-          id
+          cuid
           name
         }
       }

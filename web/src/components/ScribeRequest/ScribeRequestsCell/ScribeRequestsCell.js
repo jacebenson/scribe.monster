@@ -60,17 +60,17 @@ export const QUERY = gql`
       skip
       q
       results {
-        id
+        cuid
         createdAt
         updatedAt
         user {
-          id
+          cuid
           name
         }
         #userId
         #modelInstanceId
         modelInstance {
-          id
+          cuid
           name
         }
         queryTokens

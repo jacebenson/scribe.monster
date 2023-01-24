@@ -1,101 +1,137 @@
 /* eslint-disable no-console */
 
-import { PrismaClient } from '@prisma/client'
+import fs from 'fs'
 
-import { groups } from './seedFiles/groupSeed'
-import { messages } from './seedFiles/messageSeed'
-import modelInstances from './seedFiles/ModelInstance.json'
-import { properties } from './seedFiles/propertySeed'
-//import users from './seedFiles/User.json'
-import users from './seedFiles/UserBackup.json'
+import { PrismaClient } from '@prisma/client'
+import cuid from 'cuid'
+
+import group from /*         */ './seedFiles/backup-2023-01-23/group.json'
+//import groupMember from /*   */ './seedFiles/backup-2023-01-23/groupMember.json'
+//import groupRole from /*     */ './seedFiles/backup-2023-01-23/groupRole.json'
+import message from /*       */ './seedFiles/backup-2023-01-23/message.json'
+import modelInstance from /* */ './seedFiles/backup-2023-01-23/modelInstance.json'
+import prompt from /*         */ './seedFiles/backup-2023-01-23/prompt.json' // not needed
+import property from /*      */ './seedFiles/backup-2023-01-23/property.json'
+import scribeRequest from /*   */ './seedFiles/backup-2023-01-23/scribeRequest.json' // not needed
+import user from /*          */ './seedFiles/backup-2023-01-23/user.json'
+// import preference from   /**/ './seedFiles/preference.json'// not needed
+
+//import users from './seedFiles/UserBackup.json'
 //import { users, bulkUsers } from './seedFiles/userSeed'
 
 const dotenv = require('dotenv')
 dotenv.config()
-//const { PrismaClient } = require('@prisma/client')
-
+// lets make a list of the seed objects we want to seed where the key is the table name
+const firstSeed = {
+  group,
+  //groupRole,
+  user,
+  //groupMember,
+}
+const secondSeed = {
+  message,
+  modelInstance,
+  property,
+  prompt,
+  scribeRequest,
+}
 const db = new PrismaClient()
+let now = (value) => new Date(value)
 async function main() {
-  // if there is an admin group, don't seed it
-  const existingAdminGroup = await db.group.findUnique({
-    where: { name: 'Admin' },
-  })
-  if (existingAdminGroup) {
-    console.log(`Admin group already exists in the database, skipping seeding`)
-  }
-  if (!existingAdminGroup) {
-    await db.groupRole.deleteMany({})
-    for (let group of groups) {
-      await db.group.upsert({
-        where: { id: group.id },
-        update: group,
-        create: group,
-      })
-    }
-  }
-  //users.map((user) => user?.email)
-  //await db.user.deleteMany(/*{ where: { email: { in: userEmails } } }*/)
-  //await db.user.createMany({ data: bulkUsers })
-  //for (let user of bulkUsers) {
-  //  await db.user.create({
-  //    data: user,
-  //  })
-  //}
+  // loop through the seed object and console.log the name of the seed object
+  // and the number of records in the seed object
 
-  // if there are users in the database, don't seed them
-  let existingUsers = await db.user.count()
-  existingUsers = 0
-  if (existingUsers > 0) {
-    console.log(
-      `${existingUsers} Users already exist in the database, skipping seeding`
-    )
-  }
-  if (existingUsers === 0) {
-    console.log({ users })
-    for (let user of users) {
-      let userData = {
-        ...user,
-        createdAt: new Date(user.createdAt),
-        updatedAt: new Date(user.updatedAt),
-        resetTokenExpiresAt: (() => {
-          if (user.resetTokenExpiresAt) {
-            return new Date(user.resetTokenExpiresAt)
-          }
-          return null
-        })(),
+  // for users, groups we're going to upsert individual records
+  // for everything esle, we're going ot bulk insert after modifing the JSON in memory
+
+  await db.prompt.deleteMany({})
+  await db.scribeRequest.deleteMany({})
+  // users + groups
+  await db.user.deleteMany({})
+  await db.group.deleteMany({})
+  for (const [key, value] of Object.entries(firstSeed)) {
+    let newData = []
+    for (let record of value) {
+      record.createdAt = now(record.createdAt)
+      record.updatedAt = now(record.updatedAt)
+      if (key === 'user') {
+        record.resetTokenExpiresAt = null
+        if (record.verifiedAt !== null) {
+          record.verifiedAt = now(record.verifiedAt)
+        } else {
+          record.verifiedAt = null
+        }
       }
-      await db.user.upsert({
-        where: { id: user.id },
-        update: userData,
-        create: userData,
-      })
+      delete record.id
+      record.cuid = cuid()
+      //console.log(`upserting ${key} record: ${record.cuid}`)
+      newData.push(record)
     }
+    await db[key].createMany({
+      data: newData,
+      skipDuplicates: true,
+    })
   }
+
   await db.message.deleteMany({})
-  for (let message of messages) {
-    await db.message.create({
-      data: message,
-    })
-  }
-  await db.property.deleteMany({})
-  for (let property of properties) {
-    await db.property.create({
-      data: property,
-    })
-  }
   await db.modelInstance.deleteMany({})
-  for (let model of modelInstances) {
-    let modelInstanceData = {
-      ...model,
-      createdAt: new Date(model.createdAt),
-      updatedAt: new Date(model.updatedAt),
+  await db.property.deleteMany({})
+
+  // everything else
+  for (const [key, value] of Object.entries(secondSeed)) {
+    let newData = []
+    // load up users into memory
+    let users = await db.user.findMany({
+      select: { cuid: true, username: true },
+    })
+    for (let record of value) {
+      if (!record?.cuid) {
+        record.cuid = cuid()
+      }
+      record.createdAt = now(record.createdAt)
+      record.updatedAt = now(record.updatedAt)
+      if (key === 'prompt' || key === 'scribeRequest') {
+        // we now have users in memory
+        // look up the user's cuid
+        //console.log({ users })
+        users.filter((user) => {
+          if (user.username === record['userId.username']) {
+            record.userCuid = user.cuid
+          }
+        })
+        delete record['userId.username']
+      }
+      delete record.id
+      // push the record into the new array
+      newData.push(record)
     }
-    await db.modelInstance.upsert({
-      where: { id: model.id },
-      update: modelInstanceData,
-      create: modelInstanceData,
+    // bulk insert the new array
+    console.log(`bulk inserting ${key} records: ${newData.length}`)
+    await db[key].createMany({
+      data: newData,
+      skipDuplicates: true,
     })
   }
+  // now look up the admin group, and the user jacebenson
+  // then create a groupMember record for jacebenson in the admin group
+  const adminGroup = await db.group.findUnique({
+    where: { name: 'Administrators' },
+  })
+  const jace = await db.user.findUnique({
+    where: { username: 'jacebenson' },
+  })
+  let groupMember = {
+    userCuid: jace.cuid,
+    groupCuid: adminGroup.cuid,
+  }
+  await db.groupMember.create({ data: groupMember })
+  // create the grouprole for admin
+  let groupRole = {
+    groupCuid: adminGroup.cuid,
+    role: 'admin',
+  }
+  await db.groupRole.create({ data: groupRole })
+  return
 }
 
 main()

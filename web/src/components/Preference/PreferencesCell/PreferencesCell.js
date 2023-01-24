@@ -61,14 +61,14 @@ export const QUERY = gql`
       skip
       q
       results {
-        id
+        cuid
         createdAt
         updatedAt
         entity
         value
-        userId
+        userCuid
         user {
-          id
+          cuid
           name
         }
       }

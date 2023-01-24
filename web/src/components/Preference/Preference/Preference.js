@@ -35,9 +35,9 @@ const Preference = ({ preference }) => {
     },
   })
 
-  const onDeleteClick = (id) => {
-    if (confirm('Are you sure you want to delete preference ' + id + '?')) {
-      deletePreference({ variables: { id } })
+  const onDeleteClick = (cuid) => {
+    if (confirm('Are you sure you want to delete preference ' + cuid + '?')) {
+      deletePreference({ variables: { cuid } })
     }
   }
 
@@ -80,7 +80,7 @@ const Preference = ({ preference }) => {
       </div>
       <nav className="rw-button-group">
         <Link
-          to={routes.editPreference({ id: preference.id })}
+          to={routes.editPreference({ cuid: preference.id })}
           className="rw-button rw-button-blue"
         >
           Edit

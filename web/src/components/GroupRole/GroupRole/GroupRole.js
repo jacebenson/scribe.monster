@@ -35,9 +35,9 @@ const GroupRole = ({ groupRole }) => {
     },
   })
 
-  const onDeleteClick = (id) => {
-    if (confirm('Are you sure you want to delete groupRole ' + id + '?')) {
-      deleteGroupRole({ variables: { id } })
+  const onDeleteClick = (cuid) => {
+    if (confirm('Are you sure you want to delete groupRole ' + cuid + '?')) {
+      deleteGroupRole({ variables: { cuid } })
     }
   }
 
@@ -76,7 +76,7 @@ const GroupRole = ({ groupRole }) => {
       </div>
       <nav className="rw-button-group">
         <Link
-          to={routes.editGroupRole({ id: groupRole.id })}
+          to={routes.editGroupRole({ cuid: groupRole.id })}
           className="rw-button rw-button-blue"
         >
           Edit

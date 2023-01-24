@@ -62,7 +62,7 @@ export const prompts = async ({
       endpoint: instance.endpoint,
       about: instance.desciption,
       required: ['action'],
-      modelInstance: instance.id,
+      modelInstance: instance.cuid,
       prepend: context?.prepend || '',
     }
     console.log({ function: 'promptDB', returnObj })

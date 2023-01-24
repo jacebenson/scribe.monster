@@ -1,0 +1,7 @@
+[
+{"id":2,"createdAt":"2022-12-05 03:08:34.791","updatedAt":"2022-12-12 04:00:17.769","entity":"MAILGUN_DOMAIN","type":"string","value":"mg.scribe.monster"},
+{"id":3,"createdAt":"2022-12-05 03:08:35.175","updatedAt":"2022-12-12 04:02:19.921","entity":"MAILGUN_API_KEY","type":"string","value":"7f3ee308b365cfcf4a42e79b8c3e97c8-48d7d97c-b43b34ea"},
+{"id":4,"createdAt":"2022-12-12 04:05:50.561","updatedAt":"2022-12-12 04:05:50.561","entity":"brand","type":"string","value":"ScribeMonster"},
+{"id":5,"createdAt":"2022-12-12 04:07:53.582","updatedAt":"2022-12-12 04:07:53.582","entity":"domain","type":"string","value":"https://scribe.monster"},
+{"id":1,"createdAt":"2022-12-05 03:08:34.246","updatedAt":"2022-12-12 05:03:13.805","entity":"email","type":"string","value":"active"}
+]

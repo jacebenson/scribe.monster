@@ -11,7 +11,7 @@ import FormComponent from 'src/components/FormComponent'
 const CREATE_MODEL_INSTANCE_MUTATION = gql`
   mutation CreateModelInstanceMutation($input: CreateModelInstanceInput!) {
     createModelInstance(input: $input) {
-      id
+      cuid
     }
   }
 `

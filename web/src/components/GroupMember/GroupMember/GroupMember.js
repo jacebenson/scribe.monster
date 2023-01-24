@@ -35,9 +35,9 @@ const GroupMember = ({ groupMember }) => {
     },
   })
 
-  const onDeleteClick = (id) => {
-    if (confirm('Are you sure you want to delete groupMember ' + id + '?')) {
-      deleteGroupMember({ variables: { id } })
+  const onDeleteClick = (cuid) => {
+    if (confirm('Are you sure you want to delete groupMember ' + cuid + '?')) {
+      deleteGroupMember({ variables: { cuid } })
     }
   }
 
@@ -65,18 +65,18 @@ const GroupMember = ({ groupMember }) => {
             </tr>
             <tr>
               <th>User id</th>
-              <td>{groupMember.userId}</td>
+              <td>{groupMember.userCuid}</td>
             </tr>
             <tr>
               <th>Group id</th>
-              <td>{groupMember.groupId}</td>
+              <td>{groupMember.groupCuid}</td>
             </tr>
           </tbody>
         </table>
       </div>
       <nav className="rw-button-group">
         <Link
-          to={routes.editGroupMember({ id: groupMember.id })}
+          to={routes.editGroupMember({ cuid: groupMember.cuid })}
           className="rw-button rw-button-blue"
         >
           Edit
@@ -84,7 +84,7 @@ const GroupMember = ({ groupMember }) => {
         <button
           type="button"
           className="rw-button rw-button-red"
-          onClick={() => onDeleteClick(groupMember.id)}
+          onClick={() => onDeleteClick(groupMember.cuid)}
         >
           Delete
         </button>

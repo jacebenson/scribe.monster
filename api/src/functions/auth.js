@@ -7,7 +7,7 @@ export const handler = async (event, context) => {
     handler: async (user) => {
       try {
         let updatedUser = await updateUser({
-          id: user.id,
+          cuid: user.cuid,
           input: {
             resetToken: user.resetToken,
           },
@@ -87,7 +87,7 @@ export const handler = async (event, context) => {
     db: db,
     authModelAccessor: 'user',
     authFields: {
-      id: 'id',
+      id: 'cuid',
       username: 'username',
       hashedPassword: 'hashedPassword',
       salt: 'salt',

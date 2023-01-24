@@ -11,7 +11,7 @@ import FormComponent from 'src/components/FormComponent'
 const CREATE_SCRIBE_REQUEST_MUTATION = gql`
   mutation CreateScribeRequestMutation($input: CreateScribeRequestInput!) {
     createScribeRequest(input: $input) {
-      id
+      cuid
     }
   }
 `
@@ -36,8 +36,8 @@ const NewScribeRequest = () => {
 
   const onSave = (input) => {
     const castInput = Object.assign(input, {
-      userId: parseInt(input.userId),
-      //modelInstanceId: parseInt(input.modelInstanceId),
+      userCuid: input.user,
+      modelInstanceCuid: input.modelInstance,
       queryTokens: parseInt(input.queryTokens),
       responseTokens: parseInt(input.responseTokens),
     })
@@ -45,7 +45,7 @@ const NewScribeRequest = () => {
   }
   const fields = [
     {
-      name: 'userId',
+      name: 'user',
       prettyName: 'User id',
 
       required: 'This is required',
@@ -53,7 +53,7 @@ const NewScribeRequest = () => {
       // uncomment and edit below to your needs
       type: 'reference',
       display: 'name',
-      value: 'id',
+      value: 'cuid',
       QUERY: gql`
         query FinduserIdHereFromScribeRequests(
           $filter: String
@@ -65,7 +65,7 @@ const NewScribeRequest = () => {
             take
             skip
             results {
-              id
+              cuid
               name
             }
           }
@@ -73,12 +73,12 @@ const NewScribeRequest = () => {
       `,
     },
     {
-      name: 'modelInstanceId',
+      name: 'modelInstance',
       prettyName: 'Model instance id',
       required: 'This is required',
       type: 'reference',
       display: 'name',
-      value: 'id',
+      value: 'cuid',
       QUERY: gql`
         query FindqueryTokensHereFromScribeRequests(
           $filter: String
@@ -90,7 +90,7 @@ const NewScribeRequest = () => {
             take
             skip
             results {
-              id
+              cuid
               name
             }
           }

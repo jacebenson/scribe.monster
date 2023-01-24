@@ -47,6 +47,7 @@ export const handler = async (event /*, context*/) => {
       })
     }
     // post is good.  now lets see if the user can auth...
+    console.log({ headers: event.headers })
     if (!event.headers.authorization) {
       return respond({
         code: 401,
@@ -89,7 +90,7 @@ export const handler = async (event /*, context*/) => {
     })
     if (!user.verifiedAt) {
       await db.user.update({
-        where: { id: user.id },
+        where: { cuid: user.cuid },
         data: { verifiedAt: new Date() },
       })
     }
@@ -99,7 +100,7 @@ export const handler = async (event /*, context*/) => {
       data: { message: 'success' },
     })
   } catch (error) {
-    console.log(error)
+    console.log({ error })
     return respond({ code: 500, data: { error: 'Failed fetching data' } })
   }
 }

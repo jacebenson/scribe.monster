@@ -9,9 +9,9 @@ import { toast } from '@redwoodjs/web/toast'
 import FormComponent from 'src/components/FormComponent'
 
 export const QUERY = gql`
-  query EditModelInstanceById($id: String!) {
-    modelInstance: modelInstance(id: $id) {
-      id
+  query EditModelInstanceById($cuid: String!) {
+    modelInstance: modelInstance(cuid: $cuid) {
+      cuid
       createdAt
       updatedAt
       name
@@ -36,11 +36,11 @@ export const QUERY = gql`
 `
 const UPDATE_MODEL_INSTANCE_MUTATION = gql`
   mutation UpdateModelInstanceMutation(
-    $id: String!
+    $cuid: String!
     $input: UpdateModelInstanceInput!
   ) {
-    updateModelInstance(id: $id, input: $input) {
-      id
+    updateModelInstance(cuid: $cuid, input: $input) {
+      cuid
       createdAt
       updatedAt
       name
@@ -64,9 +64,9 @@ const UPDATE_MODEL_INSTANCE_MUTATION = gql`
   }
 `
 export const DELETE_MODEL_INSTANCE_MUTATION = gql`
-  mutation DeleteModelInstanceMutation($id: String!) {
-    deletedRow: deleteModelInstance(id: $id) {
-      id
+  mutation DeleteModelInstanceMutation($cuid: String!) {
+    deletedRow: deleteModelInstance(cuid: $cuid) {
+      cuid
     }
   }
 `
@@ -95,7 +95,7 @@ export const Success = ({ modelInstance }) => {
     console.log({ function: 'onSubmit', data })
     onSave(data, modelInstance.id)
   }
-  const onSave = async (input, id) => {
+  const onSave = async (input, cuid) => {
     console.log({ function: 'onSave', input })
     const castInput = Object.assign(input, {
       version: parseInt(input.version),
@@ -110,7 +110,7 @@ export const Success = ({ modelInstance }) => {
       presencePenalty: parseFloat(input.presencePenalty),
     })
     console.log({ function: 'onSave', castInput })
-    updateModelInstance({ variables: { id, input: castInput } })
+    updateModelInstance({ variables: { cuid, input: castInput } })
   }
 
   const [deleteModelInstance] = useMutation(DELETE_MODEL_INSTANCE_MUTATION, {
@@ -123,10 +123,12 @@ export const Success = ({ modelInstance }) => {
     },
   })
 
-  const onDelete = async (id) => {
-    console.log({ function: 'onDelete', id })
-    if (confirm('Are you sure you want to delete ModelInstance ' + id + '?')) {
-      deleteModelInstance({ variables: { id } })
+  const onDelete = async (cuid) => {
+    console.log({ function: 'onDelete', cuid })
+    if (
+      confirm('Are you sure you want to delete ModelInstance ' + cuid + '?')
+    ) {
+      deleteModelInstance({ variables: { cuid } })
     }
   }
   const fields = [

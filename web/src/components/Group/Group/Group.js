@@ -35,9 +35,9 @@ const Group = ({ group }) => {
     },
   })
 
-  const onDeleteClick = (id) => {
-    if (confirm('Are you sure you want to delete group ' + id + '?')) {
-      deleteGroup({ variables: { id } })
+  const onDeleteClick = (cuid) => {
+    if (confirm('Are you sure you want to delete group ' + cuid + '?')) {
+      deleteGroup({ variables: { cuid } })
     }
   }
 
@@ -46,14 +46,14 @@ const Group = ({ group }) => {
       <div className="rw-segment">
         <header className="rw-segment-header">
           <h2 className="rw-heading rw-heading-secondary">
-            Group {group.id} Detail
+            Group {group.cuid} Detail
           </h2>
         </header>
         <table className="rw-table">
           <tbody>
             <tr>
               <th>Id</th>
-              <td>{group.id}</td>
+              <td>{group.cuid}</td>
             </tr>
             <tr>
               <th>Created at</th>
@@ -76,7 +76,7 @@ const Group = ({ group }) => {
       </div>
       <nav className="rw-button-group">
         <Link
-          to={routes.editGroup({ id: group.id })}
+          to={routes.editGroup({ cuid: group.cuid })}
           className="rw-button rw-button-blue"
         >
           Edit
@@ -84,7 +84,7 @@ const Group = ({ group }) => {
         <button
           type="button"
           className="rw-button rw-button-red"
-          onClick={() => onDeleteClick(group.id)}
+          onClick={() => onDeleteClick(group.cuid)}
         >
           Delete
         </button>

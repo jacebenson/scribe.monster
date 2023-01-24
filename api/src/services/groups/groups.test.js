@@ -8,7 +8,7 @@ describe('groups', () => {
   })
 
   scenario('returns a single group', async (scenario) => {
-    const result = await group({ id: scenario.group.one.id })
+    const result = await group({ cuid: scenario.group.one.cuid })
 
     expect(result).toEqual(scenario.group.one)
   })
@@ -28,9 +28,9 @@ describe('groups', () => {
   })
 
   scenario('updates a group', async (scenario) => {
-    const original = await group({ id: scenario.group.one.id })
+    const original = await group({ cuid: scenario.group.one.cuid })
     const result = await updateGroup({
-      id: original.id,
+      cuid: original.id,
       input: { updatedAt: '2022-01-16T22:41:51Z' },
     })
 
@@ -38,8 +38,8 @@ describe('groups', () => {
   })
 
   scenario('deletes a group', async (scenario) => {
-    const original = await deleteGroup({ id: scenario.group.one.id })
-    const result = await group({ id: original.id })
+    const original = await deleteGroup({ cuid: scenario.group.one.cuid })
+    const result = await group({ cuid: original.cuid })
 
     expect(result).toEqual(null)
   })

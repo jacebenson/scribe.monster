@@ -1,9 +1,9 @@
 import Property from 'src/components/Property/Property'
 
 export const QUERY = gql`
-  query FindPropertyById($id: Int!) {
-    property: property(id: $id) {
-      id
+  query FindPropertyById($cuid: String!) {
+    property: property(cuid: $cuid) {
+      cuid
       createdAt
       updatedAt
       entity

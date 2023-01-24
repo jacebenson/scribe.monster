@@ -1,7 +1,7 @@
 import GroupRoleCell from 'src/components/GroupRole/GroupRoleCell'
 
-const GroupRolePage = ({ id }) => {
-  return <GroupRoleCell id={id} />
+const GroupRolePage = ({ cuid }) => {
+  return <GroupRoleCell cuid={cuid} />
 }
 
 export default GroupRolePage

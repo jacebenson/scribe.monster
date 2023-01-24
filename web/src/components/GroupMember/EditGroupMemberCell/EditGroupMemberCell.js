@@ -9,42 +9,42 @@ import { toast } from '@redwoodjs/web/toast'
 import FormComponent from 'src/components/FormComponent'
 import FormSkeleton from 'src/components/FormSkeleton/FormSkeleton'
 export const QUERY = gql`
-  query EditGroupMemberById($id: Int!) {
-    groupMember: groupMember(id: $id) {
-      id
+  query EditGroupMemberById($cuid: String!) {
+    groupMember: groupMember(cuid: $cuid) {
+      cuid
       createdAt
       updatedAt
-      userId
+      userCuid
       user {
-        id
+        cuid
         name
       }
-      groupId
+      groupCuid
       group {
         name
-        id
+        cuid
       }
     }
   }
 `
 const UPDATE_GROUP_MEMBER_MUTATION = gql`
   mutation UpdateGroupMemberMutation(
-    $id: Int!
+    $cuid: String!
     $input: UpdateGroupMemberInput!
   ) {
-    updateGroupMember(id: $id, input: $input) {
-      id
+    updateGroupMember(cuid: $cuid, input: $input) {
+      cuid
       createdAt
       updatedAt
-      userId
-      groupId
+      userCuid
+      groupCuid
     }
   }
 `
 export const DELETE_GROUP_MEMBER_MUTATION = gql`
-  mutation DeleteGroupMemberMutation($id: Int!) {
-    deletedRow: deleteGroupMember(id: $id) {
-      id
+  mutation DeleteGroupMemberMutation($cuid: String!) {
+    deletedRow: deleteGroupMember(cuid: $cuid) {
+      cuid
     }
   }
 `
@@ -70,14 +70,15 @@ export const Success = ({ groupMember }) => {
   )
 
   const onSubmit = (data) => {
-    onSave(data, groupMember.id)
+    onSave(data, groupMember.cuid)
   }
-  const onSave = (input, id) => {
+  const onSave = (input, cuid) => {
+    console.log({ input, cuid })
     const castInput = Object.assign(input, {
-      userId: parseInt(input.userId),
-      groupId: parseInt(input.groupId),
+      userCuid: input.user,
+      groupCuid: input.group,
     })
-    updateGroupMember({ variables: { id, input: castInput } })
+    updateGroupMember({ variables: { cuid, input: castInput } })
   }
 
   const [deleteGroupMember] = useMutation(DELETE_GROUP_MEMBER_MUTATION, {
@@ -87,20 +88,25 @@ export const Success = ({ groupMember }) => {
     },
   })
 
-  const onDelete = (id) => {
-    if (confirm('Are you sure you want to delete GroupMember ' + id + '?')) {
-      deleteGroupMember({ variables: { id } })
+  const onDelete = (cuid) => {
+    console.log({ cuid })
+    if (
+      confirm(
+        'Are you sure you want to delete GroupMember ' + groupMember.cuid + '?'
+      )
+    ) {
+      deleteGroupMember({ variables: { cuid: groupMember.cuid } })
     }
   }
   const fields = [
     {
-      name: 'user',
+      name: 'userCuid',
       prettyName: 'User',
       required: 'This is required',
       type: 'reference',
       display: 'name',
-      value: 'id',
-      defaultValue: groupMember.user.id,
+      value: 'cuid',
+      defaultValue: groupMember.user.cuid,
       defaultDisplay: groupMember.user.name,
       QUERY: gql`
         query Find_referencedModelHere_FromGroupMembers(
@@ -113,7 +119,7 @@ export const Success = ({ groupMember }) => {
             take
             skip
             results {
-              id
+              cuid
               name
             }
           }
@@ -122,7 +128,7 @@ export const Success = ({ groupMember }) => {
     },
     {
       // {"name":"groupId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"type":"Int","hasDefaultValue":false,"isGenerated":false,"isUpdatedAt":false,"label":"Group id","component":"NumberField","defaultProp":"defaultValue","deserilizeFunction":"","validation":"{{ required: true }}","listDisplayFunction":"truncate"}
-      name: 'groupId',
+      name: 'groupCuid',
       prettyName: 'Group id',
       required: 'This is required',
       // If this is a reference you probably want this below
@@ -131,8 +137,8 @@ export const Success = ({ groupMember }) => {
       // and uncomment and edit below to your needs
       type: 'reference',
       display: 'name',
-      value: 'id',
-      defaultValue: groupMember.group.id,
+      value: 'cuid',
+      defaultValue: groupMember.group.cuid,
       defaultDisplay: groupMember.group.name,
       QUERY: gql`
         query FindGroupFromGroupMembers(
@@ -145,7 +151,7 @@ export const Success = ({ groupMember }) => {
             take
             skip
             results {
-              id
+              cuid
               name
             }
           }

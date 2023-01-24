@@ -14,7 +14,7 @@ describe('groupRoles', () => {
   })
 
   scenario('returns a single groupRole', async (scenario) => {
-    const result = await groupRole({ id: scenario.groupRole.one.id })
+    const result = await groupRole({ cuid: scenario.groupRole.one.cuid })
 
     expect(result).toEqual(scenario.groupRole.one)
   })
@@ -34,9 +34,9 @@ describe('groupRoles', () => {
   })
 
   scenario('updates a groupRole', async (scenario) => {
-    const original = await groupRole({ id: scenario.groupRole.one.id })
+    const original = await groupRole({ cuid: scenario.groupRole.one.cuid })
     const result = await updateGroupRole({
-      id: original.id,
+      cuid: original.cuid,
       input: { updatedAt: '2022-01-16T22:45:02Z' },
     })
 
@@ -44,8 +44,10 @@ describe('groupRoles', () => {
   })
 
   scenario('deletes a groupRole', async (scenario) => {
-    const original = await deleteGroupRole({ id: scenario.groupRole.one.id })
-    const result = await groupRole({ id: original.id })
+    const original = await deleteGroupRole({
+      cuid: scenario.groupRole.one.cuid,
+    })
+    const result = await groupRole({ cuid: original.cuid })
 
     expect(result).toEqual(null)
   })

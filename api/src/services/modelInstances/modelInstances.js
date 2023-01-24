@@ -71,11 +71,11 @@ export const modelInstances = async ({ filter, skip, orderBy, q, take }) => {
   }
 }
 
-export const modelInstance = async ({ id }) => {
+export const modelInstance = async ({ cuid }) => {
   try {
-    let { where } = await executeBeforeReadRulesV2({ table, id })
-    if (!where /* if where is falsy, return { id } */) {
-      where = { id }
+    let { where } = await executeBeforeReadRulesV2({ table, cuid })
+    if (!where /* if where is falsy, return { cuid } */) {
+      where = { cuid }
     }
     let readRecord = await db[table].findUnique({ where })
     let { record } = await executeAfterReadRulesV2({
@@ -88,23 +88,23 @@ export const modelInstance = async ({ id }) => {
   }
 }
 
-export const updateModelInstance = async ({ id, input }) => {
+export const updateModelInstance = async ({ cuid, input }) => {
   try {
     let { data, where } = await executeBeforeUpdateRulesV2({
       table,
       data: input,
-      id,
+      cuid,
     })
     if (!where) {
-      // if where is falsy, return { id }
-      where = { id }
+      // if where is falsy, return { cuid }
+      where = { cuid }
     }
     let updatedRecord = await db[table].update({ data, where })
 
     let { record } = await executeAfterUpdateRulesV2({
       table,
       data: updatedRecord,
-      id,
+      cuid,
     })
     return { ...record }
   } catch (error) {
@@ -112,18 +112,18 @@ export const updateModelInstance = async ({ id, input }) => {
   }
 }
 
-export const deleteModelInstance = async ({ id }) => {
-  console.log({ function: 'deleteModelInstance', id })
+export const deleteModelInstance = async ({ cuid }) => {
+  console.log({ function: 'deleteModelInstance', cuid })
   try {
     let { where } = await executeBeforeDeleteRulesV2({
       table,
-      id,
+      cuid,
     })
-    if (!where /* if where is falsy, return { id } */) {
-      where = { id }
+    if (!where /* if where is falsy, return { cuid } */) {
+      where = { cuid }
     }
     let deletedRecord = await db[table].delete({
-      where: { id },
+      where: { cuid },
     })
 
     await executeAfterDeleteRulesV2({ table, data: deletedRecord })

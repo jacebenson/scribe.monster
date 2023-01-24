@@ -55,7 +55,7 @@ export const QUERY = gql`
       skip
       q
       results {
-        id
+        cuid
         createdAt
         updatedAt
         name
@@ -65,7 +65,7 @@ export const QUERY = gql`
         #}
         extensionKey
         Preference {
-          id
+          cuid
         }
       }
     }

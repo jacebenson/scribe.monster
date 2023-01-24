@@ -24,7 +24,7 @@ export const QUERY = gql`
 const UPDATE_MY_PROFILE_MUTATION = gql`
   mutation UpdateMyProfileMutation($input: UpdateUserInput!) {
     updateMyProfile(input: $input) {
-      id
+      cuid
       name
       email
     }
@@ -33,7 +33,7 @@ const UPDATE_MY_PROFILE_MUTATION = gql`
 export const DELETE_MY_PROFILE_MUTATION = gql`
   mutation DeleteMyProfileMutation {
     deletedRow: deleteMyProfile {
-      id
+      cuid
       name
     }
   }

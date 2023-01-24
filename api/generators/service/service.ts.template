@@ -75,11 +75,11 @@ export const ${pluralCamelName} = async ({ filter, skip, orderBy, q, take }) => 
   }
 }
 
-export const ${singularCamelName} = async ({ id }: Prisma.${singularPascalName}WhereUniqueInput) => {
+export const ${singularCamelName} = async ({ cuid }: Prisma.${singularPascalName}WhereUniqueInput) => {
   try {
-    let { where } = await executeBeforeReadRulesV2({ table, id })
-    if (!where /* if where is falsy, return { id } */) {
-      where = { id }
+    let { where } = await executeBeforeReadRulesV2({ table, cuid })
+    if (!where /* if where is falsy, return { cuid } */) {
+      where = { cuid }
     }
     let readRecord = await db[table].findUnique({ where })
     let { record } = await executeAfterReadRulesV2({
@@ -96,23 +96,23 @@ interface Update${singularPascalName}Args extends Prisma.${singularPascalName}Wh
   input: Prisma.${singularPascalName}UpdateInput
 }
 
-export const update${singularPascalName} = async ({ id, input }: Update${singularPascalName}Args) => {
+export const update${singularPascalName} = async ({ cuid, input }: Update${singularPascalName}Args) => {
   try {
     let { data, where } = await executeBeforeUpdateRulesV2({
       table,
       data: input,
-      id,
+      cuid,
     })
     if (!where) {
-      // if where is falsy, return { id }
-      where = { id }
+      // if where is falsy, return { cuid }
+      where = { cuid }
     }
     let updatedRecord = await db[table].update({ data, where })
 
     let { record } = await executeAfterUpdateRulesV2({
       table,
       data: updatedRecord,
-      id,
+      cuid,
     })
     return { ...record }
   } catch (error) {
@@ -120,17 +120,17 @@ export const update${singularPascalName} = async ({ id, input }: Update${singula
   }
 }
 
-export const delete${singularPascalName} = async ({ id }: Prisma.${singularPascalName}WhereUniqueInput) => {
+export const delete${singularPascalName} = async ({ cuid }: Prisma.${singularPascalName}WhereUniqueInput) => {
  try {
     let { where } = await executeBeforeDeleteRulesV2({
       table,
-      id,
+      cuid,
     })
-    if (!where /* if where is falsy, return { id } */) {
-      where = { id }
+    if (!where /* if where is falsy, return { cuid } */) {
+      where = { cuid }
     }
     let deletedRecord = await db[table].delete({
-      where: { id },
+      where: { cuid },
     })
 
     await executeAfterDeleteRulesV2({ table, data: deletedRecord })
@@ -144,17 +144,17 @@ export const delete${singularPascalName} = async ({ id }: Prisma.${singularPasca
 
 <% if (!crud) {%>
 
-export const ${singularCamelName} = async ({ id }: Prisma.${singularPascalName}WhereUniqueInput) => {
+export const ${singularCamelName} = async ({ cuid }: Prisma.${singularPascalName}WhereUniqueInput) => {
   try {
     let result = await executeBeforeReadRules(table, {
-      id,
+      cuid,
       status: { code: 'success', message: '' },
     })
     if (result.status.code !== 'success') {
       throw new UserInputError(result.status.message)
     }
     let readRecord = await db[table].findUnique({
-      where: { id },
+      where: { cuid },
     })
     readRecord = executeAfterReadRules(table, readRecord)
     return readRecord
@@ -168,5 +168,5 @@ export const ${singularCamelName} = async ({ id }: Prisma.${singularPascalName}W
 <% if (relations.length) { %>
 
 export const ${singularPascalName} = {<% relations.forEach(relation => { %>
-  ${relation}: (_obj, { root }: ResolverArgs<ReturnType<typeof ${singularCamelName}>>) => db[table].findUnique({ where: { id: root.id } }).${relation}(),<% }) %>
+  ${relation}: (_obj, { root }: ResolverArgs<ReturnType<typeof ${singularCamelName}>>) => db[table].findUnique({ where: { cuid: root.cuid } }).${relation}(),<% }) %>
 }<% } %>

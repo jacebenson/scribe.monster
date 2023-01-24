@@ -10,9 +10,9 @@ import FormComponent from 'src/components/FormComponent'
 import FormSkeleton from 'src/components/FormSkeleton/FormSkeleton'
 
 export const QUERY = gql`
-  query EditMessageById($id: Int!) {
-    message: message(id: $id) {
-      id
+  query EditMessageById($cuid: String!) {
+    message: message(cuid: $cuid) {
+      cuid
       createdAt
       updatedAt
       language
@@ -22,9 +22,9 @@ export const QUERY = gql`
   }
 `
 const UPDATE_MESSAGE_MUTATION = gql`
-  mutation UpdateMessageMutation($id: Int!, $input: UpdateMessageInput!) {
-    updateMessage(id: $id, input: $input) {
-      id
+  mutation UpdateMessageMutation($cuid: String!, $input: UpdateMessageInput!) {
+    updateMessage(cuid: $cuid, input: $input) {
+      cuid
       createdAt
       updatedAt
       language
@@ -34,9 +34,9 @@ const UPDATE_MESSAGE_MUTATION = gql`
   }
 `
 export const DELETE_MESSAGE_MUTATION = gql`
-  mutation DeleteMessageMutation($id: Int!) {
-    deletedRow: deleteMessage(id: $id) {
-      id
+  mutation DeleteMessageMutation($cuid: String!) {
+    deletedRow: deleteMessage(cuid: $cuid) {
+      cuid
       entity
     }
   }
@@ -65,8 +65,8 @@ export const Success = ({ message }) => {
   const onSubmit = (data) => {
     onSave(data, message.id)
   }
-  const onSave = (input, id) => {
-    updateMessage({ variables: { id, input } })
+  const onSave = (input, cuid) => {
+    updateMessage({ variables: { cuid, input } })
   }
 
   const [deleteMessage] = useMutation(DELETE_MESSAGE_MUTATION, {
@@ -76,9 +76,9 @@ export const Success = ({ message }) => {
     },
   })
 
-  const onDelete = (id) => {
-    if (confirm('Are you sure you want to delete Message ' + id + '?')) {
-      deleteMessage({ variables: { id } })
+  const onDelete = (cuid) => {
+    if (confirm('Are you sure you want to delete Message ' + cuid + '?')) {
+      deleteMessage({ variables: { cuid } })
     }
   }
   const fields = [

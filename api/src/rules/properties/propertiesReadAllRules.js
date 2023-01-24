@@ -7,7 +7,7 @@ module.exports = {
   file: __filename, //       used for logging
   command: async function ({ where, filter, q }) {
     if (!context.currentUser.roles.includes('admin')) {
-      where.push({ id: -1 }) // required for all queries
+      where.push({ cuid: -1 }) // required for all queries
     }
     if (filter) {
       where.push({

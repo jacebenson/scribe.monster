@@ -160,7 +160,7 @@ export const handler = async (event /*, context*/) => {
       },
     })
   } catch (error) {
-    console.log(error)
+    console.log({ error })
     return respond({ code: 500, data: { error: 'Failed fetching data' } })
   }
 }

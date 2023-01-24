@@ -29,21 +29,21 @@ const GroupMemberForm = (props) => {
         />
 
         <Label
-          name="userId"
+          name="userCuid"
           className="rw-label"
           errorClassName="rw-label rw-label-error"
         >
           User id
         </Label>
         <NumberField
-          name="userId"
-          defaultValue={props.groupMember?.userId}
+          name="userCuid"
+          defaultValue={props.groupMember?.userCuid}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
           validation={{ required: true }}
         />
 
-        <FieldError name="userId" className="rw-field-error" />
+        <FieldError name="userCuid" className="rw-field-error" />
 
         <Label
           name="groupId"

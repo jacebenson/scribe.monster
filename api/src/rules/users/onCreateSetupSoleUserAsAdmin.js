@@ -19,7 +19,7 @@ module.exports = {
       if (users.length === 1) {
         for (let group of groups) {
           await db.group.upsert({
-            where: { id: group.id },
+            where: { cuid: group.cuid },
             update: group,
             create: group,
           })
@@ -27,13 +27,13 @@ module.exports = {
         await db.groupRole.create({
           data: {
             role: 'admin',
-            groupId: 1,
+            group: { connect: { name: 'Administrators' } },
           },
         })
         await db.groupMember.create({
           data: {
-            userId: record.id,
-            groupId: 1,
+            userCuid: record.cuid,
+            group: { connect: { name: 'Administrators' } },
           },
         })
         for (let property of properties) {

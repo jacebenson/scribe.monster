@@ -35,9 +35,9 @@ const Message = ({ message }) => {
     },
   })
 
-  const onDeleteClick = (id) => {
-    if (confirm('Are you sure you want to delete message ' + id + '?')) {
-      deleteMessage({ variables: { id } })
+  const onDeleteClick = (cuid) => {
+    if (confirm('Are you sure you want to delete message ' + cuid + '?')) {
+      deleteMessage({ variables: { cuid } })
     }
   }
 
@@ -80,7 +80,7 @@ const Message = ({ message }) => {
       </div>
       <nav className="rw-button-group">
         <Link
-          to={routes.editMessage({ id: message.id })}
+          to={routes.editMessage({ cuid: message.cuid })}
           className="rw-button rw-button-blue"
         >
           Edit
@@ -88,7 +88,7 @@ const Message = ({ message }) => {
         <button
           type="button"
           className="rw-button rw-button-red"
-          onClick={() => onDeleteClick(message.id)}
+          onClick={() => onDeleteClick(message.cuid)}
         >
           Delete
         </button>

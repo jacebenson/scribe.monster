@@ -1,14 +1,14 @@
 import Preference from 'src/components/Preference/Preference'
 
 export const QUERY = gql`
-  query FindPreferenceById($id: Int!) {
-    preference: preference(id: $id) {
-      id
+  query FindPreferenceById($cuid: String!) {
+    preference: preference(cuid: $cuid) {
+      cuid
       createdAt
       updatedAt
       entity
       value
-      userId
+      userCuid
     }
   }
 `

@@ -15,13 +15,13 @@ const DeleteButton = ({
   const toast = useToast()
   const { hasRole } = useAuth()
 
-  let handleDeleteItem = (id) => {
+  let handleDeleteItem = (cuid) => {
     let foundRow = data.results?.filter((record) => {
-      return record.id === id
+      return record.cuid === cuid
     })
     let question = `Are you sure you want to delete ${foundRow[0][displayColumn]}?`
     if (confirm(question)) {
-      deleteRecord({ variables: { id } })
+      deleteRecord({ variables: { cuid } })
     }
   }
   const [deleteRecord] = useMutation(deleteMutation, {
@@ -53,7 +53,7 @@ const DeleteButton = ({
           aria-label="Remove"
           value={row.id}
           onClick={() => {
-            handleDeleteItem(row.id)
+            handleDeleteItem(row.cuid)
           }}
           icon={<CloseIcon />}
           colorScheme="red"

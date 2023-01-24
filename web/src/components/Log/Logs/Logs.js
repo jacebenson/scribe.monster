@@ -10,7 +10,7 @@ export const initialColumns = [
     Header: 'Created at',
     accessor: 'createdAt',
     link: (givenId) => {
-      return routes.log({ id: givenId })
+      return routes.log({ cuid: givenId })
     },
     showMatching,
     filterOut,
@@ -70,7 +70,7 @@ const LogsList = () => {
         setQuery={setQuery}
         fuzzyQuery={fuzzyQuery}
         setFuzzyQuery={setFuzzyQuery}
-        displayColumn="id"
+        displayColumn="cuid"
         roles={roles}
       />
     </Fragment>

@@ -17,6 +17,7 @@ import {
 let table = 'scribeRequest'
 
 export const createScribeRequest = async ({ input }) => {
+  console.log({ function: 'createScribeRequest', input })
   try {
     let { data } =
       (await executeBeforeCreateRulesV2({ table, data: input })) || input
@@ -78,12 +79,12 @@ export const scribeRequests = async ({ filter, skip, orderBy, q, take }) => {
   }
 }
 
-export const scribeRequest = async ({ id }) => {
+export const scribeRequest = async ({ cuid }) => {
   try {
-    console.log({ function: 'sdl.scribeRequest', id })
-    let { where } = await executeBeforeReadRulesV2({ table, id })
-    if (!where /* if where is falsy, return { id } */) {
-      where = { id }
+    console.log({ function: 'sdl.scribeRequest', cuid })
+    let { where } = await executeBeforeReadRulesV2({ table, cuid })
+    if (!where /* if where is falsy, return { cuid } */) {
+      where = { cuid }
     }
     let readRecord = await db[table].findUnique({ where })
     let { record } = await executeAfterReadRulesV2({
@@ -97,23 +98,23 @@ export const scribeRequest = async ({ id }) => {
   }
 }
 
-export const updateScribeRequest = async ({ id, input }) => {
+export const updateScribeRequest = async ({ cuid, input }) => {
   try {
     let { data, where } = await executeBeforeUpdateRulesV2({
       table,
       data: input,
-      id,
+      cuid,
     })
     if (!where) {
-      // if where is falsy, return { id }
-      where = { id }
+      // if where is falsy, return { cuid }
+      where = { cuid }
     }
     let updatedRecord = await db[table].update({ data, where })
 
     let { record } = await executeAfterUpdateRulesV2({
       table,
       data: updatedRecord,
-      id,
+      cuid,
     })
     return { ...record }
   } catch (error) {
@@ -121,17 +122,17 @@ export const updateScribeRequest = async ({ id, input }) => {
   }
 }
 
-export const deleteScribeRequest = async ({ id }) => {
+export const deleteScribeRequest = async ({ cuid }) => {
   try {
     let { where } = await executeBeforeDeleteRulesV2({
       table,
-      id,
+      cuid,
     })
-    if (!where /* if where is falsy, return { id } */) {
-      where = { id }
+    if (!where /* if where is falsy, return { cuid } */) {
+      where = { cuid }
     }
     let deletedRecord = await db[table].delete({
-      where: { id },
+      where: { cuid },
     })
 
     await executeAfterDeleteRulesV2({ table, data: deletedRecord })
@@ -145,10 +146,10 @@ export const deleteScribeRequest = async ({ id }) => {
 
 export const ScribeRequest = {
   user: (_obj, { root }) => {
-    return db[table].findUnique({ where: { id: root.id } }).user()
+    return db[table].findUnique({ where: { cuid: root.cuid } }).user()
   },
   modelInstance: (_obj, { root }) => {
-    return db[table].findUnique({ where: { id: root.id } }).modelInstance()
+    return db[table].findUnique({ where: { cuid: root.cuid } }).modelInstance()
   },
   totalTokens: (_obj, { root }) => {
     return root.queryTokens + root.responseTokens

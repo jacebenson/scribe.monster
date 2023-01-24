@@ -9,7 +9,7 @@ export const initialColumns = [
   accessor: '${column.name}',
   showMatching,
   filterOut,<% if (column.isId){ %>link: (givenId) => {
-    return routes.${singularRouteName}({ id: givenId })
+    return routes.${singularRouteName}({ cuid: givenId })
   },<% } %>
   <% if (column.type === "Int"){ %>dataType: 'integer',<% } %><% if (column.type === "DateTime"){ %>dataType: 'timestamp',<% } %><% if (column.type === "Boolean"){ %>dataType: 'boolean',<% } %>
   <% if (column.type === "Int" && column.isId === false){ %>// If this is a reference
@@ -42,7 +42,7 @@ export const initialColumns = [
 ]
 
 const ${pluralPascalName}List = () => {
-  let [orderBy, setOrderBy] = useState({ id: 'asc' }) // default order
+  let [orderBy, setOrderBy] = useState({ cuid: 'asc' }) // default order
   let [columns, setColumns] = useState(initialColumns) // default columns
   let [skip, setSkip] = useState(0) // default reocrds to jump
   let [take, setTake] = useState(10) // default records to take

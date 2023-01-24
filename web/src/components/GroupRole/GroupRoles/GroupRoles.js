@@ -7,6 +7,15 @@ import GroupRolesCell from 'src/components/GroupRole/GroupRolesCell'
 import { showMatching, filterOut } from '/src/lib/atomicFunctions'
 export const initialColumns = [
   {
+    Header: 'Cuid',
+    accessor: 'cuid',
+    showMatching,
+    filterOut,
+    link: (givenId) => {
+      return routes.groupRole({ cuid: givenId })
+    },
+  },
+  {
     Header: 'Group',
     accessor: 'group',
     showMatching,
@@ -16,14 +25,14 @@ export const initialColumns = [
     model: 'group',
     field: 'name',
     link: (givenId) => {
-      return routes.group({ id: givenId })
+      return routes.group({ cuid: givenId })
     },
   },
   {
     Header: 'Role',
     accessor: 'role',
     link: (givenId) => {
-      return routes.groupRole({ id: givenId })
+      return routes.groupRole({ cuid: givenId })
     },
     showMatching,
     filterOut,
@@ -40,7 +49,7 @@ export const initialColumns = [
 ]
 
 const GroupRolesList = () => {
-  let [orderBy, setOrderBy] = useState({ id: 'asc' }) // default order
+  let [orderBy, setOrderBy] = useState({ cuid: 'asc' }) // default order
   let [columns, setColumns] = useState(initialColumns) // default columns
   let [skip, setSkip] = useState(0) // default reocrds to jump
   let [take, setTake] = useState(10) // default records to take
@@ -68,7 +77,7 @@ const GroupRolesList = () => {
         setQuery={setQuery}
         fuzzyQuery={fuzzyQuery}
         setFuzzyQuery={setFuzzyQuery}
-        displayColumn="id"
+        displayColumn="cuid"
         roles={roles}
       />
     </Fragment>

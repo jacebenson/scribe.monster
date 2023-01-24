@@ -14,7 +14,9 @@ describe('modelInstances', () => {
   })
 
   scenario('returns a single modelInstance', async (scenario) => {
-    const result = await modelInstance({ id: scenario.modelInstance.one.id })
+    const result = await modelInstance({
+      cuid: scenario.modelInstance.one.cuid,
+    })
 
     expect(result).toEqual(scenario.modelInstance.one)
   })
@@ -34,9 +36,11 @@ describe('modelInstances', () => {
   })
 
   scenario('updates a modelInstance', async (scenario) => {
-    const original = await modelInstance({ id: scenario.modelInstance.one.id })
+    const original = await modelInstance({
+      cuid: scenario.modelInstance.one.cuid,
+    })
     const result = await updateModelInstance({
-      id: original.id,
+      cuid: original.cuid,
       input: { updatedAt: '2022-12-15T03:27:35.868Z' },
     })
 
@@ -45,9 +49,9 @@ describe('modelInstances', () => {
 
   scenario('deletes a modelInstance', async (scenario) => {
     const original = await deleteModelInstance({
-      id: scenario.modelInstance.one.id,
+      cuid: scenario.modelInstance.one.cuid,
     })
-    const result = await modelInstance({ id: original.id })
+    const result = await modelInstance({ cuid: original.cuid })
 
     expect(result).toEqual(null)
   })

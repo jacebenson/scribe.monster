@@ -40,6 +40,8 @@ let loadRules = async (allRules, table, when, operation) => {
         logger.error(
           `${field} is required for rule ${rule?.title || rule?.file}`
         )
+        //console.log({ rule: JSON.stringify(rule) }) //TODO: This prints out after update of user with
+        //rule: '{"default":{"active":true,"order":100,"when":["after"],"operation":["update"],"table":"user"},"active":true,"order":100,"when":["after"],"operation":["update"],"table":"user"}'
         errors = true
       }
     })
@@ -136,15 +138,17 @@ export const executeAfterReadAllRulesV2 = async ({ table, data }) => {
  * @param {object} data - the object of elements you want to insert
  * @returns {object} { data, status }
  */
-export const executeBeforeUpdateRulesV2 = async ({ table, data, id }) => {
+export const executeBeforeUpdateRulesV2 = async ({ table, data, cuid }) => {
   let rules = await loadRules(allRules, table, 'before', 'update')
+  console.log({ function: 'executeBeforeUpdateRulesV2', rules })
   let status = { code: 'success', message: '' }
   for (let rule of rules /* needs to be a for of to allow break */) {
     try {
       if (status.code == 'success') {
         status.file = rule.file.split('\\dist\\')[1]
-        let output = await rule.command({ data, status, id })
-        status = output.status
+        console.log({ function: './src/lib/rules.js', file: status.file })
+        let output = await rule.command({ data, status, cuid })
+        status = output?.status
       }
     } catch (error) {
       status = { code: 'error from catch', message: error }
@@ -155,21 +159,21 @@ export const executeBeforeUpdateRulesV2 = async ({ table, data, id }) => {
   return { data, status }
 }
 
-export const executeBeforeDeleteRulesV2 = async ({ table, id }) => {
+export const executeBeforeDeleteRulesV2 = async ({ table, cuid }) => {
   let rules = await loadRules(allRules, table, 'before', 'delete')
   let status = { code: 'success', message: '' }
   for (let rule of rules /* needs to be a for of to allow break */) {
     try {
-      let output = await rule.command({ id, status })
+      let output = await rule.command({ cuid, status })
       status = output.status
     } catch (error) {
-      console.log(error)
+      console.log({ funciton: 'executeBeforeDeleteRulesV2', error })
       status = { code: 'error from catch', message: error }
       break
     }
   }
   exitWhenNotSuccess(status)
-  return { id, status }
+  return { cuid, status }
 }
 export const executeAfterDeleteRulesV2 = async ({ table, data }) => {
   console.log('starting executeafterdeleterulesv2', table, data)
@@ -200,15 +204,15 @@ export const executeAfterUpdateRulesV2 = async ({ table, data }) => {
   return { record: data, status }
 }
 
-export const executeBeforeReadRulesV2 = async ({ table, id }) => {
+export const executeBeforeReadRulesV2 = async ({ table, cuid }) => {
   let rules = await loadRules(allRules, table, 'before', 'read')
   let where = []
   let status = { code: 'success', message: '' }
   rules.forEach(async (rule) => {
-    await rule.command({ where, id, status: status })
+    await rule.command({ where, cuid, status: status })
   })
   exitWhenNotSuccess(status)
-  return { where: where[0], id, status }
+  return { where: where[0], cuid, status }
 }
 
 export const executeAfterReadRulesV2 = async ({ table, data }) => {
@@ -221,14 +225,14 @@ export const executeAfterReadRulesV2 = async ({ table, data }) => {
   return { record: data, status }
 }
 
-export const executeBeforeReadRules = async (table, id) => {
+export const executeBeforeReadRules = async (table, cuid) => {
   let rules = await loadRules(allRules, table, 'before', 'read')
   if (rules.length > 0) {
     rules.forEach(async (rule) => {
-      id = await rule.command(id)
+      cuid = await rule.command(cuid)
     })
   }
-  return await id
+  return await cuid
 }
 export const executeAfterReadRules = async (table, record) => {
   let rules = await loadRules(allRules, table, 'after', 'read')
@@ -257,14 +261,14 @@ export const executeAfterUpdateRules = async (table, record) => {
   }
   return await record
 }
-export const executeBeforeDeleteRules = async (table, id) => {
+export const executeBeforeDeleteRules = async (table, cuid) => {
   let rules = await loadRules(allRules, table, 'before', 'delete')
   if (rules.length > 0) {
     rules.forEach((rule) => {
-      id = rule.command(id)
+      cuid = rule.command(cuid)
     })
   }
-  return await id
+  return await cuid
 }
 export const executeAfterDeleteRules = async (table, record) => {
   let rules = await loadRules(allRules, table, 'after', 'delete')

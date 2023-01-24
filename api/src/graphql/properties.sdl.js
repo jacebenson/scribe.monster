@@ -1,6 +1,6 @@
 export const schema = gql`
   type Property {
-    id: Int!
+    cuid: String!
     createdAt: DateTime!
     updatedAt: DateTime!
     entity: String!
@@ -25,7 +25,8 @@ export const schema = gql`
       q: String
     ): Properties! @requireAuth(roles: ["propertyRead", "admin"])
 
-    property(id: Int!): Property @requireAuth(roles: ["propertyRead", "admin"])
+    property(cuid: String!): Property
+      @requireAuth(roles: ["propertyRead", "admin"])
   }
 
   input CreatePropertyInput {
@@ -43,9 +44,9 @@ export const schema = gql`
   type Mutation {
     createProperty(input: CreatePropertyInput!): Property!
       @requireAuth(roles: ["propertyCreate", "admin"])
-    updateProperty(id: Int!, input: UpdatePropertyInput!): Property!
+    updateProperty(cuid: String!, input: UpdatePropertyInput!): Property!
       @requireAuth(roles: ["propertyUpdate", "admin"])
-    deleteProperty(id: Int!): Property!
+    deleteProperty(cuid: String!): Property!
       @requireAuth(roles: ["propertyDelete", "admin"])
   }
 `

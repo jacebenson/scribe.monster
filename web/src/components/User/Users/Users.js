@@ -9,9 +9,10 @@ export const initialColumns = [
   {
     Header: 'Name',
     accessor: 'name',
-    link: (givenId) => {
-      return routes.user({ id: givenId })
-    },
+    //link: (givenId) => {
+    //  console.log({function: 'component:Users:initialColumns:link', givenId})
+    //  return routes.user({ cuid: givenId })
+    //},
     showMatching,
     filterOut,
   },
@@ -38,7 +39,7 @@ export const initialColumns = [
     link: (givenId) => {
       //q={%22AND%22:{%22userID%22:%20620}}
       //q={"AND":[{"userId":{"equals":620}}]}
-      return routes.preferences({ q: `{"userId":${givenId}}` })
+      return routes.preferences({ q: `{"userCuid":${givenId}}` })
     },
   },
 
@@ -52,14 +53,14 @@ export const initialColumns = [
     canSetTake: true,
     canEdit: true,
     editLink: (givenId) => {
-      return routes.user({ id: givenId })
+      return routes.user({ cuid: givenId })
     },
     canDelete: true,
   },
 ]
 
 const UsersList = () => {
-  let [orderBy, setOrderBy] = useState({ id: 'asc' }) // default order
+  let [orderBy, setOrderBy] = useState({ cuid: 'asc' }) // default order
   let [columns, setColumns] = useState(initialColumns) // default columns
   let [skip, setSkip] = useState(0) // default reocrds to jump
   let [take, setTake] = useState(10) // default records to take

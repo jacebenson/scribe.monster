@@ -1,6 +1,6 @@
 export const groups = [
   {
-    id: 1,
+    cuid: 'cld3p8xk10023qwgud5yq2dwe',
     name: 'Administrators',
     description: 'Can CRUD all records.',
     GroupRole: {
