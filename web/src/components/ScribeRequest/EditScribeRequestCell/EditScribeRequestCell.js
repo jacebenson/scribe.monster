@@ -23,7 +23,7 @@ export const QUERY = gql`
         cuid
         name
       }
-      modelInstanceId
+      modelInstanceCuid
       queryTokens
       responseTokens
     }

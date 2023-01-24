@@ -6,7 +6,7 @@ export const schema = gql`
     user: User!
     userCuid: String!
     modelInstance: ModelInstance!
-    modelInstanceId: String!
+    modelInstanceCuid: String!
     queryTokens: Int
     responseTokens: Int
     totalTokens: String #calculated on servcie file
@@ -42,7 +42,7 @@ export const schema = gql`
 
   input UpdateScribeRequestInput {
     userCuid: String
-    modelInstanceId: String
+    modelInstanceCuid: String
     queryTokens: Int
     responseTokens: Int
   }
