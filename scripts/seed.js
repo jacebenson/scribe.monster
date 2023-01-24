@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import fs from 'fs'
+//import fs from 'fs'
 
 import { PrismaClient } from '@prisma/client'
 import cuid from 'cuid'
@@ -46,9 +46,13 @@ async function main() {
 
   await db.prompt.deleteMany({})
   await db.scribeRequest.deleteMany({})
-  // users + groups
+  await db.message.deleteMany({})
+  await db.modelInstance.deleteMany({})
+  await db.property.deleteMany({})
   await db.user.deleteMany({})
   await db.group.deleteMany({})
+
+  // users + groups
   for (const [key, value] of Object.entries(firstSeed)) {
     let newData = []
     for (let record of value) {
@@ -72,11 +76,6 @@ async function main() {
       skipDuplicates: true,
     })
   }
-
-  await db.message.deleteMany({})
-  await db.modelInstance.deleteMany({})
-  await db.property.deleteMany({})
-
   // everything else
   for (const [key, value] of Object.entries(secondSeed)) {
     let newData = []
