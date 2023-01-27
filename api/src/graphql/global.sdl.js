@@ -39,5 +39,6 @@ export const schema = gql`
     price: Sort
     temperature: Sort
     maxTokens: Sort
+    content: Sort
   }
 `

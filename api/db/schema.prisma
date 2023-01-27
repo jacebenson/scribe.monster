@@ -159,3 +159,15 @@ model Prompt {
 
   @@index([userCuid])
 }
+
+// a place to store stews memories with vectors, content, active
+model Memory {
+  cuid      String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  content   String
+  vector    String?
+  active    Boolean  @default(true)
+  title     String
+  // semantic, procedural, episodic
+}

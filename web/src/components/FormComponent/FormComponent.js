@@ -13,6 +13,7 @@ import {
   Spacer,
   Flex,
   Switch,
+  Text,
   Textarea,
 } from '@chakra-ui/react'
 
@@ -249,10 +250,11 @@ const FormComponent = ({
         >
           <FormLabel htmlFor={field.name}>{field.prettyName}</FormLabel>
           <Textarea
+            spellCheck={field?.spellCheck}
             fontFamily={'monospace'}
             id={field.name}
             rows={field?.rows}
-            placeholder={field.placeholder || '...' || ''}
+            placeholder={field.placeholder || 'Enter text here...'}
             readOnly={field.readOnly || false}
             {...register(field.name, {
               required: field?.required || false,
@@ -263,6 +265,18 @@ const FormComponent = ({
               record?.[field.name]?.toString() || field.defaultValue?.toString()
             }
           />
+          {/**countCharacters and countTokens starts at zero and should show when it is zero*/}
+          {(field?.countCharacters || field?.countCharacters == 0) && (
+            <Text fontSize={'xs'} color={'gray.500'}>
+              {field?.countCharacters || 0} characters
+            </Text>
+          )}
+
+          {(field?.countTokens || field?.countTokens == 0) && (
+            <Text fontSize={'xs'} color={'gray.500'}>
+              ~{field?.countTokens || 0} tokens
+            </Text>
+          )}
           <FormErrorMessage>
             {errors[field.name] && errors[field.name].message}
           </FormErrorMessage>

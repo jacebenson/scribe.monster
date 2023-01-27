@@ -78,10 +78,14 @@ let exitWhenNotSuccess = (status) => {
 export const executeBeforeCreateRulesV2 = async ({ table, data }) => {
   let rules = await loadRules(allRules, table, 'before', 'create')
   let status = { code: 'success', message: '' }
+  console.log(`RUNNING executeBeforeCreateRulesV2 ${table}`)
   rules.forEach(async (rule) => {
+    console.log(`Executing ${rule.file}`)
     await rule.command({ data, status })
+    console.log(`Executed ${rule.file}`)
   })
   exitWhenNotSuccess(status)
+  console.log(`STOPPED executeBeforeCreateRulesV2 ${table}`)
   return { data, status }
 }
 
@@ -196,11 +200,15 @@ export const executeAfterDeleteRulesV2 = async ({ table, data }) => {
 export const executeAfterUpdateRulesV2 = async ({ table, data }) => {
   let rules = await loadRules(allRules, table, 'after', 'update')
   let status = { code: 'success', message: '' }
+  console.log(`RUNNING executeAfterUpdateRulesV2 ${table}`)
   rules.forEach(async (rule) => {
+    console.log(`Executing ${rule.file}`)
     await rule.command({ data, status })
+    console.log(`Executed ${rule.file}`)
   })
   exitWhenNotSuccess(status)
   // we return status as part of the return object
+  console.log(`STOPPED executeAfterUpdateRulesV2 ${table}`)
   return { record: data, status }
 }
 

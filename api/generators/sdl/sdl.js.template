@@ -9,7 +9,7 @@ export const schema = gql`
 <%}) %><% } %>
   type Query {
     ${pluralCamelName}: [${singularPascalName}!]! @requireAuth<% if (crud) { %>
-    ${singularCamelName}(cuid: ${cuidType}!): ${singularPascalName} @requireAuth<% } %>
+    ${singularCamelName}(cuid: ${idType}!): ${singularPascalName} @requireAuth<% } %>
   }
 
   input Create${singularPascalName}Input {
@@ -22,7 +22,7 @@ export const schema = gql`
 
   type Mutation {
     create${singularPascalName}(input: Create${singularPascalName}Input!): ${singularPascalName}! @requireAuth
-    update${singularPascalName}(cuid: ${cuidType}!, input: Update${singularPascalName}Input!): ${singularPascalName}! @requireAuth
-    delete${singularPascalName}(cuid: ${cuidType}!): ${singularPascalName}! @requireAuth
+    update${singularPascalName}(cuid: ${idType}!, input: Update${singularPascalName}Input!): ${singularPascalName}! @requireAuth
+    delete${singularPascalName}(cuid: ${idType}!): ${singularPascalName}! @requireAuth
   }<% } %>
 `
