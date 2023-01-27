@@ -1,5 +1,4 @@
 import { db } from 'src/lib/db'
-import fetch from 'node-fetch'
 export const getVector = async (stringForVector) => {
   console.log(`:: Getting Vector ::`)
   let model = 'text-embedding-ada-002'

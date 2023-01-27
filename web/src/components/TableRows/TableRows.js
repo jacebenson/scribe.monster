@@ -120,6 +120,15 @@ const TableRows = ({
         </>
       )
     }
+    if (column.condensedLength) {
+      let condensed = row[column.accessor].slice(0, column.condensedLength)
+      return (
+        <>
+          {menu(row, column)}
+          <Box p="2">{condensed}</Box>
+        </>
+      )
+    }
     if (column.link)
       return (
         <>

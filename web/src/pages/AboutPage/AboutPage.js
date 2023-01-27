@@ -7,7 +7,11 @@ const AboutPage = () => {
     domain: process.env.AUTH0_DOMAIN || false,
     redirect: process.env.AUTH0_REDIRECT_URI || false,
   }
-  return <AboutComponent auth0={auth0} />
+  return (
+    <>
+      <AboutComponent auth0={auth0} />
+    </>
+  )
 }
 
 export default AboutPage
