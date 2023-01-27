@@ -1,18 +1,10 @@
-// In this file, all Page components from 'src/pages` are auto-imported. Nested
-// directories are supported, and should be uppercase. Each subdirectory will be
-// prepended onto the component name.
-//
-// Examples:
-//
-// 'src/pages/HomePage/HomePage.js'         -> HomePage
-// 'src/pages/Admin/BooksPage/BooksPage.js' -> AdminBooksPage
-
 import { Set, Router, Route, Private } from '@redwoodjs/router'
 
 import GroupMembersLayout from 'src/layouts/GroupMembersLayout'
 import GroupRolesLayout from 'src/layouts/GroupRolesLayout'
 import GroupsLayout from 'src/layouts/GroupsLayout'
 import LogsLayout from 'src/layouts/LogsLayout'
+import MemoriesLayout from 'src/layouts/MemoriesLayout'
 import MessagesLayout from 'src/layouts/MessagesLayout'
 import ModelInstancesLayout from 'src/layouts/ModelInstancesLayout'
 import PreferencesLayout from 'src/layouts/PreferencesLayout'
@@ -27,6 +19,7 @@ import Standard from './layouts/Standard/Standard'
 const Routes = () => {
   return (
     <Router>
+      <Route path="/ask" page={AskPage} name="ask" />
       <Route path="/resources" page={ResourcesPage} name="resources" />
       <Route path="/forgot-password" whileLoadingAuth={() => <>Loading...</>} page={ForgotPasswordPage} name="forgotPassword" />
       <Route path="/reset-password" page={ResetPasswordPage} name="resetPassword" />
@@ -115,6 +108,11 @@ const Routes = () => {
               <Route path="/scribe-requests/{cuid}" page={ScribeRequestEditScribeRequestPage} name="scribeRequest" />
               <Route path="/scribe-requests" page={ScribeRequestScribeRequestsPage} name="scribeRequests" />
             </Private>
+          </Set>
+          <Set wrap={MemoriesLayout} title="Memories" titleTo="memories" buttonLabel="New Memory" buttonTo="newMemory">
+            <Route path="/memories/new" page={MemoryNewMemoryPage} name="newMemory" />
+            <Route path="/memories/{cuid}" page={MemoryEditMemoryPage} name="memory" />
+            <Route path="/memories" page={MemoryMemoriesPage} name="memories" />
           </Set>
         </Private>
       </Set>

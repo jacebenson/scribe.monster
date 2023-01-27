@@ -1,5 +1,5 @@
-// To access your database
-// Append api/* to import from api and web/* to import from web
+import { UserInputError } from '@redwoodjs/graphql-server'
+
 import {
   getVector,
   getMemoriesSortedByVector,
@@ -8,20 +8,13 @@ import {
   filterMemories,
   addTokens,
   addCost,
-} from 'api/src/lib/openAIHelper'
+} from 'src/lib/openAIHelper'
 
-export default async ({ args }) => {
+export const stewQuestion = async ({ input }) => {
+  console.log({ function: 'ask', input })
   try {
-    // Your script here...
-    console.log(':: Executing script with args ::')
-    //console.log({ args })
-    if (args._[1] === undefined || args._[1] === '') {
-      console.log(':: No Query provided ::')
-      return
-    }
-    console.log(`:: Loading vector of Query ::`)
-    let query = args._[1]
-    let vectorData = await getVector(query)
+    let question = input.question
+    let vectorData = await getVector(question)
     let vector = vectorData.embedding
     let tokenUsage = {}
     tokenUsage = addTokens({
@@ -38,7 +31,7 @@ export default async ({ args }) => {
     let context = ''
     for (let i = 0; i < memories.length; i++) {
       let memory = memories[i]
-      let summary = await summarizeMemory({ memory, query })
+      let summary = await summarizeMemory({ memory, query: question })
       context += summary.text
       tokenUsage = addTokens({
         tokenObj: tokenUsage,
@@ -48,7 +41,7 @@ export default async ({ args }) => {
     }
     // now lets add the query
     // lets go ahead and try the prompt
-    let answer = await answerMemory({ question: query, context })
+    let answer = await answerMemory({ question, context })
     tokenUsage = await addTokens({
       tokenObj: tokenUsage,
       model: answer.model,
@@ -60,15 +53,15 @@ export default async ({ args }) => {
     for (let model in tokenUsage) {
       cost = addCost({ costObj: cost, model, tokens: tokenUsage[model] })
     }
-
-    console.log({
-      //context,
-      tokenUsage,
-      cost,
-      query,
-      result: answer.text,
-    })
-  } catch (e) {
-    console.log({ e })
+    let record = {
+      question: question || 'No question',
+      context: context || 'No context',
+      answer: answer.text || 'No answer',
+      cost: cost || {},
+      tokenUsage: tokenUsage || {},
+    }
+    return { ...record }
+  } catch (error) {
+    throw new UserInputError(error.message)
   }
 }

@@ -26,7 +26,7 @@ export const schema = gql`
       q: String
     ): ${pluralPascalName}! @requireAuth(roles: ["${singularCamelName}Read", "admin"])
 
-    ${singularCamelName}(cuid: ${cuidType}!): ${singularPascalName} @requireAuth(roles: ["${singularCamelName}Read", "admin"])<% } %>
+    ${singularCamelName}(cuid: ${idType}!): ${singularPascalName} @requireAuth(roles: ["${singularCamelName}Read", "admin"])<% } %>
   }
 
   input Create${singularPascalName}Input {

@@ -4,7 +4,7 @@ import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import ${singularPascalName} from '${importComponentName}'
 
 export const QUERY = gql`
-  query Find${singularPascalName}ById($cuid: ${cuidType}!) {
+  query Find${singularPascalName}ById($cuid: ${idType}!) {
     ${singularCamelName}: ${singularCamelName}(cuid: $cuid) {<% columns.forEach(column => { %>
       <%= column.name %><% }) %>
     }

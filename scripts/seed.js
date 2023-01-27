@@ -14,6 +14,7 @@ import prompt from /*         */ './seedFiles/backup-2023-01-23/prompt.json' // 
 import property from /*      */ './seedFiles/backup-2023-01-23/property.json'
 import scribeRequest from /*   */ './seedFiles/backup-2023-01-23/scribeRequest.json' // not needed
 import user from /*          */ './seedFiles/backup-2023-01-23/user.json'
+import memory from /*         */ './seedFiles/memory.json' // not needed
 // import preference from   /**/ './seedFiles/preference.json'// not needed
 
 //import users from './seedFiles/UserBackup.json'
@@ -34,6 +35,7 @@ const secondSeed = {
   property,
   prompt,
   scribeRequest,
+  memory,
 }
 const db = new PrismaClient()
 let now = (value) => new Date(value)

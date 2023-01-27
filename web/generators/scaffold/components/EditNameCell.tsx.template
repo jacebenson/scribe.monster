@@ -11,14 +11,14 @@ import { Fragment, useState } from 'react'
 import ${singularPascalName}Form from '${importComponentNameForm}'
 
 export const QUERY = gql`
-  query Edit${singularPascalName}ById($cuid: ${cuidType}!) {
+  query Edit${singularPascalName}ById($cuid: ${idType}!) {
     ${singularCamelName}: ${singularCamelName}(cuid: $cuid) {<% columns.forEach(column => { %>
       <%= column.name %><% }) %>
     }
   }
 `
 const UPDATE_${singularConstantName}_MUTATION = gql`
-  mutation Update${singularPascalName}Mutation($cuid: ${cuidType}!, $input: Update${singularPascalName}Input!) {
+  mutation Update${singularPascalName}Mutation($cuid: ${idType}!, $input: Update${singularPascalName}Input!) {
     update${singularPascalName}(cuid: $cuid, input: $input) {<% columns.forEach(column => { %>
       <%= column.name %><% }) %>
     }
