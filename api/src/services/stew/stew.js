@@ -55,9 +55,9 @@ export const stewQuestion = async ({ input }) => {
     }
     let record = {
       question: question || 'No question',
-      context: context || 'No context',
+      context: 'hidden', //context || 'No context',
       answer: answer.text || 'No answer',
-      cost: cost || {},
+      cost: {}, // cost || {},
       tokenUsage: tokenUsage || {},
     }
     return { ...record }

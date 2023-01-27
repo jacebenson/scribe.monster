@@ -5,15 +5,15 @@
 import { PrismaClient } from '@prisma/client'
 import cuid from 'cuid'
 
-import group from /*         */ './seedFiles/backup-2023-01-23/group.json'
+import group from /*         */ './seedFiles/backup-2023-01-27/group.json'
 //import groupMember from /*   */ './seedFiles/backup-2023-01-23/groupMember.json'
 //import groupRole from /*     */ './seedFiles/backup-2023-01-23/groupRole.json'
-import message from /*       */ './seedFiles/backup-2023-01-23/message.json'
-import modelInstance from /* */ './seedFiles/backup-2023-01-23/modelInstance.json'
-import prompt from /*         */ './seedFiles/backup-2023-01-23/prompt.json' // not needed
-import property from /*      */ './seedFiles/backup-2023-01-23/property.json'
-import scribeRequest from /*   */ './seedFiles/backup-2023-01-23/scribeRequest.json' // not needed
-import user from /*          */ './seedFiles/backup-2023-01-23/user.json'
+import message from /*       */ './seedFiles/backup-2023-01-27/message.json'
+import modelInstance from /* */ './seedFiles/backup-2023-01-27/modelInstance.json'
+import prompt from /*         */ './seedFiles/backup-2023-01-27/prompt.json' // not needed
+import property from /*      */ './seedFiles/backup-2023-01-27/property.json'
+import scribeRequest from /*   */ './seedFiles/backup-2023-01-27/scribeRequest.json' // not needed
+import user from /*          */ './seedFiles/backup-2023-01-27/user.json'
 import memory from /*         */ './seedFiles/memory.json' // not needed
 // import preference from   /**/ './seedFiles/preference.json'// not needed
 
@@ -68,8 +68,10 @@ async function main() {
           record.verifiedAt = null
         }
       }
-      delete record.id
-      record.cuid = cuid()
+      if (record.id) {
+        delete record.id
+        record.cuid = cuid()
+      }
       //console.log(`upserting ${key} record: ${record.cuid}`)
       newData.push(record)
     }
