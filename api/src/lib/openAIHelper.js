@@ -1,3 +1,5 @@
+import fetch from 'node-fetch'
+
 import { db } from 'src/lib/db'
 export const getVector = async (stringForVector) => {
   console.log(`:: Getting Vector ::`)
