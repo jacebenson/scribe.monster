@@ -13,6 +13,7 @@ import {
 export const stewQuestion = async ({ input }) => {
   console.log({ function: 'ask', input })
   try {
+    let cost = {}
     let question = input.question
     let vectorData = await getVector(question)
     let vector = vectorData.embedding
@@ -22,9 +23,14 @@ export const stewQuestion = async ({ input }) => {
       model: vectorData.model,
       tokens: vectorData.tokens,
     })
+    cost = addCost({
+      costObj: cost,
+      model: vectorData.model,
+      tokens: vectorData.tokens,
+    })
     let memories = await getMemoriesSortedByVector(vector)
     // filter to only the top 3 with a score of 70 or higher
-    memories = await filterMemories({ memories, quantity: 3, score: 70 })
+    memories = await filterMemories({ memories, quantity: 3, score: 75 })
     // loop through the top 3 memories
     // this needs to wait for the summarizeMemory function to return
     // and wait for the summarizeMemory function to return
@@ -46,7 +52,7 @@ export const stewQuestion = async ({ input }) => {
         context: 'hidden', //context || 'No context',
         answer:
           "I'm not sure.  I don't have enough information to answer that question.",
-        cost: {}, // cost || {},
+        cost: cost || {},
         tokenUsage: tokenUsage || {},
       }
     }
@@ -60,7 +66,6 @@ export const stewQuestion = async ({ input }) => {
     })
     // figure out the cost of the query
     // look over the token usage and add the cost
-    let cost = {}
     for (let model in tokenUsage) {
       cost = addCost({ costObj: cost, model, tokens: tokenUsage[model] })
     }
@@ -68,7 +73,7 @@ export const stewQuestion = async ({ input }) => {
       question: question || 'No question',
       context: 'hidden', //context || 'No context',
       answer: answer.text || 'No answer',
-      cost: {}, // cost || {},
+      cost: cost || {},
       tokenUsage: tokenUsage || {},
     }
     return { ...record }

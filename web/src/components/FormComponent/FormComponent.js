@@ -33,7 +33,9 @@ const FormComponent = ({
   register,
   formState: { errors, isSubmitting },
   children,
+  style,
 }) => {
+  if (!style) style = {}
   const { hasRole /*currentUser*/ } = useAuth()
   fields = fields.filter((field) => {
     if (!field.name) {
@@ -247,6 +249,7 @@ const FormComponent = ({
           pt={field.pt}
           key={field.name}
           isInvalid={errors[field.name]}
+          minW={'maxContent'}
         >
           <FormLabel htmlFor={field.name}>{field.prettyName}</FormLabel>
           <Textarea
@@ -254,7 +257,9 @@ const FormComponent = ({
             fontFamily={'monospace'}
             id={field.name}
             rows={field?.rows}
-            placeholder={field.placeholder || 'Enter text here...'}
+            minW={field?.minW}
+            value={field?.value}
+            placeholder={field?.placeholder || 'Enter text here...'}
             readOnly={field.readOnly || false}
             {...register(field.name, {
               required: field?.required || false,
@@ -305,7 +310,7 @@ const FormComponent = ({
   return (
     <StrictMode>
       <Fragment>
-        <Box key={'formComponentBox'} bg={'white'} p={3}>
+        <Box key={'formComponentBox'} bg={'white'} p={3} style={style || ''}>
           {error?.graphQLErrors[0]?.message && (
             <Alert status="error">
               <AlertIcon />

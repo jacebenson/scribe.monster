@@ -59,20 +59,22 @@ export const getMemoriesSortedByVector = async (vector) => {
   })
   let results = activeMemories.map((memory) => {
     let parsedVector = JSON.parse(memory.vector)
-    //console.log({
-    //  parsedVectorLength: parsedVector.length,
-    //  name: memory.content.substring(0, 20),
-    //})
-    //console.log({ parsedVector })
+    let score = parseFloat((dot(parsedVector, vector) * 100).toFixed(2))
+    let title = memory.title
     return {
-      score: parseFloat((dot(parsedVector, vector) * 100).toFixed(2)),
-      title: memory.title,
+      score,
+      title,
       content: memory.content,
     }
   })
   results.sort((a, b) => {
     return b.score - a.score
   })
+  // log top 5 the results score and title
+  results.slice(0, 5).forEach((result) => {
+    console.log({ score: result.score, title: result.title.substring(0, 20) })
+  })
+
   return results
 }
 
@@ -96,7 +98,6 @@ export const summarizeMemory = async ({ memory, query }) => {
   let summaryMemory = await db.memory.findFirst({
     where: { title: 'Summarize' },
   })
-  console.log({ order: 1, summaryMemory: summaryMemory.title })
   // now lets merge the prompt with the memory and query
   let prompt = summaryMemory.content.replace('{{MEMORY}}', memory.content)
   prompt = prompt.replace('{{QUERY}}', query)
@@ -242,7 +243,7 @@ export const createPrompt = async ({
     },
   })
   console.log(`:: Prompt Created ::`)
-  console.log({ newPrompt, newScribeRequest })
+  //console.log({ newPrompt, newScribeRequest })
   return { prompt: newPrompt, request: newScribeRequest }
 }
 export const filterMemories = async ({ memories, quantity, score }) => {
@@ -282,4 +283,10 @@ export const addCost = ({ costObj, model, tokens }) => {
   }
   costObj.total += tokens * priceSheetPerToken[model]
   return costObj
+}
+export const isJace = (user) => {
+  if (user.username === 'jacebenson') {
+    return true
+  }
+  return false
 }
