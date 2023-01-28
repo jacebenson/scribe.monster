@@ -38,6 +38,7 @@ export default async ({ args }) => {
     let context = ''
     for (let i = 0; i < memories.length; i++) {
       let memory = memories[i]
+      console.log({ title: memory.title, score: memory.score })
       let summary = await summarizeMemory({ memory, query })
       context += summary.text
       tokenUsage = addTokens({
@@ -45,6 +46,10 @@ export default async ({ args }) => {
         model: summary.model,
         tokens: summary.tokens,
       })
+    }
+    if (context === '') {
+      console.log(':: No context found ::')
+      return
     }
     // now lets add the query
     // lets go ahead and try the prompt

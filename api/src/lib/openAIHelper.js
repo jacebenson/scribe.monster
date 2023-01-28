@@ -217,7 +217,7 @@ export const createPrompt = async ({
   let userLookup = null
   if (!user) {
     userLookup = await db.user.findFirst({
-      where: { username: 'jacebenson' },
+      where: { username: 'guest' },
     })
   }
   if (!userLookup) {
@@ -241,6 +241,8 @@ export const createPrompt = async ({
       responseTokens,
     },
   })
+  console.log(`:: Prompt Created ::`)
+  console.log({ newPrompt, newScribeRequest })
   return { prompt: newPrompt, request: newScribeRequest }
 }
 export const filterMemories = async ({ memories, quantity, score }) => {

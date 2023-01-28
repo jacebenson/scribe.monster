@@ -39,6 +39,17 @@ export const stewQuestion = async ({ input }) => {
         tokens: summary.tokens,
       })
     }
+    if (context === '') {
+      // tell the user, We're not sure.
+      return {
+        question: question || 'No question',
+        context: 'hidden', //context || 'No context',
+        answer:
+          "I'm not sure.  I don't have enough information to answer that question.",
+        cost: {}, // cost || {},
+        tokenUsage: tokenUsage || {},
+      }
+    }
     // now lets add the query
     // lets go ahead and try the prompt
     let answer = await answerMemory({ question, context })
