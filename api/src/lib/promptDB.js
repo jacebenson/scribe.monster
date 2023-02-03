@@ -11,10 +11,10 @@ export const prompts = async ({
   suffix,
   field,
 }) => {
-  //console.log({
-  //  function: 'promptDB',
-  //  props: { input, prompt, action, table, type },
-  //})
+  console.log({
+    function: 'promptDB',
+    props: { input, prompt, action, table, type },
+  })
   let where = { name: action }
   let orderBy = { version: 'desc' }
   let instance = await db.modelInstance.findFirst({ where, orderBy })
@@ -65,6 +65,15 @@ export const prompts = async ({
       prepend: context?.prepend || '',
       provider: 'openAi',
     }
+    //if (returnObj.endpoint === 'https://api.openai.com/v1/edits') {
+    //  returnObj.ai.instruction = prompt
+    //  delete returnObj.ai.frequency_penalty
+    //  delete returnObj.ai.max_tokens
+    //  delete returnObj.ai.presence_penalty
+    //  delete returnObj.ai.prompt
+    //  delete returnObj.ai.stop
+    //  delete returnObj.ai.suffix
+    //}
     //console.log({ function: 'promptDB', returnObj })
     return returnObj
   }
