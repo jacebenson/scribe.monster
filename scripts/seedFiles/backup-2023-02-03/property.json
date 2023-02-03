@@ -1,0 +1,7 @@
+[
+{"createdAt":"2022-12-05 09:08:34.791","updatedAt":"2022-12-12 10:00:17.769","entity":"MAILGUN_DOMAIN","type":"string","value":"mg.scribe.monster","cuid":"clde7vbu000117ogu8qa34pu1"},
+{"createdAt":"2022-12-05 09:08:35.175","updatedAt":"2022-12-12 10:02:19.921","entity":"MAILGUN_API_KEY","type":"string","value":"7f3ee308b365cfcf4a42e79b8c3e97c8-48d7d97c-b43b34ea","cuid":"clde7vbu000127oguflexdlfq"},
+{"createdAt":"2022-12-12 10:05:50.561","updatedAt":"2022-12-12 10:05:50.561","entity":"brand","type":"string","value":"ScribeMonster","cuid":"clde7vbu000137ogubhwgfwgv"},
+{"createdAt":"2022-12-12 10:07:53.582","updatedAt":"2022-12-12 10:07:53.582","entity":"domain","type":"string","value":"https://scribe.monster","cuid":"clde7vbu000147ogudueb95a9"},
+{"createdAt":"2022-12-05 09:08:34.246","updatedAt":"2022-12-12 11:03:13.805","entity":"email","type":"string","value":"active","cuid":"clde7vbu000157ogu9b1c8ltk"}
+]

@@ -279,7 +279,7 @@ const FormComponent = ({
 
           {(field?.countTokens || field?.countTokens == 0) && (
             <Text fontSize={'xs'} color={'gray.500'}>
-              ~{field?.countTokens || 0} tokens
+              {field?.countTokens || 0} tokens
             </Text>
           )}
           <FormErrorMessage>

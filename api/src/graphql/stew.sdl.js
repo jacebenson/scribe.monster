@@ -5,10 +5,8 @@ export const schema = gql`
     cost: JSON!
     tokenUsage: JSON!
   }
-  input CreateQuestionInput {
-    question: String!
-  }
+
   type Mutation {
-    stewQuestion(input: CreateQuestionInput!): StewResponse @skipAuth
+    stewQuestion(input: CreateQuestionInput!): StewResponse @requireAuth
   }
 `

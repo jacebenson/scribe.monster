@@ -141,6 +141,19 @@ const SidebarContent = ({ brand, onClose, ...rest }) => {
       role: 'admin',
       navigateTo: 'memories',
     },
+    {
+      name: 'Threads',
+      icon: MdSettingsApplications,
+      role: 'admin',
+      navigateTo: 'threads',
+    },
+    {
+      name: 'Questions',
+      icon: MdSettingsApplications,
+      role: 'admin',
+      navigateTo: 'questions',
+    },
+
     //{ name: 'Logout', icon: MdLogout, navigateTo: 'logout' },
   ].filter((item) => {
     if (item?.requireAuth === true && isAuthenticated) {

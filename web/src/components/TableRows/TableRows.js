@@ -145,12 +145,14 @@ const TableRows = ({
           </Box>
         </>
       )
-    if (column.dataType === 'timestamp')
+    if (column.dataType === 'timestamp'){
+      if(!row[column.accessor]) return <Box p="2"></Box>
       return (
         <Badge colorScheme={'white'}>
           {new Date(row[column.accessor]).toLocaleString()}
         </Badge>
       )
+    }
     if (column.dataType === 'boolean') {
       let bool = 'false'
       if (row[column.accessor] === true) bool = 'true'

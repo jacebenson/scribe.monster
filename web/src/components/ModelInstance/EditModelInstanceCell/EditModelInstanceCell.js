@@ -93,7 +93,7 @@ export const Success = ({ modelInstance }) => {
 
   const onSubmit = (data) => {
     console.log({ function: 'onSubmit', data })
-    onSave(data, modelInstance.id)
+    onSave(data, modelInstance.cuid)
   }
   const onSave = async (input, cuid) => {
     console.log({ function: 'onSave', input })

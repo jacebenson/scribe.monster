@@ -211,3 +211,135 @@ Right now, sometimes when setting this up for the first time, permissions aren't
 1.  Goto prisma's studio by running this on your command line; `yarn rw prisma studio`
 2.  Verify you have a user you created or admin is there.  If missing, spin up `yarn rw dev` and Sign up and try again.
 3.  Still stuck? Verify there's group roles associated to the user and group in question.  If missing, create a group in prisma studio, and a group role of admin.
+
+## Ask Stew Logic
+
+###
+
+![Alt text](./scribeMonster-chat-future.png "a title")
+
+```mermaid
+flowchart TB
+
+classDef done fill:#a2f,stroke:#333,stroke-width:4px;
+%%subgraph legend[Legend]
+    direction LR
+    legend1(fa:fa-database Database)
+    legend2[fa:fa-clock    Short Term Memory]
+    legend3[fa:fa-spinner  Slow]
+    legend4[fa:fa-bolt     Fast]
+    legend5[fa:fa-save     Save]
+%%end
+%%subgraph questionLifecycle
+%%    direction LR
+%%    qState1(Open)
+%%    qState2(Recall)
+%%    qState3(Transform)
+%%    qState4(Research)
+%%    qState5(Summarize Research)
+%%    qState6(Finding Best Results)
+%%    qState7(Formulating Answer)
+%%    qState8(Answered)
+%%    qState1-->qState2
+%%    qState2-->qState3
+%%    qState3-->qState4
+%%    qState4-->qState5
+%%    qState5-->qState6
+%%    qState6-->qState7
+%%    qState7-->qState8
+%%end
+%%userQ-..->qState1
+%%recall-..->qState2
+%%transform-..->qState3
+%%research-..->qState4
+%%summarize-..->qState5
+%%identifyResults-..->qState6
+%%generateAnswers-..->qState7
+%%answered-..->qState8
+
+subgraph recall[Recall]
+    UserQEmbedding(fa:fa-bolt Embedding):::done
+    LookupQuestions(fa:fa-bolt fa:fa-database Lookup Last Questions<br/>update prompt w/Pronouns):::done
+end
+subgraph transform[Transform]
+    generateActions[Generate Actions<br/>text-curie-001]
+    rewritePronowns(fa:fa-spinner Rewite question to use proper pronoun):::done
+    generateEmbedding(fa:fa-bolt fa:fa-save fa:fa-database OpenAI to generate<br/>Question Embedding)
+end
+subgraph research[Research]
+    searchMemories(fa:fa-bolt fa:fa-database Lookup memories):::done
+    makeAPICalls(fa:fa-spinner fa:fa-clock Rest Calls)
+    generateCode(fa:fa-spinner fa:fa-clock Ask OpenAI<br/>for code<br/>code-cushman-001)
+
+end
+subgraph summarize[Summarize Research]
+    summarizeMemory(fa:fa-spinner fa:fa-clock summarize):::done
+    chunkAPI(chunk api)
+    saveAPI(fa:fa-save fa:fa-database  save to memory)
+    summarizeAPI(fa:fa-spinner fa:fa-clock summarize)
+    chunkCode(chunk code)
+    saveCode(fa:fa-save fa:fa-database  save to memory)
+    summarizeCode(fa:fa-spinner fa:fa-clock summarize)
+end
+
+subgraph identifyResults[Finding Best Results]
+    memoryEmbedding(fa:fa-bolt OpenAI to generate<br/>embedding)
+    APIEmbedding(fa:fa-bolt OpenAI to generate<br/>embedding)
+    CodeEmbedding(fa:fa-bolt OpenAI to generate<br/>embedding)
+    addToContextMemory(Add to Context<br/>until 50% of token used):::done
+    addToContextAPI(Add to Context<br/>until 50% of token used)
+    addToContextCode(Add to Context<br/>until 50% of token used)
+end
+
+subgraph generateAnswers[Finding Best Results]
+    memoryAnswers[fa:fa-dollar Create Answer<br/>from Memories]:::done
+    APIAnswers[fa:fa-dollar Create Answer<br/>from APIs]
+    CodeAnswers[fa:fa-dollar Create Answer<br/>from Code]
+    OrderAnswers(fa:fa-dollar Combine and rewite the answer to be convesational):::done
+end
+subgraph answered[Answered]
+Respond:::done
+AskForFeedback
+CreateMemory
+end
+
+userQ(User Asks Question):::done
+
+userQ --> UserQEmbedding
+UserQEmbedding --> LookupQuestions
+LookupQuestions --->rewritePronowns
+LookupQuestions -.top result > 90%.->generateActions
+%%userQ             -->rewritePronowns
+rewritePronowns   -->generateEmbedding
+rewritePronowns   -.->generateActions
+
+generateEmbedding -->searchMemories
+searchMemories    --if embeddingSearch >75%-->summarizeMemory
+generateActions   -.->makeAPICalls
+generateActions   -.->generateCode
+generateActions   -.->searchMemories
+makeAPICalls      --response is small  -->saveAPI
+makeAPICalls      --response is too big-->chunkAPI
+generateCode      --response is small  -->saveCode
+generateCode      --response is too big-->chunkCode
+chunkAPI          -->saveAPI
+saveAPI           -->summarizeAPI
+chunkCode         -->saveCode
+saveCode          -->summarizeCode
+
+summarizeAPI      -->APIEmbedding
+summarizeCode     -->CodeEmbedding
+summarizeMemory   -->memoryEmbedding
+memoryEmbedding   --if embeddingSearch > 75%-->addToContextMemory
+APIEmbedding      --if embeddingSearch > 75%-->addToContextAPI
+CodeEmbedding     --if embeddingSearch > 75%-->addToContextCode
+addToContextMemory-->memoryAnswers
+addToContextAPI   -->APIAnswers
+addToContextCode  -->CodeAnswers
+memoryAnswers     -->OrderAnswers
+APIAnswers        -->OrderAnswers
+CodeAnswers       -->OrderAnswers
+OrderAnswers      -->Respond
+Respond           -->AskForFeedback
+AskForFeedback --positive-->CreateMemory
+```

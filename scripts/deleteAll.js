@@ -6,8 +6,8 @@ export default async ({ args }) => {
   // Your script here...
   console.log(':: Executing script with args ::')
   console.log(args._[1])
-  await db.scribeRequest.deleteMany({})
-  await db.prompt.deleteMany({})
+  //await db.scribeRequest.deleteMany({})
+  await db.activity.deleteMany({})
   await db.user.deleteMany()
   await db.group.deleteMany({})
   await db.groupMember.deleteMany({})

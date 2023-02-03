@@ -17,15 +17,14 @@ export const prompts = async ({
   //})
   let where = { name: action }
   let orderBy = { version: 'desc' }
-  console.log({ where, orderBy })
   let instance = await db.modelInstance.findFirst({ where, orderBy })
   //console.log({ function: 'promptDB', instance })
-  if (!instance) throw 'No model with that name'
-  console.log({
-    function: 'promptDB',
-    prompt: prompt || null,
-    dbFunc: instance?.prompt,
-  })
+  if (!instance) return { error: `No model found matching action '${action}'` }
+  //  console.log({
+  //    function: 'promptDB',
+  //    prompt: prompt || null,
+  //    dbFunc: instance?.prompt,
+  //  })
   let prepend
   let context = vm.createContext({
     prompt,
@@ -42,7 +41,7 @@ export const prompts = async ({
   let script = new vm.Script(instance.prompt)
   //vm.createContext({ promptContext })
   script.runInContext(context)
-  console.log({ context })
+  //console.log({ context })
   if (instance) {
     let returnObj = {
       ai: {
@@ -64,8 +63,9 @@ export const prompts = async ({
       required: ['action'],
       modelInstance: instance.cuid,
       prepend: context?.prepend || '',
+      provider: 'openAi',
     }
-    console.log({ function: 'promptDB', returnObj })
+    //console.log({ function: 'promptDB', returnObj })
     return returnObj
   }
 }

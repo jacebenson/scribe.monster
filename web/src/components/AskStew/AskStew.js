@@ -10,24 +10,33 @@ import { toast } from '@redwoodjs/web/toast'
 
 import FormComponent from 'src/components/FormComponent'
 const ASK_STEW = gql`
-  mutation stewQuestion($input: CreateQuestionInput!) {
-    stewQuestion(input: $input) {
+  mutation createQuestion($input: CreateQuestionInput!) {
+    createQuestion(input: $input) {
+      cuid
       answer
-      context
-      cost
-      tokenUsage
+      rephrasedText
+      answeredAt
+      answeredBy
+      threadCuid
+      thread {
+        question {
+          text
+          answer
+          state
+        }
+      }
     }
   }
 `
-let now = new Date().toLocaleTimeString('en-US', {
-  hour: 'numeric',
-  minute: 'numeric',
-  hour12: true,
-})
+let now = (() => {
+  return new Date().toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  })
+})()
 
 const AskStew = () => {
-  //let [answer, setAnswer] = useState('')
-  let [scrollPosition, setScrollPosition] = useState(0)
   let [text, setText] = useState('')
   let [contentRows, setContentRows] = useState(0)
   let [messages, setMessages] = useState([
@@ -38,6 +47,7 @@ const AskStew = () => {
       when: now,
     },
   ])
+  let [thread, setThread] = useState('')
   useEffect(() => {
     // get the last message and scroll to it
     const lastMessage = document.querySelector('.chat-message:last-child')
@@ -45,31 +55,36 @@ const AskStew = () => {
       lastMessage.scrollIntoView()
     }
   }, [messages])
-  const [stewQuestion, { loading, error }] = useMutation(ASK_STEW, {
+  const [createQuestion, { loading, error }] = useMutation(ASK_STEW, {
     onCompleted: (response) => {
-      toast.success('Question Answered')
-      console.log('stewQuestion', stewQuestion, response)
+      console.log({ function: 'useMutation.onCompleted', response })
+      toast.success('Looking into it...')
+      console.log('createQuestion', createQuestion, response)
       //setAnswer(response.stewQuestion.answer)
       setMessages([
         ...messages,
         {
-          message: response.stewQuestion.answer.trim(),
+          message: response.createQuestion.answer.trim(),
           name: 'stew',
           // hh:mm
           when: now,
         },
       ])
       //navigate(routes.memories())
+      setThread(response.createQuestion.threadCuid)
     },
     onError: (error) => {
+      console.log({ function: 'useMutation.onError', error })
       toast.error(error.message)
     },
   })
   const onSubmit = async (data) => {
+    console.log({ function: 'askStew component', data })
+    if (!data.threadCuid) delete data.threadCuid
     setMessages([
       ...messages,
       {
-        message: data.question,
+        message: data.text,
         name: 'You',
         // hh:mm
         when: now,
@@ -82,12 +97,12 @@ const AskStew = () => {
   }
 
   const onSave = async (input) => {
-    await stewQuestion({ variables: { input } })
+    await createQuestion({ variables: { input } })
   }
   const fields = [
     {
       value: text,
-      name: 'question',
+      name: 'text',
       prettyName: '',
       placeholder: ` `,
       type: 'textarea',
@@ -101,11 +116,16 @@ const AskStew = () => {
       },
       spellCheck: 'true',
     },
+    {
+      name: 'threadCuid',
+      prettyName: 'Thread',
+      placeholder: ` `,
+      readOnly: true,
+      defaultValue: thread || '',
+      //type: 'hidden',
+    },
   ]
-  const roles = {
-    //update: ['logUpdate'],
-    delete: ['noOneNotRealRole'],
-  }
+
   const {
     handleSubmit,
     register,
@@ -113,6 +133,7 @@ const AskStew = () => {
   } = useForm()
   const chatMessage = ({ message, name, when }) => (
     <Flex
+      key={message + when}
       p={4}
       /**make background color alternate if stew or not
        */
@@ -162,7 +183,7 @@ const AskStew = () => {
 
       <FormComponent
         fields={fields}
-        roles={roles}
+        roles={{}}
         onSubmit={onSubmit}
         loading={loading}
         error={error}

@@ -79,12 +79,19 @@ export const executeBeforeCreateRulesV2 = async ({ table, data }) => {
   let rules = await loadRules(allRules, table, 'before', 'create')
   let status = { code: 'success', message: '' }
   console.log(`RUNNING executeBeforeCreateRulesV2 ${table}`)
-  rules.forEach(async (rule) => {
+  for (let i = 0; i < rules.length; i++) {
+    let rule = rules[i]
     console.log(`Executing ${rule.file}`)
-    await rule.command({ data, status })
-    console.log(`Executed ${rule.file}`)
-  })
-  exitWhenNotSuccess(status)
+    let returnObj = await rule.command({ data, status })
+    data = returnObj.data
+    status = returnObj.status
+    console.log(`Executed ${rule.file}, status: ${status.code}`)
+    if (status.code != 'success') {
+      console.log(`STOPPING executeBeforeCreateRulesV2 ${table}`)
+      throw exitWhenNotSuccess(status)
+    }
+  }
+
   console.log(`STOPPED executeBeforeCreateRulesV2 ${table}`)
   return { data, status }
 }

@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "createdAt": "2022-12-05 03:07:25.265",
+    "updatedAt": "2022-12-05 03:07:25.265",
+    "name": "Administrators",
+    "description": "Can CRUD all records."
+  },
+  {
+    "id": 2,
+    "createdAt": "2022-12-05 03:07:26.363",
+    "updatedAt": "2022-12-05 03:07:26.363",
+    "name": "Managers",
+    "description": "Can CRU users, can CRU groups, can CRD group members"
+  },
+  {
+    "id": 3,
+    "createdAt": "2022-12-05 03:07:27.78",
+    "updatedAt": "2022-12-05 03:07:27.78",
+    "name": "Employees",
+    "description": "Can CRU users, can R groups, can R group members"
+  }
+]

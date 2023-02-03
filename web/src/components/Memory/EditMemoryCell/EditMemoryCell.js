@@ -1,5 +1,6 @@
 import { Fragment, useState } from 'react'
 
+import GPT3Tokenizer from 'gpt3-tokenizer'
 import { useForm } from 'react-hook-form'
 
 import { navigate, routes } from '@redwoodjs/router'
@@ -56,11 +57,17 @@ export const Loading = () => <div>Loading...</div>
 export const Failure = ({ error }) => (
   <div className="rw-cell-error">{error.message}</div>
 )
-
 export const Success = ({ memory }) => {
+  let countTokens = (content) => {
+    const tokenizer = new GPT3Tokenizer({ type: 'gpt3' })
+
+    const tokensObj = tokenizer.encode(content)
+    const countedTokens = tokensObj.text.length
+    return countedTokens
+  }
   let loadedLines = memory.content.split('\n').length
   let [characters, setCharacters] = useState(memory.content.length)
-  let [tokens, setTokens] = useState(Math.floor(memory.content.length / 4))
+  let [tokens, setTokens] = useState(countTokens(memory.content))
   let [contentRows, setContentRows] = useState(loadedLines)
 
   const [updateMemory, { loading, error }] = useMutation(
@@ -90,7 +97,7 @@ export const Success = ({ memory }) => {
     },
   })
 
-  const onDelete = (cuid) => {
+  const onDelete = (/*cuid*/) => {
     if (
       confirm(
         'Are you sure you want to delete Memory ' +
@@ -101,6 +108,8 @@ export const Success = ({ memory }) => {
       deleteMemory({ variables: { cuid: memory.cuid } })
     }
   }
+  const tokenizer = new GPT3Tokenizer({ type: 'gpt3' })
+
   const fields = [
     {
       name: 'title',
@@ -115,7 +124,11 @@ export const Success = ({ memory }) => {
       placeholder: 'Enter your content here',
       onChange: (e) => {
         setCharacters(e.target.value.length)
-        setTokens(Math.floor(e.target.value.length / 4))
+        //setTokens(Math.floor(e.target.value.length / 4))
+        const tokensObj = tokenizer.encode(e.target.value)
+        const countedTokens = tokensObj.text.length
+        setTokens(countedTokens)
+        //setTokens(Math.floor(e.target.value.length / 4))
         const height = Math.floor(e.target.scrollHeight / 22)
         setContentRows(height)
         //setContentRows(e.target.value.split('\n').length)

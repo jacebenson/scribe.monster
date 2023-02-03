@@ -5,7 +5,7 @@ import { handler } from './scribe'
 //   Improve this test with help from the Redwood Testing Doc:
 //    https://redwoodjs.com/docs/testing#testing-functions
 
-describe('scribe function', () => {
+describe('scribeV2 function', () => {
   it('Should respond with 200', async () => {
     const httpEvent = mockHttpEvent({
       queryStringParameters: {
@@ -17,7 +17,7 @@ describe('scribe function', () => {
     const { data } = JSON.parse(response.body)
 
     expect(response.statusCode).toBe(200)
-    expect(data).toBe('scribe function')
+    expect(data).toBe('scribeV2 function')
   })
 
   // You can also use scenarios to test your api functions

@@ -30,23 +30,24 @@ model Message {
 }
 
 model User {
-  cuid                String          @id @default(cuid())
-  createdAt           DateTime        @default(now())
-  updatedAt           DateTime        @updatedAt
-  name                String          @default("")
-  username            String          @unique @default("")
+  cuid                String        @id @default(cuid())
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  name                String        @default("")
+  username            String        @unique @default("")
   verifiedAt          DateTime?
-  email               String?         @default("")
-  hashedPassword      String?         @default("")
-  salt                String?         @default("")
+  email               String?       @default("")
+  hashedPassword      String?       @default("")
+  salt                String?       @default("")
   resetToken          String?
   resetTokenExpiresAt DateTime?
-  level               String?         @default("free")
-  extensionKey        String?         @default("")
-  GroupMember         GroupMember[]   @relation("UserGroupMember")
-  Preference          Preference[]    @relation("UserPreference")
-  ScribeReqest        ScribeRequest[]
-  Prompt              Prompt[]
+  level               String?       @default("free")
+  extensionKey        String?       @default("")
+  GroupMember         GroupMember[] @relation("UserGroupMember")
+  Preference          Preference[]  @relation("UserPreference")
+  Question            Question[]
+  Thread              Thread[]
+  Activity            Activity[]
 }
 
 model Preference {
@@ -107,57 +108,27 @@ model Log {
 }
 
 model ModelInstance {
-  cuid             String          @id @default(cuid())
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  name             String          @default("")
-  version          Float           @default(1)
-  description      String          @default("This action")
-  endpoint         String          @default("https://api.openai.com/v1/completions")
-  cost             Float           @default(0.02)
-  price            Float           @default(0.20)
-  model            String          @default("text-davinci-002")
+  cuid             String     @id @default(cuid())
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  name             String     @default("")
+  version          Float      @default(1)
+  description      String     @default("This action")
+  endpoint         String     @default("https://api.openai.com/v1/completions")
+  cost             Float      @default(0.02)
+  price            Float      @default(0.20)
+  model            String     @default("text-davinci-002")
   prompt           String
-  temperature      Float           @default(0.7)
-  maxTokens        Int             @default(500)
-  topP             Int             @default(1)
-  bestOf           Int             @default(1)
-  n                Int             @default(1)
-  stop             String          @default("END")
-  frequencyPenalty Float           @default(0)
-  presencePenalty  Float           @default(0)
-  required         String          @default("action")
-  ScribeReqest     ScribeRequest[]
-}
-
-model ScribeRequest {
-  cuid              String        @id @default(cuid())
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-  userCuid          String?
-  modelInstanceCuid String
-  queryTokens       Int?
-  responseTokens    Int?
-  modelInstance     ModelInstance @relation(fields: [modelInstanceCuid], references: [cuid])
-  user              User?         @relation(fields: [userCuid], references: [cuid])
-
-  @@index([modelInstanceCuid])
-  @@index([userCuid])
-}
-
-// I want to allow users to store their prompts and responses in the database
-// it will be an OPT-IN feature
-model Prompt {
-  cuid      String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userCuid  String?
-  user      User?    @relation(fields: [userCuid], references: [cuid])
-  prompt    String
-  action    String   @default("")
-  response  String?
-
-  @@index([userCuid])
+  temperature      Float      @default(0.7)
+  maxTokens        Int        @default(500)
+  topP             Int        @default(1)
+  bestOf           Int        @default(1)
+  n                Int        @default(1)
+  stop             String     @default("END")
+  frequencyPenalty Float      @default(0)
+  presencePenalty  Float      @default(0)
+  required         String     @default("action")
+  activity         Activity[]
 }
 
 // a place to store stews memories with vectors, content, active
@@ -170,4 +141,55 @@ model Memory {
   active    Boolean  @default(true)
   title     String
   // semantic, procedural, episodic
+}
+
+model Question {
+  cuid                String    @id @default(cuid())
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  userCuid            String?
+  user                User?     @relation(fields: [userCuid], references: [cuid])
+  state               String    @default("open")
+  text                String
+  rephrasedText       String?
+  rephrasedTextVector String?
+  context             String?
+  answer              String?
+  answeredAt          DateTime?
+  answeredBy          String?   @default("stew")
+  active              Boolean   @default(true)
+  thread              Thread    @relation(fields: [threadCuid], references: [cuid])
+  threadCuid          String
+
+  @@index([userCuid])
+  @@index([threadCuid])
+}
+
+model Thread {
+  cuid      String     @id @default(cuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userCuid  String?
+  user      User?      @relation(fields: [userCuid], references: [cuid])
+  question  Question[]
+
+  @@index([userCuid])
+}
+
+model Activity {
+  cuid              String        @id @default(cuid())
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  queryTokens       Int
+  responseTokens    Int
+  modelInstanceCuid String
+  modelInstance     ModelInstance @relation(fields: [modelInstanceCuid], references: [cuid])
+  cost              Float
+  price             Float
+  userCuid          String
+  user              User          @relation(fields: [userCuid], references: [cuid])
+  action            String
+
+  @@index([modelInstanceCuid])
+  @@index([userCuid])
 }

@@ -5,20 +5,12 @@
 import { PrismaClient } from '@prisma/client'
 import cuid from 'cuid'
 
-import group from /*         */ './seedFiles/backup-2023-01-27/group.json'
-//import groupMember from /*   */ './seedFiles/backup-2023-01-23/groupMember.json'
-//import groupRole from /*     */ './seedFiles/backup-2023-01-23/groupRole.json'
-import message from /*       */ './seedFiles/backup-2023-01-27/message.json'
-import modelInstance from /* */ './seedFiles/backup-2023-01-27/modelInstance.json'
-import prompt from /*         */ './seedFiles/backup-2023-01-27/prompt.json' // not needed
-import property from /*      */ './seedFiles/backup-2023-01-27/property.json'
-import scribeRequest from /*   */ './seedFiles/backup-2023-01-27/scribeRequest.json' // not needed
-import user from /*          */ './seedFiles/backup-2023-01-27/user.json'
-import memory from /*         */ './seedFiles/memory.json' // not needed
-// import preference from   /**/ './seedFiles/preference.json'// not needed
-
-//import users from './seedFiles/UserBackup.json'
-//import { users, bulkUsers } from './seedFiles/userSeed'
+import group from /*         */ './seedFiles/2023-02-03/group.json'
+import memory from /*        */ './seedFiles/2023-02-03/memory.json' // not needed
+import message from /*       */ './seedFiles/2023-02-03/message.json'
+import modelInstance from /* */ './seedFiles/2023-02-03/modelInstance.json'
+import property from /*      */ './seedFiles/2023-02-03/property.json'
+import user from /*          */ './seedFiles/2023-02-03/user.json'
 
 const dotenv = require('dotenv')
 dotenv.config()
@@ -33,8 +25,6 @@ const secondSeed = {
   message,
   modelInstance,
   property,
-  prompt,
-  scribeRequest,
   memory,
 }
 const db = new PrismaClient()
@@ -46,13 +36,67 @@ async function main() {
   // for users, groups we're going to upsert individual records
   // for everything esle, we're going ot bulk insert after modifing the JSON in memory
 
-  await db.prompt.deleteMany({})
-  await db.scribeRequest.deleteMany({})
   await db.message.deleteMany({})
   await db.modelInstance.deleteMany({})
   await db.property.deleteMany({})
   await db.user.deleteMany({})
   await db.group.deleteMany({})
+  let firstNames = [
+    'Al,',
+    'Bob',
+    'Charlie',
+    'Dave',
+    'Evan',
+    'Frank',
+    'George',
+    'Harry',
+    'Ivan',
+    'John',
+    'Kevin',
+    'Larry',
+    'Mike',
+    'Nate',
+    'Oscar',
+    'Paul',
+    'Quinn',
+    'Ralph',
+    'Steve',
+    'Tom',
+    'Ulysses',
+    'Victor',
+    'Walter',
+    'Xavier',
+    'Yancy',
+    'Zachary',
+  ]
+  let lastNames = [
+    'Adams',
+    'Baker',
+    'Carter',
+    'Davis',
+    'Evans',
+    'Franklin',
+    'Gibson',
+    'Harris',
+    'Ingram',
+    'Johnson',
+    'King',
+    'Lambert',
+    'Miller',
+    'Nelson',
+    'Owens',
+    'Patterson',
+    'Quinn',
+    'Roberts',
+    'Smith',
+    'Taylor',
+    'Underwood',
+    'Vance',
+    'Washington',
+    'Xavier',
+    'Young',
+    'Zimmerman',
+  ]
 
   // users + groups
   for (const [key, value] of Object.entries(firstSeed)) {
@@ -61,6 +105,19 @@ async function main() {
       record.createdAt = now(record.createdAt)
       record.updatedAt = now(record.updatedAt)
       if (key === 'user') {
+        // if name is null, generate a name
+        if (!record.name) {
+          let name = `${
+            firstNames[Math.floor(Math.random() * firstNames.length)]
+          } ${lastNames[Math.floor(Math.random() * lastNames.length)]}`
+          let username =
+            name.replace(' ', '').toLowerCase() +
+            Math.floor(Math.random() * 1000)
+          record.name = name
+          record.username = username
+          record.email = `${username}@example.com`
+        }
+        record.resetToken = null
         record.resetTokenExpiresAt = null
         if (record.verifiedAt !== null) {
           record.verifiedAt = now(record.verifiedAt)
@@ -75,10 +132,12 @@ async function main() {
       //console.log(`upserting ${key} record: ${record.cuid}`)
       newData.push(record)
     }
-    await db[key].createMany({
+    console.log(`bulk inserting ${key} records: ${newData.length}`)
+    let fristSeedResult = await db[key].createMany({
       data: newData,
       skipDuplicates: true,
     })
+    console.log(fristSeedResult)
   }
   // everything else
   for (const [key, value] of Object.entries(secondSeed)) {

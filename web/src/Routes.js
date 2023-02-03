@@ -9,7 +9,9 @@ import MessagesLayout from 'src/layouts/MessagesLayout'
 import ModelInstancesLayout from 'src/layouts/ModelInstancesLayout'
 import PreferencesLayout from 'src/layouts/PreferencesLayout'
 import PropertiesLayout from 'src/layouts/PropertiesLayout'
+import QuestionsLayout from 'src/layouts/QuestionsLayout'
 import ScribeRequestsLayout from 'src/layouts/ScribeRequestsLayout'
+import ThreadsLayout from 'src/layouts/ThreadsLayout'
 import UsersLayout from 'src/layouts/UsersLayout'
 import AboutPage from 'src/pages/AboutPage'
 import HomePage from 'src/pages/HomePage'
@@ -113,6 +115,16 @@ const Routes = () => {
             <Route path="/memories/new" page={MemoryNewMemoryPage} name="newMemory" />
             <Route path="/memories/{cuid}" page={MemoryEditMemoryPage} name="memory" />
             <Route path="/memories" page={MemoryMemoriesPage} name="memories" />
+          </Set>
+          <Set wrap={ThreadsLayout} title="Threads" titleTo="threads" buttonLabel="New Thread" buttonTo="newThread">
+            <Route path="/threads/new" page={ThreadNewThreadPage} name="newThread" />
+            <Route path="/threads/{cuid}" page={ThreadEditThreadPage} name="thread" />
+            <Route path="/threads" page={ThreadThreadsPage} name="threads" />
+          </Set>
+          <Set wrap={QuestionsLayout} title="Questions" titleTo="questions" buttonLabel="New Question" buttonTo="newQuestion">
+            <Route path="/questions/new" page={QuestionNewQuestionPage} name="newQuestion" />
+            <Route path="/questions/{cuid}" page={QuestionEditQuestionPage} name="question" />
+            <Route path="/questions" page={QuestionQuestionsPage} name="questions" />
           </Set>
         </Private>
       </Set>

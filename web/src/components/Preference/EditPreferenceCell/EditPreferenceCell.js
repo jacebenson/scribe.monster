@@ -73,10 +73,7 @@ export const Success = ({ preference }) => {
     onSave(data, preference.cuid)
   }
   const onSave = (input, cuid) => {
-    const castInput = Object.assign(input, {
-      userCuid: input.user,
-    })
-    updatePreference({ variables: { cuid, input: castInput } })
+    updatePreference({ variables: { cuid, input } })
   }
 
   const [deletePreference] = useMutation(DELETE_PREFERENCE_MUTATION, {
@@ -107,7 +104,7 @@ export const Success = ({ preference }) => {
 
     {
       // {"name":"userId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"type":"Int","hasDefaultValue":false,"isGenerated":false,"isUpdatedAt":false,"label":"User id","component":"NumberField","defaultProp":"defaultValue","deserilizeFunction":"","validation":"{{ required: true }}","listDisplayFunction":"truncate"}
-      name: 'user',
+      name: 'userCuid',
       prettyName: 'User id',
       required: 'This is required',
       // If this is a reference you probably want this below

@@ -1,0 +1,5 @@
+[
+{"createdAt":"2022-12-05 09:07:25.265","updatedAt":"2022-12-05 09:07:25.265","name":"Administrators","description":"Can CRUD all records.","cuid":"clde7va5n00007ogu5lqzb37l"},
+{"createdAt":"2022-12-05 09:07:26.363","updatedAt":"2022-12-05 09:07:26.363","name":"Managers","description":"Can CRU users, can CRU groups, can CRD group members","cuid":"clde7va5n00017ogu0att2t4s"},
+{"createdAt":"2022-12-05 09:07:27.78","updatedAt":"2022-12-05 09:07:27.78","name":"Employees","description":"Can CRU users, can R groups, can R group members","cuid":"clde7va5o00027oguhnmp2tlh"}
+]
