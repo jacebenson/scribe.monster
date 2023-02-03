@@ -5,12 +5,12 @@
 import { PrismaClient } from '@prisma/client'
 import cuid from 'cuid'
 
-import group from /*         */ './seedFiles/2023-02-03/group.json'
-import memory from /*        */ './seedFiles/2023-02-03/memory.json' // not needed
-import message from /*       */ './seedFiles/2023-02-03/message.json'
-import modelInstance from /* */ './seedFiles/2023-02-03/modelInstance.json'
-import property from /*      */ './seedFiles/2023-02-03/property.json'
-import user from /*          */ './seedFiles/2023-02-03/user.json'
+import group from /*         */ './seedFiles/backup-2023-02-03/group.json'
+import memory from /*        */ './seedFiles/backup-2023-02-03/memory.json' // not needed
+import message from /*       */ './seedFiles/backup-2023-02-03/message.json'
+import modelInstance from /* */ './seedFiles/backup-2023-02-03/modelInstance.json'
+import property from /*      */ './seedFiles/backup-2023-02-03/property.json'
+import user from /*          */ './seedFiles/backup-2023-02-03/user.json'
 
 const dotenv = require('dotenv')
 dotenv.config()
@@ -107,18 +107,18 @@ async function main() {
       if (key === 'user') {
         // if name is null, generate a name
         if (!record.name) {
-          let name = `${
-            firstNames[Math.floor(Math.random() * firstNames.length)]
-          } ${lastNames[Math.floor(Math.random() * lastNames.length)]}`
-          let username =
-            name.replace(' ', '').toLowerCase() +
-            Math.floor(Math.random() * 1000)
-          record.name = name
-          record.username = username
-          record.email = `${username}@example.com`
+          //let name = `${
+          //  firstNames[Math.floor(Math.random() * firstNames.length)]
+          //} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`
+          //let username =
+          //  name.replace(' ', '').toLowerCase() +
+          //  Math.floor(Math.random() * 1000)
+          //record.name = name
+          //record.username = username
+          //record.email = `${username}@example.com`
         }
-        record.resetToken = null
-        record.resetTokenExpiresAt = null
+        //record.resetToken = null
+        //record.resetTokenExpiresAt = null
         if (record.verifiedAt !== null) {
           record.verifiedAt = now(record.verifiedAt)
         } else {
