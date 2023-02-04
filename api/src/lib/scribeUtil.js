@@ -46,6 +46,20 @@ let providerSheet = ({ responseTokens, characters }) => {
           model: 'text-embedding-ada-002',
           endpoint: 'https://api.openai.com/v1/embeddings',
         },
+        'code-davinci-002': {
+          name: 'Code Davinci',
+          cost: 0.02 / 1000,
+          maxTokens: 4000,
+          model: 'code-davinci-002',
+          endpoint: 'https://api.openai.com/v1/completions',
+        },
+        'code-davinci-edit-001': {
+          name: 'Code Davinci Edit',
+          cost: 0.02 / 1000,
+          maxTokens: 4000,
+          model: 'code-davinci-edit-001',
+          endpoint: 'https://api.openai.com/v1/edits',
+        },
       },
     },
     cohere: {
@@ -357,6 +371,7 @@ export let getTextCompletion = async ({
     body: JSON.stringify({ ...promptConfig.ai }),
   })
   let data = await response.json()
+  console.log({ function: 'getTextCompletion', data })
   let queryTokens = data?.usage?.prompt_tokens
   let responseTokens = data?.usage?.completion_tokens
   let responseText = () => {
