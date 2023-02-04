@@ -51,8 +51,9 @@ const SignupForm = () => {
     },
     {
       name: 'email',
-      prettyName: 'Email (not required, used for password resets*)',
+      prettyName: 'Email (going passwordless soon*)',
       placeholder: 'deckard.cain@example.com',
+      required: 'This is required',
     },
 
     {

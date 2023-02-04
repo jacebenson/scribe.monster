@@ -36,7 +36,7 @@ model User {
   name                String        @default("")
   username            String        @unique @default("")
   verifiedAt          DateTime?
-  email               String?       @default("")
+  email               String        @unique
   hashedPassword      String?       @default("")
   salt                String?       @default("")
   resetToken          String?
@@ -140,6 +140,7 @@ model Memory {
   vector    String?
   active    Boolean  @default(true)
   title     String
+  source    String?
   // semantic, procedural, episodic
 }
 

@@ -7,4 +7,8 @@ export default async ({ args }) => {
   // Your script here...
   console.log(':: Executing script with args ::')
   console.log(args)
+
+  // get all memories
+  let memories = await db.memory.findMany({
+    where: { }
 }

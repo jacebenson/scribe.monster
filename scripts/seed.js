@@ -5,27 +5,29 @@
 import { PrismaClient } from '@prisma/client'
 import cuid from 'cuid'
 
-import group from /*         */ './seedFiles/backup-2023-02-03/group.json'
-import memory from /*        */ './seedFiles/backup-2023-02-03/memory.json' // not needed
-import message from /*       */ './seedFiles/backup-2023-02-03/message.json'
-import modelInstance from /* */ './seedFiles/backup-2023-02-03/modelInstance.json'
-import property from /*      */ './seedFiles/backup-2023-02-03/property.json'
-import user from /*          */ './seedFiles/backup-2023-02-03/user.json'
+import activity from /*         */ './seedFiles/backup-2023-02-04/activity.json'
+import group from /*         */ './seedFiles/backup-2023-02-04/group.json'
+import memory from /*        */ './seedFiles/backup-2023-02-04/memory.json' // not needed
+import modelInstance from /* */ './seedFiles/backup-2023-02-04/modelInstance.json'
+import property from /*      */ './seedFiles/backup-2023-02-04/property.json'
+import question from /*      */ './seedFiles/backup-2023-02-04/question.json'
+import thread from /*      */ './seedFiles/backup-2023-02-04/thread.json'
+import user from /*          */ './seedFiles/backup-2023-02-04/user.json'
 
 const dotenv = require('dotenv')
 dotenv.config()
 // lets make a list of the seed objects we want to seed where the key is the table name
 const firstSeed = {
   group,
-  //groupRole,
   user,
-  //groupMember,
 }
 const secondSeed = {
-  message,
   modelInstance,
   property,
   memory,
+  thread,
+  question,
+  activity,
 }
 const db = new PrismaClient()
 let now = (value) => new Date(value)
@@ -36,11 +38,6 @@ async function main() {
   // for users, groups we're going to upsert individual records
   // for everything esle, we're going ot bulk insert after modifing the JSON in memory
 
-  await db.message.deleteMany({})
-  await db.modelInstance.deleteMany({})
-  await db.property.deleteMany({})
-  await db.user.deleteMany({})
-  await db.group.deleteMany({})
   let firstNames = [
     'Al,',
     'Bob',
@@ -100,6 +97,7 @@ async function main() {
 
   // users + groups
   for (const [key, value] of Object.entries(firstSeed)) {
+    db[key].deleteMany({}) // delete all records
     let newData = []
     for (let record of value) {
       record.createdAt = now(record.createdAt)
@@ -141,6 +139,7 @@ async function main() {
   }
   // everything else
   for (const [key, value] of Object.entries(secondSeed)) {
+    db[key].deleteMany({}) // delete all records
     let newData = []
     // load up users into memory
     let users = await db.user.findMany({
@@ -182,16 +181,19 @@ async function main() {
   const jace = await db.user.findUnique({
     where: { username: 'jacebenson' },
   })
+
   let groupMember = {
     userCuid: jace.cuid,
     groupCuid: adminGroup.cuid,
   }
+  await db.groupMember.deleteMany({}) // delete all records
   await db.groupMember.create({ data: groupMember })
   // create the grouprole for admin
   let groupRole = {
     groupCuid: adminGroup.cuid,
     role: 'admin',
   }
+  await db.groupRole.deleteMany({}) // delete all records
   await db.groupRole.create({ data: groupRole })
   return
 }
