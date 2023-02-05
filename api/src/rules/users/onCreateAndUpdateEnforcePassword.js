@@ -13,8 +13,10 @@ module.exports = {
         // if password is empty, remove it.
         delete data.hashedPassword
       } else if (data?.hashedPassword?.length < 4) {
-        status.code = 'error'
-        status.message = 'Password not long enough.  Update not saved'
+        return {
+          data,
+          status: { code: 'failure', message: 'Password too short' },
+        }
       }
     } catch (e) {
       logger.error(e)

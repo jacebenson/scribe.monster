@@ -9,13 +9,13 @@ module.exports = {
   operation: ['create'],
   file: __filename,
   table: 'user',
-  command: async function ({ data }) {
-    console.log('data')
+  command: async function ({ data, status }) {
+    console.log({ data })
     try {
       let brand = (await getProperty('brand')) || 'Undefined'
       let domain = (await getProperty('domain')) || 'https://example.com'
       let rendered = render({
-        name: data.name,
+        name: data?.name || data.username,
         login: { text: 'Login', url: `${domain}/login` },
         brand,
         whatIsThis: `${brand} is a Chrome extension that give you the power of openAI.
@@ -49,9 +49,9 @@ That's all to say, THANK YOU for trying this out!`,
       })
       let client = await email({ provider: 'mailgun' })
       if (!client.error) {
-        await client?.send(
+        let message = await client?.send(
           {
-            to: data.email,
+            to: data.username,
             from: `${brand} <jace@${client.domain}>`,
             'h:Reply-To': `jace@$tskr.io`, //not working
             subject: `Welcome to ${brand}`,
@@ -62,6 +62,7 @@ That's all to say, THANK YOU for trying this out!`,
             logger.info(body)
           }
         )
+        console.log({ message })
       }
       if (client.error) {
         logger.error(`${client.error}`)
@@ -69,6 +70,6 @@ That's all to say, THANK YOU for trying this out!`,
     } catch (e) {
       logger.error(e)
     }
-    return await { data }
+    return { data, status }
   },
 }

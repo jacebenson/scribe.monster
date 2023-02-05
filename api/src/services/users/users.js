@@ -17,16 +17,22 @@ import {
 let table = 'user'
 
 export const createUser = async ({ input }) => {
+  console.log({ function: 'createUser', input })
   try {
-    let { data } = await executeBeforeCreateRulesV2({ table, data: input })
-    let createdRecord = await db[table].create({ data })
-
-    let { record } = await executeAfterCreateRulesV2({
-      table,
-      data: createdRecord,
-    })
+    let data = input
+    let preData = await executeBeforeCreateRulesV2({ table, data })
+    data = preData.data
+    let status = preData.status || { code: 'success', message: 'Omitted' }
+    console.log({ function: 'createUser', data, status })
+    let user = await db[table].create({ data })
+    console.log({ function: 'createUser', user })
+    let postData = await executeAfterCreateRulesV2({ table, data: user })
+    let record = postData.record
+    status = postData.status || { code: 'success', message: 'Omitted' }
+    console.log({ record, status })
     return { ...record }
   } catch (error) {
+    console.log({ error })
     throw new UserInputError(error.message)
   }
 }

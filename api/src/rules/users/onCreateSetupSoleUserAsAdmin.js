@@ -8,7 +8,7 @@ module.exports = {
   operation: ['create'],
   table: 'user',
   file: __filename,
-  command: async function ({ record }) {
+  command: async function ({ data, status }) {
     try {
       // if this is the only user, make them an admin
       // on create, check if this is the only user, if so,
@@ -32,7 +32,7 @@ module.exports = {
         })
         await db.groupMember.create({
           data: {
-            userCuid: record.cuid,
+            userCuid: data.cuid,
             group: { connect: { name: 'Administrators' } },
           },
         })
@@ -45,6 +45,6 @@ module.exports = {
     } catch (e) {
       logger.error(e)
     }
-    return await { record }
+    return await { data, status }
   },
 }

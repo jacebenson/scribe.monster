@@ -77,8 +77,28 @@ let exitWhenNotSuccess = (status) => {
  */
 export const executeBeforeCreateRulesV2 = async ({ table, data }) => {
   let rules = await loadRules(allRules, table, 'before', 'create')
-  let status = { code: 'success', message: '' }
   console.log(`RUNNING executeBeforeCreateRulesV2 ${table}`)
+  let status = { code: 'success', message: '' }
+  for (let rule of rules) {
+    try {
+      if (status.code == 'success') {
+        status.file = rule.file.split('\\dist\\')[1]
+        console.log({ function: './src/lib/rules.js', file: status.file })
+        let output = await rule.command({ data, status })
+        status = output?.status
+        data = output?.data
+        console.log({ data, status })
+      }
+      if (status.code != 'success') {
+        break
+      }
+    } catch (error) {
+      status = { code: 'error from catch', message: error }
+      break
+    }
+  }
+  exitWhenNotSuccess(status)
+  /*
   for (let i = 0; i < rules.length; i++) {
     let rule = rules[i]
     console.log(`Executing ${rule.file}`)
@@ -91,7 +111,7 @@ export const executeBeforeCreateRulesV2 = async ({ table, data }) => {
       throw exitWhenNotSuccess(status)
     }
   }
-
+*/
   console.log(`STOPPED executeBeforeCreateRulesV2 ${table}`)
   return { data, status }
 }
@@ -104,11 +124,30 @@ export const executeBeforeCreateRulesV2 = async ({ table, data }) => {
  * @returns {object} { data, status }
  */
 export const executeAfterCreateRulesV2 = async ({ table, data }) => {
+  console.log({ function: 'executeAfterCreateRulesV2', table, data })
   let rules = await loadRules(allRules, table, 'after', 'create')
   let status = { code: 'success', message: '' }
-  rules.forEach(async (rule) => {
-    await rule.command({ data, status })
-  })
+  for (let rule of rules) {
+    try {
+      if (status.code == 'success') {
+        status.file = rule.file.split('\\dist\\')[1]
+        console.log({ function: './src/lib/rules.js', file: status.file })
+        let output = await rule.command({ data, status })
+        status = output?.status || status
+        data = output?.data
+        console.log({ data, status })
+      }
+      if (status.code != 'success') {
+        break
+      }
+    } catch (error) {
+      status = { code: 'error from catch', message: error }
+      break
+    }
+  }
+  //rules.forEach(async (rule) => {
+  //  await rule.command({ data, status })
+  //})
   exitWhenNotSuccess(status)
   // we return status as part of the return object
   return { record: data, status }

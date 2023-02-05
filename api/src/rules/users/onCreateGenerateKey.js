@@ -6,7 +6,7 @@ module.exports = {
   operation: ['create'],
   file: __filename,
   table: 'user',
-  command: async function ({ data }) {
+  command: async function ({ data, status }) {
     console.log('data')
     try {
       data.extensionKey = (function randomStringGenerator() {
@@ -23,6 +23,6 @@ module.exports = {
     } catch (e) {
       logger.error(e)
     }
-    return await { data }
+    return await { data, status }
   },
 }

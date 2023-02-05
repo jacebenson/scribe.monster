@@ -56,25 +56,16 @@ export const handler = async (event, context) => {
   }
   const signupOptions = {
     handler: async ({ username, hashedPassword, salt, userAttributes }) => {
-      //let user = await db.user.create({
-      //  data: {
-      //    email: username,
-      //    hashedPassword: hashedPassword,
-      //    salt: salt,
-      //    name: userAttributes.name,
-      //  },
-      //})
-      return await createUser({
+      let user = await createUser({
         input: {
           username: username,
           hashedPassword: hashedPassword,
           salt: salt,
           name: userAttributes.name,
-          email: userAttributes.email,
           // skipPassword: true,
         },
       })
-      //return modifiedUser.record
+      return user
     },
 
     errors: {

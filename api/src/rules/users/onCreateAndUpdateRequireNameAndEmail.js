@@ -1,15 +1,19 @@
 module.exports = {
-  active: false,
-  order: 100,
+  active: true,
+  order: 90,
   when: ['before'],
   operation: ['create', 'update'],
   table: 'user',
   file: __filename,
-  command: async function ({ input, status }) {
-    if (input.email == '' || input.name == '') {
-      status.code = 'failure'
-      status.message = `Email and Name are required`
+  command: async function ({ data, status }) {
+    data.name = data?.name?.trim()
+    data.email = data?.username?.trim()
+    if (!data?.name || !data?.email) {
+      return {
+        data,
+        status: { code: 'failure', message: 'Name and Email are required' },
+      }
     }
-    return await { input, status }
+    return await { data, status }
   },
 }

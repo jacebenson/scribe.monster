@@ -45,17 +45,10 @@ const SignupForm = () => {
     },
     {
       name: 'username',
-      prettyName: 'Username',
-      placeholder: 'deckard.cain',
-      required: 'This is required',
-    },
-    {
-      name: 'email',
       prettyName: 'Email (going passwordless soon*)',
       placeholder: 'deckard.cain@example.com',
       required: 'This is required',
     },
-
     {
       name: 'password',
       prettyName: 'Password',
