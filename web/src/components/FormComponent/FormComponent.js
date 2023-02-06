@@ -17,11 +17,12 @@ import {
   Textarea,
 } from '@chakra-ui/react'
 
-import { useAuth } from '@redwoodjs/auth'
+import { useAuth } from 'src/auth'
 
 import MonacoEditor from '../MonacoEditor/MonacoEditor'
 import PasswordField from '../PasswordField/PasswordField'
 import ReferenceField from '../ReferenceField/ReferenceField'
+import { Link, NavLink, routes } from '@redwoodjs/router'
 const FormComponent = ({
   record,
   fields,
@@ -303,6 +304,18 @@ const FormComponent = ({
             ref={React.createRef()}
           />
         </>
+      )
+    }
+    if (field.type === 'link') {
+      console.log({ field  })
+      html = (
+        <Box key={field.name} pt={2}>
+          <Link to={routes[field.to](field.record)} key={field.name}>
+              {field.prettyName}
+
+          </Link>
+          </Box>
+
       )
     }
     return html

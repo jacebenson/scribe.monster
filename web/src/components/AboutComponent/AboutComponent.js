@@ -2,9 +2,9 @@ import { Fragment, useState } from 'react'
 
 import { Box, Button, Link } from '@chakra-ui/react'
 
-import { useAuth } from '@redwoodjs/auth'
 import { navigate } from '@redwoodjs/router'
 
+import { useAuth } from 'src/auth'
 import { PlayIcon } from 'src/components/CallToActionWithVideo/'
 import CallToActionWithVideo from 'src/components/CallToActionWithVideo/'
 import Welcome from 'src/components/Welcome'

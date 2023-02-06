@@ -12,8 +12,9 @@ import {
   Badge,
 } from '@chakra-ui/react'
 
-import { useAuth } from '@redwoodjs/auth'
 import { Link, navigate } from '@redwoodjs/router'
+
+import { useAuth } from 'src/auth'
 
 import DeleteButton from '../DeleteButton/DeleteButton'
 import EditButton from '../EditButton/EditButton'
@@ -145,8 +146,8 @@ const TableRows = ({
           </Box>
         </>
       )
-    if (column.dataType === 'timestamp'){
-      if(!row[column.accessor]) return <Box p="2"></Box>
+    if (column.dataType === 'timestamp') {
+      if (!row[column.accessor]) return <Box p="2"></Box>
       return (
         <Badge colorScheme={'white'}>
           {new Date(row[column.accessor]).toLocaleString()}

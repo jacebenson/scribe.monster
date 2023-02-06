@@ -7,9 +7,9 @@ module.exports = {
   order: 100,
   when: ['after'],
   operation: ['update'],
-  file: __filename.split('/dist')[1],
+  file: __filename || 'onUpdateSendUserForgotPassword',
   table: 'user',
-  command: async function ({ data }) {
+  command: async function ({ data, status }) {
     try {
       if (!data.resetToken) return { data }
       if (new Date(data.resetTokenExpiresAt) < new Date()) return { data }
@@ -46,6 +46,6 @@ module.exports = {
       logger.error(e)
       log(e.message)
     }
-    return await { data }
+    return await { data, status }
   },
 }

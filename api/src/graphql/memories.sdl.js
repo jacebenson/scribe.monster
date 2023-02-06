@@ -4,6 +4,7 @@ export const schema = gql`
     createdAt: DateTime!
     updatedAt: DateTime!
     content: String!
+    source: String
     vector: String
     active: Boolean!
     title: String
@@ -31,6 +32,7 @@ export const schema = gql`
 
   input CreateMemoryInput {
     content: String!
+    source: String
     vector: String
     active: Boolean!
     title: String!
@@ -39,6 +41,7 @@ export const schema = gql`
   input UpdateMemoryInput {
     cuid: String
     content: String
+    source: String
     vector: String
     active: Boolean
     title: String

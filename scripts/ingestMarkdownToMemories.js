@@ -14,7 +14,7 @@ export default async ({ args }) => {
   // title = file name
   // content = file contents
   // vector = getVector(file contents)
-  let dir = 'scripts/seedFiles/servicenow-legal-2023-02-03'
+  let dir = 'scripts/seedFiles/heating'
   let files = fs.readdirSync(dir)
   for (let i = 0; i < files.length; i++) {
     console.log({ step: 'reading file', file: files[i] })

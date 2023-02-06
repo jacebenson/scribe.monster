@@ -40,8 +40,6 @@ let loadRules = async (allRules, table, when, operation) => {
         logger.error(
           `${field} is required for rule ${rule?.title || rule?.file}`
         )
-        //console.log({ rule: JSON.stringify(rule) }) //TODO: This prints out after update of user with
-        //rule: '{"default":{"active":true,"order":100,"when":["after"],"operation":["update"],"table":"user"},"active":true,"order":100,"when":["after"],"operation":["update"],"table":"user"}'
         errors = true
       }
     })
@@ -190,13 +188,14 @@ export const executeAfterReadAllRulesV2 = async ({ table, data }) => {
  */
 export const executeBeforeUpdateRulesV2 = async ({ table, data, cuid }) => {
   let rules = await loadRules(allRules, table, 'before', 'update')
-  console.log({ function: 'executeBeforeUpdateRulesV2', rules })
+  console.log({ function: 'executeBeforeUpdateRulesV2' })
   let status = { code: 'success', message: '' }
   for (let rule of rules /* needs to be a for of to allow break */) {
     try {
       if (status.code == 'success') {
         status.file = rule.file.split('\\dist\\')[1]
-        console.log({ function: './src/lib/rules.js', file: status.file })
+        //console.log({ function: './src/lib/rules.js', file: status.file })
+        console.log(`Executing Before [${rule.order}] update ${status.file}`)
         let output = await rule.command({ data, status, cuid })
         status = output?.status
       }
@@ -246,16 +245,25 @@ export const executeAfterDeleteRulesV2 = async ({ table, data }) => {
 export const executeAfterUpdateRulesV2 = async ({ table, data }) => {
   let rules = await loadRules(allRules, table, 'after', 'update')
   let status = { code: 'success', message: '' }
-  console.log(`RUNNING executeAfterUpdateRulesV2 ${table}`)
-  rules.forEach(async (rule) => {
-    console.log(`Executing ${rule.file}`)
-    await rule.command({ data, status })
-    console.log(`Executed ${rule.file}`)
-  })
-  exitWhenNotSuccess(status)
-  // we return status as part of the return object
-  console.log(`STOPPED executeAfterUpdateRulesV2 ${table}`)
-  return { record: data, status }
+  //console.log({ function: 'executeAfterUpdateRulesV2', rules })
+  for (let rule of rules /* needs to be a for of to allow break */) {
+    try {
+      if (status.code == 'success') {
+        status.file = rule.file.split('\\dist\\')[1]
+        //console.log({ function: './src/lib/rules.js', file: status.file })
+        console.log(`Executing After [${rule.order}] Update ${status.file}`)
+        let output = await rule.command({ data, status })
+        status = output?.status
+      }
+    } catch (error) {
+      status = { code: 'error from catch', message: error }
+      break // stops other rules from running
+    }
+    exitWhenNotSuccess(status)
+    // we return status as part of the return object
+    console.log(`STOPPED executeAfterUpdateRulesV2 ${table}`)
+    return { record: data, status }
+  }
 }
 
 export const executeBeforeReadRulesV2 = async ({ table, cuid }) => {

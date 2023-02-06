@@ -3,6 +3,7 @@ import { db } from '../db.js'
 export const getUser = async (session) => {
   try {
     // look up the user by the session id
+    console.log({ function: 'dbauth.js', session })
     let userData = await db.user.findUnique({
       where: { cuid: session.id },
       select: {

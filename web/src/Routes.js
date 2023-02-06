@@ -1,10 +1,12 @@
 import { Set, Router, Route, Private } from '@redwoodjs/router'
 
+import { useAuth } from 'src/auth'
 import GroupMembersLayout from 'src/layouts/GroupMembersLayout'
 import GroupRolesLayout from 'src/layouts/GroupRolesLayout'
 import GroupsLayout from 'src/layouts/GroupsLayout'
 import LogsLayout from 'src/layouts/LogsLayout'
 import MemoriesLayout from 'src/layouts/MemoriesLayout'
+import MemoryChunksLayout from 'src/layouts/MemoryChunksLayout'
 import MessagesLayout from 'src/layouts/MessagesLayout'
 import ModelInstancesLayout from 'src/layouts/ModelInstancesLayout'
 import PreferencesLayout from 'src/layouts/PreferencesLayout'
@@ -20,7 +22,7 @@ import Standard from './layouts/Standard/Standard'
 
 const Routes = () => {
   return (
-    <Router>
+    <Router useAuth={useAuth}>
       <Route path="/ask" page={AskPage} name="ask" />
       <Route path="/resources" page={ResourcesPage} name="resources" />
       <Route path="/forgot-password" whileLoadingAuth={() => <>Loading...</>} page={ForgotPasswordPage} name="forgotPassword" />
@@ -115,6 +117,11 @@ const Routes = () => {
             <Route path="/memories/new" page={MemoryNewMemoryPage} name="newMemory" />
             <Route path="/memories/{cuid}" page={MemoryEditMemoryPage} name="memory" />
             <Route path="/memories" page={MemoryMemoriesPage} name="memories" />
+          </Set>
+          <Set wrap={MemoryChunksLayout} title="MemoryChunks" titleTo="memoryChunks" buttonLabel="New MemoryChunk" buttonTo="newMemoryChunk">
+            <Route path="/memory-chunks/new" page={MemoryChunkNewMemoryChunkPage} name="newMemoryChunk" />
+            <Route path="/memory-chunks/{cuid}" page={MemoryChunkEditMemoryChunkPage} name="memoryChunk" />
+            <Route path="/memory-chunks" page={MemoryChunkMemoryChunksPage} name="memoryChunks" />
           </Set>
           <Set wrap={ThreadsLayout} title="Threads" titleTo="threads" buttonLabel="New Thread" buttonTo="newThread">
             <Route path="/threads/new" page={ThreadNewThreadPage} name="newThread" />

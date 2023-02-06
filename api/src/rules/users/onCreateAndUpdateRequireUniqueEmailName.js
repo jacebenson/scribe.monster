@@ -1,7 +1,7 @@
 import { db } from 'src/lib/db'
 
 module.exports = {
-  active: true,
+  active: false, //TODO: make this true
   order: 100,
   when: ['before'],
   operation: ['create', 'update'],

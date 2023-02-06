@@ -46,6 +46,10 @@ const NewMemory = () => {
       required: 'This is required',
     },
     {
+      name: 'source',
+      prettyName: 'Source',
+    },
+    {
       name: 'content',
       prettyName: 'Content',
       type: 'textarea',

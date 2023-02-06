@@ -1,4 +1,4 @@
-// We only need this import 👇
+import { authDecoder } from '@redwoodjs/auth-dbauth-api'
 import { createGraphQLHandler } from '@redwoodjs/graphql-server'
 
 // We now use glob imports for services, directives and sdls 👇
@@ -11,6 +11,7 @@ import { db } from 'src/lib/db'
 import { logger } from 'src/lib/logger'
 
 export const handler = createGraphQLHandler({
+  authDecoder,
   loggerConfig: { logger, options: {} },
   getCurrentUser,
   directives,

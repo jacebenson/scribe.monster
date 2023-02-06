@@ -133,15 +133,30 @@ model ModelInstance {
 
 // a place to store stews memories with vectors, content, active
 model Memory {
-  cuid      String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  content   String
-  vector    String?
-  active    Boolean  @default(true)
-  title     String
-  source    String?
+  cuid        String        @id @default(cuid())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  content     String
+  vector      String?
+  active      Boolean       @default(true)
+  title       String
+  source      String?
   // semantic, procedural, episodic
+  MemoryChunk MemoryChunk[]
+}
+
+model MemoryChunk {
+  cuid       String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  content    String
+  vector     String?
+  active     Boolean  @default(true)
+  title      String
+  memoryCuid String
+  memory     Memory   @relation(fields: [memoryCuid], references: [cuid])
+
+  @@index([memoryCuid])
 }
 
 model Question {

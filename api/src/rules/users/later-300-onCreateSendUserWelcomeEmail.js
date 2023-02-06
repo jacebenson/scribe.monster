@@ -7,7 +7,7 @@ module.exports = {
   order: 100,
   when: ['after'],
   operation: ['create'],
-  file: __filename,
+  file: __filename || 'senduserwelcomeemail',
   table: 'user',
   command: async function ({ data, status }) {
     console.log({ data })

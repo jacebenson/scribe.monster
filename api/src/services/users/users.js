@@ -92,6 +92,7 @@ export const user = async ({ cuid }) => {
   }
 }
 export const updateUser = async ({ cuid, input }) => {
+  //console.log({ function: 'updateUser', cuid, input })
   try {
     let { data, where } = await executeBeforeUpdateRulesV2({
       table,
@@ -109,6 +110,7 @@ export const updateUser = async ({ cuid, input }) => {
       data: updatedRecord,
       cuid,
     })
+    console.log({ function: 'updateUser after', record })
     return { ...record }
   } catch (error) {
     throw new UserInputError(error.message)

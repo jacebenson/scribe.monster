@@ -11,10 +11,10 @@ import {
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 
-import { useAuth } from '@redwoodjs/auth'
 import { navigate, routes } from '@redwoodjs/router'
 import { Toaster, toast } from '@redwoodjs/web/toast'
 
+import { useAuth } from 'src/auth'
 import CookieModal from 'src/components/CookieModal'
 import FormComponent from 'src/components/FormComponent'
 const LoginForm = () => {
@@ -31,6 +31,7 @@ const LoginForm = () => {
     formState: { errors, isSubmitting },
   } = useForm()
   const onSubmit = async (data) => {
+    console.log({ data })
     const response = await logIn({ ...data })
     if (response.error) {
       toast.error(response.error)
@@ -41,8 +42,8 @@ const LoginForm = () => {
   let fields = [
     {
       name: 'username',
-      prettyName: 'Username',
-      placeholder: 'your.username',
+      prettyName: 'Email',
+      placeholder: 'deckard.cain@example.com',
       required: 'This is required',
     },
 

@@ -3,11 +3,11 @@ import { groups, properties } from 'src/lib/initialRecords'
 import { logger } from 'src/lib/logger'
 module.exports = {
   active: true,
-  order: 10,
+  order: 200,
   when: ['after'],
   operation: ['create'],
   table: 'user',
-  file: __filename,
+  file: __filename || 'setupsoleuserasadmin',
   command: async function ({ data, status }) {
     try {
       // if this is the only user, make them an admin

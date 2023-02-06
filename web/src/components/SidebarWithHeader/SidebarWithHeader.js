@@ -36,8 +36,9 @@ import {
   MdSettingsApplications,
 } from 'react-icons/md'
 
-import { useAuth } from '@redwoodjs/auth'
 import { routes, navigate } from '@redwoodjs/router'
+
+import { useAuth } from 'src/auth'
 
 import NavItem from '../NavItem/NavItem'
 const SidebarWithHeader = ({ brand, children }) => {
@@ -130,16 +131,16 @@ const SidebarContent = ({ brand, onClose, ...rest }) => {
       navigateTo: 'modelInstances',
     },
     {
-      name: 'Requests',
-      icon: MdSettingsApplications,
-      role: 'admin',
-      navigateTo: 'scribeRequests',
-    },
-    {
       name: 'Memories',
       icon: MdSettingsApplications,
       role: 'admin',
       navigateTo: 'memories',
+    },
+    {
+      name: 'MemoriesChunks',
+      icon: MdSettingsApplications,
+      role: 'admin',
+      navigateTo: 'memoryChunks',
     },
     {
       name: 'Threads',

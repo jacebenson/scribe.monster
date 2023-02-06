@@ -1,7 +1,7 @@
 import { db } from 'src/lib/db'
 import { logger } from 'src/lib/logger'
 module.exports = {
-  active: true,
+  active: false,
   order: 10,
   when: ['after'],
   operation: ['update', 'create'],
