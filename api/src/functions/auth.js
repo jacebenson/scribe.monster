@@ -18,19 +18,19 @@ export const handler = async (event, context) => {
     // address in a toast message so the user will know it worked and where
     // to look for the email.
     handler: (user) => {
-      try{
-      let updatedUser = updateUser({
-        cuid: user.cuid,
-        input: {
-          resetToken: user.resetToken,
-        },
-      })
-      console.log({ function: 'auth.js', updatedUser })
-      if (user.email === '') throw 'No email on file'
-    } catch (error) {
-      console.log({ function: 'auth.js', error })
-      throw error
-    }
+      try {
+        let updatedUser = updateUser({
+          cuid: user.cuid,
+          input: {
+            resetToken: user.resetToken,
+          },
+        })
+        console.log({ function: 'auth.js', updatedUser })
+        if (user.email === '') throw 'No email on file'
+      } catch (error) {
+        console.log({ function: 'auth.js', error })
+        throw error
+      }
 
       return user
     },
@@ -117,7 +117,7 @@ export const handler = async (event, context) => {
     //
     // If this returns anything else, it will be returned by the
     // `signUp()` function in the form of: `{
-      // message:
+    // message:
     //'String here' }`.
     handler: ({ username, hashedPassword, salt, userAttributes }) => {
       let user = createUser({
