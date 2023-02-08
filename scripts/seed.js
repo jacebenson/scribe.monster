@@ -5,14 +5,14 @@
 import { PrismaClient } from '@prisma/client'
 import cuid from 'cuid'
 
-import activity from /*         */ './seedFiles/backup-2023-02-04/activity.json'
-import group from /*         */ './seedFiles/backup-2023-02-04/group.json'
-import memory from /*        */ './seedFiles/backup-2023-02-04/memory.json' // not needed
-import modelInstance from /* */ './seedFiles/backup-2023-02-04/modelInstance.json'
-import property from /*      */ './seedFiles/backup-2023-02-04/property.json'
-import question from /*      */ './seedFiles/backup-2023-02-04/question.json'
-import thread from /*      */ './seedFiles/backup-2023-02-04/thread.json'
-import user from /*          */ './seedFiles/backup-2023-02-04/user.json'
+import activity from /*      */ './seedFiles/backup-2023-02-07/activity.json'
+import group from /*         */ './seedFiles/backup-2023-02-07/group.json'
+import memory from /*        */ './seedFiles/backup-2023-02-07/memory.json' // not needed
+import modelInstance from /* */ './seedFiles/backup-2023-02-07/modelInstance.json'
+import property from /*      */ './seedFiles/backup-2023-02-07/property.json'
+import question from /*      */ './seedFiles/backup-2023-02-07/question.json'
+import thread from /*        */ './seedFiles/backup-2023-02-07/thread.json'
+import user from /*          */ './seedFiles/backup-2023-02-07/user.json'
 
 const dotenv = require('dotenv')
 dotenv.config()
@@ -117,6 +117,10 @@ async function main() {
         }
         //record.resetToken = null
         //record.resetTokenExpiresAt = null
+        delete record.resetToken
+        delete record.resetTokenExpiresAt
+        record.loginToken = record.hashedPassword
+        delete record.hashedPassword
         if (record.verifiedAt !== null) {
           record.verifiedAt = now(record.verifiedAt)
         } else {
@@ -179,7 +183,7 @@ async function main() {
     where: { name: 'Administrators' },
   })
   const jace = await db.user.findUnique({
-    where: { username: 'jacebenson' },
+    where: { username: 'jace@benson.run' },
   })
 
   let groupMember = {

@@ -245,7 +245,7 @@ export const executeAfterDeleteRulesV2 = async ({ table, data }) => {
 export const executeAfterUpdateRulesV2 = async ({ table, data }) => {
   let rules = await loadRules(allRules, table, 'after', 'update')
   let status = { code: 'success', message: '' }
-  //console.log({ function: 'executeAfterUpdateRulesV2', rules })
+  console.log({ function: 'executeAfterUpdateRulesV2' })
   for (let rule of rules /* needs to be a for of to allow break */) {
     try {
       if (status.code == 'success') {
@@ -262,8 +262,8 @@ export const executeAfterUpdateRulesV2 = async ({ table, data }) => {
     exitWhenNotSuccess(status)
     // we return status as part of the return object
     console.log(`STOPPED executeAfterUpdateRulesV2 ${table}`)
-    return { record: data, status }
   }
+  return { record: data, status }
 }
 
 export const executeBeforeReadRulesV2 = async ({ table, cuid }) => {

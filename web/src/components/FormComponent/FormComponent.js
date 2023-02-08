@@ -60,6 +60,7 @@ const FormComponent = ({
         pt={field.pt}
         key={field.name}
         isInvalid={errors[field.name]}
+        display={field.display}
       >
         <FormLabel htmlFor={field.name}>{field.prettyName}</FormLabel>
         <Input

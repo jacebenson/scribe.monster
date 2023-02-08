@@ -1,6 +1,6 @@
 import { logger } from 'src/lib/logger'
 module.exports = {
-  active: true,
+  active: false,
   order: 30,
   when: ['before'],
   operation: ['create', 'update'],

@@ -23,11 +23,12 @@ import Standard from './layouts/Standard/Standard'
 const Routes = () => {
   return (
     <Router useAuth={useAuth}>
+      <Route path="/login" page={Login2Page} name="login" />
       <Route path="/ask" page={AskPage} name="ask" />
       <Route path="/resources" page={ResourcesPage} name="resources" />
       <Route path="/forgot-password" whileLoadingAuth={() => <>Loading...</>} page={ForgotPasswordPage} name="forgotPassword" />
       <Route path="/reset-password" page={ResetPasswordPage} name="resetPassword" />
-      <Route path="/login" page={LoginPage} name="login" />
+      <Route path="/login2" page={LoginPage} name="login2" />
       <Route path="/signup" page={SignupPage} name="signup" />
 
       <Set wrap={Standard}>

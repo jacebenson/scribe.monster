@@ -12,7 +12,7 @@ function randomString(len, charSet) {
   return randomString
 }
 module.exports = {
-  active: true,
+  active: false,
   order: 10,
   when: ['before'],
   operation: ['update', 'create'],

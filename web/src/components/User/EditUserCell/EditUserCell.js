@@ -63,12 +63,12 @@ export const Success = ({ user }) => {
   const onSubmit = (data) => {
     // if resetToken is empty delete it
     // if resetTokenExpiresAt is empty delete it
-    if (data.resetToken === '') {
-      delete data.resetToken
-    }
-    if (data.resetTokenExpiresAt === '') {
-      delete data.resetTokenExpiresAt
-    }
+    //if (data.resetToken === '') {
+    //  delete data.resetToken
+    //}
+    //if (data.resetTokenExpiresAt === '') {
+    //  delete data.resetTokenExpiresAt
+    //}
     onSave(data, user.cuid)
   }
   const onSave = (input, cuid) => {

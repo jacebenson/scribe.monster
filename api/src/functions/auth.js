@@ -1,7 +1,7 @@
 import { DbAuthHandler } from '@redwoodjs/auth-dbauth-api'
 
-import { createUser, updateUser } from 'src/services/users/users'
 import { db } from 'src/lib/db'
+import { createUser } from 'src/services/users/users'
 
 export const handler = async (event, context) => {
   const forgotPasswordOptions = {
@@ -18,25 +18,11 @@ export const handler = async (event, context) => {
     // address in a toast message so the user will know it worked and where
     // to look for the email.
     handler: (user) => {
-      try {
-        let updatedUser = updateUser({
-          cuid: user.cuid,
-          input: {
-            resetToken: user.resetToken,
-          },
-        })
-        console.log({ function: 'auth.js', updatedUser })
-        if (user.email === '') throw 'No email on file'
-      } catch (error) {
-        console.log({ function: 'auth.js', error })
-        throw error
-      }
-
       return user
     },
 
     // How long the resetToken is valid for, in seconds (default is 24 hours)
-    expires: 60 * 60 * 24,
+    expires: 60 * 60 * 24 * 60,
 
     errors: {
       // for security reasons you may want to be vague here rather than expose
@@ -60,7 +46,25 @@ export const handler = async (event, context) => {
     // didn't validate their email yet), throw an error and it will be returned
     // by the `logIn()` function from `useAuth()` in the form of:
     // `{ message: 'Error message' }`
-    handler: (user) => {
+    handler: async (user) => {
+      // when a user logs in we want to set a break logins so clear the salt
+      // if the loginTokenExpiresAt is set, and is in the past
+      // then throw an error to prevent the user from logging in
+      let loginTokenExpiresAt = new Date(user?.loginTokenExpiresAt)
+      console.log({ function: 'auth.js', loginTokenExpiresAt })
+      let validToken = loginTokenExpiresAt < new Date()
+      console.log({ function: 'auth.js', validToken })
+      if (validToken) {
+        throw 'Login token expired'
+      }
+      let updateUser = await db.user.update({
+        where: { cuid: user.cuid },
+        data: {
+          salt: null,
+          loginTokenExpiresAt: null,
+        },
+      })
+      console.log({ function: 'auth.js', updateUser })
       return user
     },
 
@@ -70,11 +74,11 @@ export const handler = async (event, context) => {
       // For security reasons you may want to make this the same as the
       // usernameNotFound error so that a malicious user can't use the error
       // to narrow down if it's the username or password that's incorrect
-      incorrectPassword: 'Incorrect password for ${username}',
+      incorrectPassword: 'Incorrect passcode',
     },
 
     // How long a user will remain logged in, in seconds
-    expires: 60 * 60 * 24 * 365 * 10,
+    expires: 60 * 60 * 24 * 365 * 10, // 10 years
   }
 
   const resetPasswordOptions = {
@@ -124,7 +128,8 @@ export const handler = async (event, context) => {
         input: {
           username: username,
           email: username,
-          hashedPassword: hashedPassword,
+          ///hashedPassword: hashedPassword,
+          loginToken: hashedPassword,
           salt: salt,
           name: userAttributes.name,
           // skipPassword: true,
@@ -161,7 +166,7 @@ export const handler = async (event, context) => {
     authFields: {
       id: 'cuid',
       username: 'username',
-      hashedPassword: 'hashedPassword',
+      hashedPassword: 'loginToken',
       salt: 'salt',
       resetToken: 'resetToken',
       resetTokenExpiresAt: 'resetTokenExpiresAt',

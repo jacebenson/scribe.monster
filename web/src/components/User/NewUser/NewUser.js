@@ -118,13 +118,13 @@ const NewUser = () => {
       required: 'This is required',
       defaultValue: randomName.toLowerCase().replace(' ', '.') + randomEmail,
     },
-    {
-      name: 'hashedPassword',
-      prettyName: 'Password',
-      required: 'This is required',
-      type: 'password',
-      defaultValue: randomName.toLowerCase().replace(' ', '.'),
-    },
+    //{
+    //  name: 'hashedPassword',
+    //  prettyName: 'Password',
+    //  required: 'This is required',
+    //  type: 'password',
+    //  defaultValue: randomName.toLowerCase().replace(' ', '.'),
+    //},
   ]
   const roles = {
     update: ['userUpdate'],

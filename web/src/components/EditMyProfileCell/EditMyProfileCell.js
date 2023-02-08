@@ -3,11 +3,11 @@ import { Fragment } from 'react'
 import { Button, Flex, Spacer } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 
-import { useAuth } from 'src/auth'
 import { navigate, routes } from '@redwoodjs/router'
 import { MetaTags, useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 
+import { useAuth } from 'src/auth'
 import FormComponent from 'src/components/FormComponent'
 import FormSkeleton from 'src/components/FormSkeleton/FormSkeleton'
 
@@ -66,12 +66,12 @@ export const Success = ({ myProfile }) => {
   const onSubmit = (data) => {
     // if resetToken is empty delete it
     // if resetTokenExpiresAt is empty delete it
-    if (data.resetToken === '') {
-      delete data.resetToken
-    }
-    if (data.resetTokenExpiresAt === '') {
-      delete data.resetTokenExpiresAt
-    }
+    //if (data.resetToken === '') {
+    //  delete data.resetToken
+    //}
+    //if (data.resetTokenExpiresAt === '') {
+    //  delete data.resetTokenExpiresAt
+    // }
     onSave(data)
   }
   const onSave = (input) => {
@@ -100,13 +100,6 @@ export const Success = ({ myProfile }) => {
       required: 'This is required',
     },
     {
-      name: 'email',
-      prettyName: 'Email (required to send you details)',
-      required: 'Yep',
-      type: 'secret',
-      defaultValue: myProfile.email,
-    },
-    {
       name: 'extensionKey',
       prettyName: 'Key',
       type: 'secret',
@@ -115,14 +108,6 @@ export const Success = ({ myProfile }) => {
       defaultValue: myProfile.extensionKey,
     },
   ]
-  if (!process.env.AUTH0_DOMAIN) {
-    fields.push({
-      name: 'hashedPassword',
-      prettyName: 'Password',
-      required: 'Yep',
-      type: 'password',
-    })
-  }
 
   let roles = []
   const {

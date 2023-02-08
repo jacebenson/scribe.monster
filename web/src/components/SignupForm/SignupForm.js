@@ -14,6 +14,9 @@ import { toast, Toaster } from '@redwoodjs/web/toast'
 
 import { useAuth } from 'src/auth'
 import FormComponent from 'src/components/FormComponent'
+let randomString = () => {
+  return Math.random().toString(36).substring(2, 15)
+}
 const SignupForm = () => {
   const [submitted, setSubmitted] = useState(false)
   const { isAuthenticated, signUp } = useAuth()
@@ -45,7 +48,7 @@ const SignupForm = () => {
     },
     {
       name: 'username',
-      prettyName: 'Email (going passwordless soon*)',
+      prettyName: 'Email',
       placeholder: 'deckard.cain@example.com',
       required: 'This is required',
     },
@@ -53,7 +56,8 @@ const SignupForm = () => {
       name: 'password',
       prettyName: 'Password',
       required: 'This is required',
-      type: 'password',
+      display: 'none',
+      defaultValue: randomString(),
     },
   ]
   return (

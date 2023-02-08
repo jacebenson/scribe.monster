@@ -26,7 +26,7 @@ export const getCurrentUser = async (session) => {
     throw new Error('Invalid session')
   }
   console.log({ function: 'auth.js', session })
-  return await getUserDBAuth(session, { context})
+  return await getUserDBAuth(session, { context })
 
   return await db.user.findUnique({
     where: { cuid: session.id },
