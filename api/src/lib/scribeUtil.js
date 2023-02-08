@@ -302,7 +302,14 @@ export const authenticateUser = async (event) => {
   if (!extensionKey) return { error: 'No extensionKey provided' }
   let where = { AND: [{ username }, { extensionKey }] }
   let user = await db.user.findFirst({ where })
-  if (!user) return { error: 'No user found' }
+  if (!user)
+    return {
+      error: `Authentication for "${username}" failed.
+We changed to passwordless and if you had an email on file that is now your login.
+
+If you're having problems, please use the "Send Feedback" button to send me a message and we will help you out.
+`,
+    }
   return user
 }
 
@@ -310,7 +317,8 @@ export let success = (message) => {
   return respond({ statusCode: 200, data: { message } })
 }
 export let error = (message) => {
-  return respond({ statusCode: 500, data: { error: message } })
+  console.log({ function: 'error', message })
+  return respond({ statusCode: 500, data: { error: message, code: message } })
 }
 export let isOptionRequest = (event) => event.httpMethod == 'OPTIONS'
 export let isNotPostRequest = (event) => event.httpMethod !== 'POST'

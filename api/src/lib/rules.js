@@ -122,7 +122,7 @@ export const executeBeforeCreateRulesV2 = async ({ table, data }) => {
  * @returns {object} { data, status }
  */
 export const executeAfterCreateRulesV2 = async ({ table, data }) => {
-  console.log({ function: 'executeAfterCreateRulesV2', table, data })
+  //console.log({ function: 'executeAfterCreateRulesV2', table, data })
   let rules = await loadRules(allRules, table, 'after', 'create')
   let status = { code: 'success', message: '' }
   for (let rule of rules) {
@@ -133,7 +133,7 @@ export const executeAfterCreateRulesV2 = async ({ table, data }) => {
         let output = await rule.command({ data, status })
         status = output?.status || status
         data = output?.data
-        console.log({ data, status })
+        //console.log({ data, status })
       }
       if (status.code != 'success') {
         break

@@ -31,7 +31,10 @@ export const handler = async (event /*, context*/) => {
     }
     let user = await authenticateUser({ headers: event.headers })
     if (user.error) {
-      return respond({ statusCode: 401, data: { error: user.error } })
+      return respond({
+        statusCode: 401,
+        data: { error: user.error, code: user.error },
+      })
     }
     let response = await getTextCompletion({
       promptConfig,
