@@ -25,6 +25,10 @@ services:
 #####
     destination: https://scribe-monster-api.onrender.com/*
   - type: rewrite
+    source: /undefined/*
+    destination: https://scribe-monster-api.onrender.com/auth
+    # this is an issue that needs to be fixed
+  - type: rewrite
     source: /*
     destination: /index.html
   headers:

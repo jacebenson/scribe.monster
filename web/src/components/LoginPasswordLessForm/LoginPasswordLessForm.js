@@ -42,7 +42,6 @@ const LoginPasswordLessForm = ({ setWaitingForCode, setEmail }) => {
     setEmail(data.username)
     const response = await generateLoginToken({
       variables: { email: data.username },
-
       fetchPolicy: 'no-cache',
     })
     if (response.error) {
