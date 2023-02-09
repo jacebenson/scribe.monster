@@ -49,7 +49,7 @@ module.exports = {
       //let memoryChunks = await getMemoriesChunksSortedByVector(questionVector)
       data.context = JSON.stringify(memories)
     } catch (e) {
-      logger.error(e)
+      logger.error(JSON.stringify(e))
     }
     return { data, status }
   },

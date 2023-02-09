@@ -15,30 +15,51 @@ module.exports = {
       // and the content is changed
       // delete all the memory chunks for that memory
       // and then create new ones
-      let oldContent = await db.memory.findFirst({
-        where: { cuid },
-        select: { content: true },
-      })
-      if (oldContent?.content === data.content) {
-        // content has not changed, so we can exit
-        return { cuid, data, status }
+      if (data?.cuid) {
+        let oldContent = await db.memory.findFirst({
+          where: { cuid: data.cuid },
+          select: { content: true },
+        })
+        if (oldContent?.content === data.content) {
+          // content has not changed, so we can exit
+          console.log('::: createChunks.js ::: content has not changed')
+          return { cuid, data, status }
+        }
+        console.log('::: createChunks.js ::: content changed', {
+          oldContentData: oldContent,
+          newContentData: data.content,
+        })
       }
+
       // if active is false, exit
-      if (!data?.active) {
+      if (data?.active === false) {
         return { cuid, data, status }
       }
       console.log('::: createChunks.js :::')
       await db.memoryChunk.deleteMany({ where: { memoryCuid: data.cuid } })
-      let chunkSize = parseInt(getProperty('MEMORY_CHUNK_SIZE')) || 1000
+      // now we need to create the chunks
+      // lets chunk it at each paragraph
       let content = data.content
-      let chunks = chunkData(content, chunkSize)
+      let pagahraphRegex = /(\n\n|\r\n)/g
+      let chunks = content.split(pagahraphRegex)
+
+      //let chunkSize = parseInt(getProperty('MEMORY_CHUNK_SIZE')) || 1000
+      //let content = data.content
+      //let chunks = chunkData(content, chunkSize)
       // now we just need to set memoryCuid, title, and vector
+      let paragraphCount = 0
       for (let i = 0; i < chunks.length; i++) {
-        let chunk = chunks[i]
+        let chunk = chunks[i].trim()
+        // if the chunk is empty, skip it
+        if (chunk === '') {
+          // fix the paragraph count
+          continue
+        }
+        paragraphCount++
         let vector = await getVector(chunk)
         let memoryChunk = {
           memoryCuid: data.cuid || cuid,
-          title: `${data.title} - ${i}`,
+          title: `${data.title} - Paragraph ${paragraphCount}`,
           content: chunk,
           vector: JSON.stringify(vector.embedding),
         }

@@ -1,6 +1,15 @@
 import { Fragment, useEffect, useState } from 'react'
 
-import { Center, Icon, Box, Button, Spacer, Text, Flex } from '@chakra-ui/react'
+import {
+  Center,
+  Icon,
+  Box,
+  Button,
+  Spacer,
+  Text,
+  Flex,
+  Link,
+} from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import { MdAccountCircle } from 'react-icons/md'
 
@@ -18,6 +27,7 @@ const ASK_STEW = gql`
       answeredAt
       answeredBy
       threadCuid
+      context
       thread {
         question {
           text
@@ -28,15 +38,14 @@ const ASK_STEW = gql`
     }
   }
 `
-let now = (() => {
-  return new Date().toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: true,
-  })
-})()
-
 const AskStew = () => {
+  let now = () => {
+    return new Date().toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    })
+  }
   let [text, setText] = useState('')
   let [contentRows, setContentRows] = useState(0)
   let [messages, setMessages] = useState([
@@ -44,7 +53,7 @@ const AskStew = () => {
       message:
         "Hello, I am Stew. Ask me anything.  I'm mostly familiar with ServiceNow topics.",
       name: 'stew',
-      when: now,
+      when: now(),
     },
   ])
   let [thread, setThread] = useState('')
@@ -65,9 +74,9 @@ const AskStew = () => {
         ...messages,
         {
           message: response.createQuestion.answer.trim(),
+          context: JSON.parse(response.createQuestion.context),
           name: 'stew',
-          // hh:mm
-          when: now,
+          when: now(),
         },
       ])
       //navigate(routes.memories())
@@ -87,7 +96,7 @@ const AskStew = () => {
         message: data.text,
         name: 'You',
         // hh:mm
-        when: now,
+        when: now(),
       },
     ])
     // clear the text area
@@ -131,7 +140,7 @@ const AskStew = () => {
     register,
     formState: { errors, isSubmitting },
   } = useForm()
-  const chatMessage = ({ message, name, when }) => (
+  const chatMessage = ({ message, name, when, context }) => (
     <Flex
       key={message + when}
       p={4}
@@ -157,9 +166,37 @@ const AskStew = () => {
         )}
       </Center>
       {/**Text should keep its whitespace and wrap*/}
-      <Text as="p" textStyle="p" whiteSpace={'pre-wrap'}>
-        {message}
-      </Text>
+      <Box>
+        <Text as="p" textStyle="p" whiteSpace={'pre-wrap'}>
+          {message}
+        </Text>
+        {context && (
+          <Box>
+            {/**A small light line, listing the paragaphs and links */}
+            <Box as="ul" listStyleType="none" p={0} m={0}>
+              {context.map((sourceData, index) => (
+                <Box as="li" key={index} p={0} m={0} fontSize={'10px'}>
+                  <Link href={sourceData.sourceUrl} isExternal>
+                    {sourceData.score}% {sourceData.source}
+                  </Link>
+                </Box>
+              ))}
+            </Box>
+
+            {/*<Box
+              as="pre"
+              p={2}
+              mt={2}
+              mb={2}
+              backgroundColor="gray.100"
+              borderRadius="md"
+              whiteSpace={'pre-wrap'}
+            >
+              {JSON.stringify(context, null, 2)}
+            </Box>*/}
+          </Box>
+        )}
+      </Box>
       <Spacer />
       {/**small */}
       <Text minW={'50px'} fontSize={'12px'}>

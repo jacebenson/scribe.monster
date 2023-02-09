@@ -32,19 +32,6 @@ module.exports = {
         context: contextText,
       })
       // lsit the sources of the memories
-      let sources = memoryContext.map((memory) => {
-        return { source: memory.source, sourceUrl: memory.sourceUrl }
-      })
-      // lets remove duplicates
-      sources = sources.filter(
-        (source, index, self) =>
-          index === self.findIndex((t) => t.source === source.source)
-      )
-
-      // now append the sources to the answer
-      sources.forEach((source) => {
-        answerObj.text += `\n\nSource: ${source.source} ${source.sourceUrl}`
-      })
       data.answer = answerObj.text
     } catch (e) {
       logger.error(e)

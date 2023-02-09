@@ -9,7 +9,7 @@ module.exports = {
   table: 'question',
   file: __filename,
   command: async function ({ data, status }) {
-    console.log('::: 4-research-.js :::')
+    console.log('::: 4-summarize-.js :::')
     try {
       // 3. look up 5 memories and filter out
       // the ones that don't match up to 80%

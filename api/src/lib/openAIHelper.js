@@ -92,6 +92,7 @@ export const getRecentQuestion = async ({ thread }) => {
   return recentQuestions
 }
 export const getMemoriesChunksSortedByVector = async (vector) => {
+  console.log(`:: Getting Memories Chunks Sorted By Vector ::`)
   let activeChunks = await db.memoryChunk.findMany({
     where: {
       memory: {
@@ -113,6 +114,8 @@ export const getMemoriesChunksSortedByVector = async (vector) => {
       },
     },
   })
+  console.log({ activeChunks: activeChunks.length })
+  if (activeChunks.length === 0) return []
   // filter out any chunks that don't have a vector
   let results = activeChunks.map((chunk) => {
     let parsedVector = JSON.parse(chunk.vector)
@@ -122,7 +125,7 @@ export const getMemoriesChunksSortedByVector = async (vector) => {
       score,
       title,
       content: chunk.content,
-      source: chunk.memory.source,
+      source: chunk.title,
       sourceUrl: chunk.memory.sourceUrl,
     }
   })
@@ -430,7 +433,7 @@ export const answerMemory = async ({ question, context }) => {
   let frequency_penalty = 0
   let presence_penalty = 0
   let estimatedTokens = getTokenCount(context || '')
-  let newMaxTokens = models.davinci.maxTokens - estimatedTokens
+  let newMaxTokens = 500 //models.davinci.maxTokens - estimatedTokens
 
   let answerMemory = await db.memory.findFirst({
     where: { title: 'Answer' },

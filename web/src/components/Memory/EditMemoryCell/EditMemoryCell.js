@@ -19,6 +19,7 @@ export const QUERY = gql`
       active
       title
       source
+      sourceUrl
     }
   }
 `
@@ -33,6 +34,7 @@ const UPDATE_MEMORY_MUTATION = gql`
       active
       title
       source
+      sourceUrl
     }
   }
 `
@@ -106,7 +108,10 @@ export const Success = ({ memory }) => {
       name: 'title',
       prettyName: 'Title',
     },
-
+    {
+      name: 'sourceUrl',
+      prettyName: 'Source URL',
+    },
     {
       name: 'source',
       prettyName: 'Source',
