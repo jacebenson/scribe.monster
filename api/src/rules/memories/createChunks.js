@@ -5,7 +5,7 @@ import { getProperty } from 'src/lib/util'
 module.exports = {
   active: true,
   order: 10,
-  when: ['after'],
+  when: ['before'],
   operation: ['update', 'create'],
   table: 'memory',
   file: __filename,
@@ -29,6 +29,7 @@ module.exports = {
           oldContentData: oldContent,
           newContentData: data.content,
         })
+        await db.memoryChunk.deleteMany({ where: { memoryCuid: data.cuid } })
       }
 
       // if active is false, exit
@@ -36,7 +37,7 @@ module.exports = {
         return { cuid, data, status }
       }
       console.log('::: createChunks.js :::')
-      await db.memoryChunk.deleteMany({ where: { memoryCuid: data.cuid } })
+
       // now we need to create the chunks
       // lets chunk it at each paragraph
       let content = data.content
