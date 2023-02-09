@@ -29,7 +29,7 @@ module.exports = {
         }
       }
       // data.context is a stringified array of memories
-      console.log('data.context', data.context)
+      //console.log('data.context', data.context)
       let contextMemory = JSON.parse(data.context)
       let summarizedMemories = []
       for (let i = 0; i < contextMemory.length; i++) {
@@ -45,6 +45,8 @@ module.exports = {
         summarizedMemories.push({
           title: memory.title,
           score: memory.score,
+          source: memory.source || null,
+          sourceUrl: memory.sourceUrl || null,
           summary,
         })
       }

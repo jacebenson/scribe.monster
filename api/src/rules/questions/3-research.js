@@ -1,5 +1,9 @@
 import { logger } from 'src/lib/logger'
-import { filterMemories, getMemoriesSortedByVector } from 'src/lib/openAIHelper'
+import {
+  filterMemories,
+  getMemoriesSortedByVector,
+  getMemoriesChunksSortedByVector,
+} from 'src/lib/openAIHelper'
 
 module.exports = {
   active: true,
@@ -29,7 +33,8 @@ module.exports = {
         }
       }
       let questionVector = JSON.parse(data.rephrasedTextVector)
-      let memories = await getMemoriesSortedByVector(questionVector)
+      //let memories = await getMemoriesSortedByVector(questionVector)
+      let memories = await getMemoriesChunksSortedByVector(questionVector)
       memories = await filterMemories({ memories, quantity: 5, score: 75 })
       if (memories.length === 0) {
         // i could look up some restful apis here
@@ -41,6 +46,7 @@ module.exports = {
           },
         }
       }
+      //let memoryChunks = await getMemoriesChunksSortedByVector(questionVector)
       data.context = JSON.stringify(memories)
     } catch (e) {
       logger.error(e)

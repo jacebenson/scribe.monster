@@ -85,7 +85,7 @@ export const executeBeforeCreateRulesV2 = async ({ table, data }) => {
         let output = await rule.command({ data, status })
         status = output?.status
         data = output?.data
-        console.log({ data, status })
+        //console.log({ data, status })
       }
       if (status.code != 'success') {
         break

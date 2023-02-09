@@ -1,6 +1,8 @@
 import fetch from 'node-fetch'
 
 import { db } from 'src/lib/db'
+
+import { log } from './util'
 export const getTokenCount = (content) => {
   // we are going to guess that each token is 4 bytes
   // this is not accurate, but it's a good enough guess
@@ -9,7 +11,7 @@ export const getTokenCount = (content) => {
   //console.log({ content.content })
   let tokenCount = content.length / 4
   tokenCount = Math.floor(tokenCount)
-  console.log({ tokenCount })
+  //console.log({ tokenCount })
   return tokenCount
 }
 export const models = {
@@ -89,6 +91,52 @@ export const getRecentQuestion = async ({ thread }) => {
   })
   return recentQuestions
 }
+export const getMemoriesChunksSortedByVector = async (vector) => {
+  let activeChunks = await db.memoryChunk.findMany({
+    where: {
+      memory: {
+        active: true,
+        vector: {
+          not: null,
+        },
+      },
+    },
+    select: {
+      title: true,
+      content: true,
+      vector: true,
+      memory: {
+        select: {
+          source: true,
+          sourceUrl: true,
+        },
+      },
+    },
+  })
+  // filter out any chunks that don't have a vector
+  let results = activeChunks.map((chunk) => {
+    let parsedVector = JSON.parse(chunk.vector)
+    let score = parseFloat((dot(parsedVector, vector) * 100).toFixed(2))
+    let title = chunk.title
+    return {
+      score,
+      title,
+      content: chunk.content,
+      source: chunk.memory.source,
+      sourceUrl: chunk.memory.sourceUrl,
+    }
+  })
+  results.sort((a, b) => {
+    return b.score - a.score
+  })
+  // log the title and score of the results > 75
+  results.forEach((result) => {
+    if (result.score > 75) {
+      console.log({ score: result.score, title: result.title.substring(0, 20) })
+    }
+  })
+  return results
+}
 export const getMemoriesSortedByVector = async (vector) => {
   let activeMemories = await db.memory.findMany({
     where: { active: true },
@@ -115,6 +163,8 @@ export const getMemoriesSortedByVector = async (vector) => {
       score,
       title,
       content: memory.content,
+      source: memory.source,
+      sourceUrl: memory.sourceUrl,
     }
   })
   results.sort((a, b) => {
@@ -137,7 +187,7 @@ export const modifyQuestionWithPronouns = async ({
   recentQuestions,
 }) => {
   console.log(`:: Modify Question ::`)
-  console.log({ question, recentQuestions })
+  //console.log({ question, recentQuestions })
   if (recentQuestions.length === 1) {
     //we create teh question when we create the thread
     // return the question
@@ -151,10 +201,10 @@ export const modifyQuestionWithPronouns = async ({
   console.log(':: Modify Prompt Recieved ::')
   // now lets merge the prompt with the memory and query
   let questionFromRecentQuestion = recentQuestions[1].text.split('QUESTION:')[1]
-  console.log({
-    //prompt: modifyQuestionMemory.content,
-    recentQuestion: questionFromRecentQuestion,
-  })
+  //console.log({
+  //  //prompt: modifyQuestionMemory.content,
+  //  recentQuestion: questionFromRecentQuestion,
+  //})
   let prompt = modifyQuestionMemory.content.replace('{{QUESTION}}', question)
   prompt = prompt.replace('{{RECENTQUESTION}}', questionFromRecentQuestion)
   prompt = prompt.replace('{{RECENTANSWER}}', recentQuestions[1]?.answer)
@@ -393,7 +443,7 @@ export const answerMemory = async ({ question, context }) => {
     order: 2,
     prompt,
     newMaxTokens,
-    max_tokens: models.davinci.maxTokens,
+    max_tokens: newMaxTokens,
     estimatedTokens,
   })
   let body = JSON.stringify({
@@ -418,6 +468,14 @@ export const answerMemory = async ({ question, context }) => {
   if (answeredMemory.error) {
     console.log(`:: Answer Memory Error ::`)
     console.log({ error: answeredMemory.error })
+    await log({
+      message: prompt,
+      source: 'openAi.answerMemory',
+      givenContext: context,
+    })
+    return {
+      text: `I'm sorry, I had a glitch generating the answer.  Try asking again.`,
+    }
     return false
   }
   console.log(`:: Answer Recieved ::`)
@@ -528,7 +586,7 @@ export const isJace = (user) => {
 
 export const rephraseQuestion = async ({ question, recentQuestions }) => {
   console.log(`:: Rephrase Question ::`)
-  console.log({ question, recentQuestions })
+  //console.log({ question, recentQuestions })
   // look up the procedure for rephasing the question with pronouns
   let rephraseMemory = await db.memory.findFirst({
     where: { title: 'Modify Prompt to Include Pronouns' },

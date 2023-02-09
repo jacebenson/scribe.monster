@@ -44,6 +44,8 @@ module.exports = {
           score,
           previousScore: memory.score,
           summary: memory.summary,
+          source: memory.source || null,
+          sourceUrl: memory.sourceUrl || null,
         })
         // sort the results by score
         bestResults.sort((a, b) => b.score - a.score)

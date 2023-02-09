@@ -60,6 +60,7 @@ module.exports = {
       //data.rephrasedTextVector = data.rephrasedTextVector.length
       console.log({
         rephrasedTextVectorLength: data.rephrasedTextVector.length,
+        rephrasedText: data.rephrasedText,
       })
       return { data, status }
     } catch (e) {

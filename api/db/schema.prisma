@@ -140,6 +140,7 @@ model Memory {
   active      Boolean       @default(true)
   title       String
   source      String?
+  sourceUrl   String?
   // semantic, procedural, episodic
   MemoryChunk MemoryChunk[]
 }
