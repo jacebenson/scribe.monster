@@ -3,20 +3,19 @@
   "workspaces": {
     "packages": [
       "api",
-      "web",
-      "packages/*"
+      "web"
     ]
   },
   "devDependencies": {
-    "@redwoodjs/auth-dbauth-setup": "4.0.1",
-    "@redwoodjs/core": "^4.0.1"
+    "@redwoodjs/auth-dbauth-setup": "4.1.1",
+    "@redwoodjs/core": "4.1.1"
   },
   "eslintConfig": {
     "extends": "@redwoodjs/eslint-config",
     "root": true
   },
   "engines": {
-    "node": ">=14.17 <=16.x",
+    "node": ">=14.19 <=18.x",
     "yarn": ">=1.15"
   },
   "prisma": {
@@ -29,5 +28,5 @@
     "setupdev": "yarn rw prisma db push && yarn rw exec seed",
     "test": "yarn postgres:down && yarn postgres:up && yarn rw test"
   },
-  "packageManager": "yarn@3.3.0"
+  "packageManager": "yarn@3.3.1"
 }
