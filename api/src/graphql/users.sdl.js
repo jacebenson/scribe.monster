@@ -9,8 +9,10 @@ export const schema = gql`
     email: String @masked
     "Used to encrypt password with dbAuth"
     salt: String @masked
-    loginToken: String @masked
-    "Used to reset password with dbAuth"
+    """
+    loginToken: String @masked"
+    "Used to reset password with dbAuth
+    """
     loginTokenExpiresAt: DateTime
     resetTokenExpiresAt: DateTime
     extensionKey: String
@@ -36,9 +38,9 @@ export const schema = gql`
       take: Int
       orderBy: OrderByInput
       q: String
-    ): Users! @requireAuth(roles: ["userRead", "admin"])
+    ): Users! @requireAuth(roles: ["admin"])
 
-    user(cuid: String!): User @requireAuth(roles: ["userRead", "admin"])
+    user(cuid: String!): User @requireAuth(roles: ["admin"])
   }
 
   input CreateUserInput {
@@ -46,8 +48,10 @@ export const schema = gql`
     name: String!
     email: String
     salt: String
-    loginTokenExpiresAt: DateTime
+    """
     loginToken: String
+    """
+    loginTokenExpiresAt: DateTime
   }
 
   input UpdateUserInput {
@@ -55,7 +59,9 @@ export const schema = gql`
     name: String
     email: String
     salt: String
+    """
     loginToken: String
+    """
     loginTokenExpiresAt: DateTime
     extensionKey: String
   }
