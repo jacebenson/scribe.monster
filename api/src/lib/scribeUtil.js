@@ -11,6 +11,13 @@ let providerSheet = ({ responseTokens, characters }) => {
     openAi: {
       name: 'OpenAI',
       models: {
+        'gpt-3.5-turbo': {
+          name: 'GPT-3.5 Turbo',
+          cost: 0.0002 / 1000,
+          maxTokens: 4048,
+          model: 'gpt-3.5-turbo',
+          endpoint: 'https://api.openai.com/v1/completions/chat',
+        },
         'text-davinci-003': {
           name: 'Davinci',
           cost: 0.02 / 1000,
@@ -239,8 +246,8 @@ export const logRequest = async (request) => {
     userCuid = await getGuestUser().cuid
     if (!userCuid) return { error: 'No userCuid provided || No guest' }
   }
-  if (!queryTokens) return { error: 'No queryTokens provided' }
-  if (!responseTokens) return { error: 'No responseTokens provided' }
+  // querytokens can be 0
+  if (queryTokens === undefined) return { error: 'No queryTokens provided' }
   if (!modelInstanceCuid) return { error: 'No modelInstanceCuid provided' }
   if (!prompt) return { error: 'No prompt provided' }
   if (!response) return { error: 'No response provided' }
@@ -368,7 +375,7 @@ export let getTextCompletion = async ({
   parsedBody,
   userCuid,
 }) => {
-  console.log({ function: 'getTextCompletion', promptConfig })
+  //console.log({ function: 'getTextCompletion', promptConfig })
   let response = await fetch(promptConfig.endpoint, {
     method: 'POST',
     cache: 'no-cache',
@@ -380,11 +387,15 @@ export let getTextCompletion = async ({
   })
   let data = await response.json()
   console.log({ function: 'getTextCompletion', data })
-  let queryTokens = data?.usage?.prompt_tokens
-  let responseTokens = data?.usage?.completion_tokens
+  //console.log({ function: 'getTextCompletion', choices: JSON.stringify(data) })
+  //console.log({ function: 'getTextCompletion', choices: JSON.stringify(data?.choices) })
+  //console.log({ function: 'getTextCompletion', choices: JSON.stringify(data?.choices?.[0]) })
+  //console.log({ function: 'getTextCompletion', choices: JSON.stringify(data?.choices?.[0]?.message?.content) })
+  let queryTokens = data?.usage?.prompt_tokens || 0
+  let responseTokens = data?.usage?.completion_tokens || 0
   let responseText = () => {
-    if (data?.error) return data.error
-    let text = data?.choices?.[0]?.text
+    if (data?.error || data?.error?.message) return data.error || data.error.message
+    let text = data?.choices?.[0]?.text || data?.choices?.[0]?.message?.content
     if (promptConfig?.prepend) return `${promptConfig.prepend}${text}`
     return text
   }

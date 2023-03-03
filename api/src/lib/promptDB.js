@@ -28,6 +28,7 @@ export const prompts = async ({
   let prepend
   let context = vm.createContext({
     prompt,
+    messages: null,
     input: input.toString(),
     table,
     action,
@@ -64,6 +65,12 @@ export const prompts = async ({
       modelInstance: instance.cuid,
       prepend: context?.prepend || '',
       provider: 'openAi',
+    }
+    if(context.messages) {
+      //console.log({ function: 'promptDB', messages: JSON.stringify(context.messages) })
+      returnObj.ai.messages = context.messages
+      delete returnObj.ai.prompt
+      delete returnObj.ai.suffix
     }
     //if (returnObj.endpoint === 'https://api.openai.com/v1/edits') {
     //  returnObj.ai.instruction = prompt
