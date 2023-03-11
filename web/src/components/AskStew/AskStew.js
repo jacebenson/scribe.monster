@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from 'react'
-
+import { ExternalLinkIcon } from '@chakra-ui/icons'
 import {
   Center,
   Icon,
@@ -11,7 +11,7 @@ import {
   Link,
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
-import { MdAccountCircle } from 'react-icons/md'
+import { MdAccountCircle, MdOpenInNew } from 'react-icons/md'
 
 //import { /*navigate,*/ routes } from '@redwoodjs/router'
 import { MetaTags, useMutation } from '@redwoodjs/web'
@@ -114,7 +114,7 @@ const AskStew = () => {
       name: 'text',
       prettyName: '',
       placeholder: ` `,
-      type: 'textarea',
+      //type: 'textarea',
       required: 'This is required',
       minW: '100%',
       rows: contentRows,
@@ -132,6 +132,7 @@ const AskStew = () => {
       readOnly: true,
       defaultValue: thread || '',
       //type: 'hidden',
+      display: 'none'
     },
   ]
 
@@ -176,9 +177,17 @@ const AskStew = () => {
             <Box as="ul" listStyleType="none" p={0} m={0}>
               {context.map((sourceData, index) => (
                 <Box as="li" key={index} p={0} m={0} fontSize={'10px'}>
+                  {sourceData.sourceUrl && (
                   <Link href={sourceData.sourceUrl} isExternal>
                     {sourceData.score}% {sourceData.source}
+                    <ExternalLinkIcon mx="2px" />
                   </Link>
+                  )}
+                  {!sourceData.sourceUrl  && (
+                    <Text>
+                      {sourceData.score}% {sourceData.source}
+                    </Text>
+                  )}
                 </Box>
               ))}
             </Box>
