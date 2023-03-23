@@ -4,11 +4,12 @@ import { db } from 'src/lib/db'
 
 import { getProperty } from './util'
 
-let providerSheet = ({ responseTokens, characters }) => {
+let providerSheet = ({ responseTokens, characters, provider }) => {
   if (!responseTokens) return 0
   if (!characters) return 0
-  return {
-    openAi: {
+  if (!provider) provider = 'openAi'
+  if(provider === 'openAi'){
+    return {
       name: 'OpenAI',
       models: {
         'gpt-3.5-turbo': {
@@ -68,8 +69,10 @@ let providerSheet = ({ responseTokens, characters }) => {
           endpoint: 'https://api.openai.com/v1/edits',
         },
       },
-    },
-    cohere: {
+    }
+  }
+  if(provider === 'cohere'){
+    return {
       name: 'Cohere',
       models: {
         generate: {
@@ -115,8 +118,10 @@ let providerSheet = ({ responseTokens, characters }) => {
           endpoint: 'https://api.cohere.ai/detect-language',
         },
       },
-    },
-    ai21: {
+    }
+  }
+  if(provider === 'ai21'){
+    return {
       name: 'AI21',
       models: {
         j1Large: {
@@ -156,7 +161,7 @@ let providerSheet = ({ responseTokens, characters }) => {
           endpoint: 'https://api.ai21.com/studio/v1/experimental/rewrite',
         },
       },
-    },
+    }
   }
 }
 
@@ -204,20 +209,12 @@ export const calculateCost = async ({
   modelInstanceCuid,
   characters,
 }) => {
-  //console.log({
-  //  function: 'calculateCost',
-  //  queryTokens,
-  //  responseTokens,
-  //  provider,
-  //  modelInstanceCuid,
-  //  characters,
-  //})
   const modelInstance = await db.modelInstance.findFirst({
     where: { cuid: modelInstanceCuid },
   })
-  if (!modelInstance) return { error: 'No model instance found' }
-  const aiProviders = providerSheet({ responseTokens, characters })[provider]
-  if (!aiProviders) return { error: 'No provider found' }
+  if (!modelInstance) return { error: 'No model instance found ln215 file: scribeUtil' }
+  const aiProviders = providerSheet({ responseTokens, characters, provider })
+  if (!aiProviders) return { error: 'No provider found ln217, fiel:scribeUtil' }
   const modelSheet = aiProviders.models[modelInstance.model]
   if (!modelSheet) {
     return { error: `No model called "${modelInstance.model}" found` }
@@ -401,7 +398,7 @@ export let getTextCompletion = async ({
   }
   let log = await logRequest({
     userCuid,
-    provider: promptConfig.provider,
+    provider: promptConfig.provider || 'openAi',
     queryTokens,
     responseTokens,
     modelInstanceCuid: promptConfig.modelInstance,
