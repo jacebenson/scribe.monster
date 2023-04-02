@@ -133,6 +133,6 @@ export const deleteGroupRole = async ({ cuid }) => {
 }
 
 export const GroupRole = {
-  group: (_obj, { root }) =>
-    db[table].findUnique({ where: { cuid: root.cuid } }).group(),
+  Group: (_obj, { root }) =>
+    db[table].findUnique({ where: { cuid: root.cuid } }).Group(),
 }

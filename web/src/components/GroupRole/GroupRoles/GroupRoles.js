@@ -17,7 +17,7 @@ export const initialColumns = [
   },
   {
     Header: 'Group',
-    accessor: 'group',
+    accessor: 'Group',
     showMatching,
     filterOut,
     canSort: false,

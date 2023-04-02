@@ -1,6 +1,5 @@
-import { UserInputError } from '@redwoodjs/graphql-server'
-
 import { db } from 'src/lib/db'
+import { UserInputError } from '@redwoodjs/graphql-server'
 import {
   executeBeforeCreateRulesV2,
   executeAfterCreateRulesV2,
@@ -14,9 +13,9 @@ import {
   executeAfterDeleteRulesV2,
 } from 'src/lib/rules'
 
-let table = 'groupMember'
+let table = 'activity'
 
-export const createGroupMember = async ({ input }) => {
+export const createActivity = async ({ input }) => {
   try {
     let { data } = await executeBeforeCreateRulesV2({ table, data: input })
     let createdRecord = await db[table].create({ data })
@@ -31,13 +30,15 @@ export const createGroupMember = async ({ input }) => {
   }
 }
 
-export const groupMembers = async ({ filter, skip, orderBy, q, take }) => {
+export const activities = async ({ filter, skip, orderBy, q, take }) => {
   try {
+    let preferences = context.currentUser.preferences
     let _take = (() => {
       let limit =
         take ||
-        parseInt(context.currentUser.preferences['groupMember.pageSize'], 10) ||
-        parseInt(context.currentUser.preferences['pageSize'], 10 || 10)
+        parseInt(preferences['activity.pageSize'], 10) ||
+        parseInt(preferences['pageSize'], 10 || 10) ||
+        10
       if (limit > 100) return 100 //return 100 or limit whatever is smaller
       return limit
     })()
@@ -48,12 +49,12 @@ export const groupMembers = async ({ filter, skip, orderBy, q, take }) => {
     if (count < skip) skip = count - _take || 0
     if (skip < 0) skip = 0
     let readRecords = await db[table].findMany({
-      take: _take,
+      take: _take || 10,
       where,
       orderBy,
       skip, // if this were 101, return skip-take
     })
-    let { records } = await executeAfterReadAllRulesV2({
+    let { records, status } = await executeAfterReadAllRulesV2({
       table,
       data: readRecords,
     })
@@ -69,7 +70,7 @@ export const groupMembers = async ({ filter, skip, orderBy, q, take }) => {
   }
 }
 
-export const groupMember = async ({ cuid }) => {
+export const activity = async ({ cuid }) => {
   try {
     let { where } = await executeBeforeReadRulesV2({ table, cuid })
     if (!where /* if where is falsy, return { cuid } */) {
@@ -86,7 +87,7 @@ export const groupMember = async ({ cuid }) => {
   }
 }
 
-export const updateGroupMember = async ({ cuid, input }) => {
+export const updateActivity = async ({ cuid, input }) => {
   try {
     let { data, where } = await executeBeforeUpdateRulesV2({
       table,
@@ -110,7 +111,7 @@ export const updateGroupMember = async ({ cuid, input }) => {
   }
 }
 
-export const deleteGroupMember = async ({ cuid }) => {
+export const deleteActivity = async ({ cuid }) => {
   try {
     let { where } = await executeBeforeDeleteRulesV2({
       table,
@@ -132,9 +133,9 @@ export const deleteGroupMember = async ({ cuid }) => {
   }
 }
 
-export const GroupMember = {
-  Group: (_obj, { root }) =>
-    db[table].findUnique({ where: { cuid: root.cuid } }).Group(),
+export const Activity = {
+  ModelInstance: (_obj, { root }) =>
+    db[table].findUnique({ where: { cuid: root.cuid } }).ModelInstance(),
   User: (_obj, { root }) =>
     db[table].findUnique({ where: { cuid: root.cuid } }).User(),
 }

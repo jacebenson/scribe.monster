@@ -18,7 +18,7 @@ export const initialColumns = [
   },
   {
     Header: 'User',
-    accessor: 'user',
+    accessor: 'User',
     showMatching,
     filterOut,
     canSort: false,
@@ -32,7 +32,7 @@ export const initialColumns = [
 
   {
     Header: 'Group',
-    accessor: 'group',
+    accessor: 'Group',
     showMatching,
     filterOut,
     canSort: false,

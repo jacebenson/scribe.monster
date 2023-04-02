@@ -23,6 +23,8 @@ import Standard from './layouts/Standard/Standard'
 const Routes = () => {
   return (
     <Router useAuth={useAuth}>
+      <Route path="/form" page={FormPage} name="form" />
+      <Route path="/list" page={ListPage} name="list" />
       <Route path="/login" page={Login2Page} name="login" />
       <Route path="/ask" page={AskPage} name="ask" />
       <Route path="/resources" page={ResourcesPage} name="resources" />
@@ -134,6 +136,18 @@ const Routes = () => {
             <Route path="/questions/{cuid}" page={QuestionEditQuestionPage} name="question" />
             <Route path="/questions" page={QuestionQuestionsPage} name="questions" />
           </Set>
+
+          <Set>
+            {/*<Route path="/list/users" page={AboutPage} name="list" />{/*this is how to override one*/}
+            <Route path="/list/{table}/{params...}" page={ListPage} name="list" />
+            <Route path="/list/{table}" page={ListPage} name="list" />
+
+
+            <Route path="/form/{table}/{cuid}" page={FormPage} name="formEdit" />
+            <Route path="/form/{table}" page={FormPage} name="form" />
+
+          </Set>
+
         </Private>
       </Set>
       <Route notfound page={NotFoundPage} />

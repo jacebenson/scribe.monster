@@ -67,12 +67,12 @@ export const QUERY = gql`
         createdAt
         updatedAt
         userCuid
-        user {
+        User {
           cuid
           name
         }
         groupCuid
-        group {
+        Group {
           cuid
           name
         }

@@ -17,7 +17,7 @@ export const QUERY = gql`
       updatedAt
       role
       groupCuid
-      group {
+      Group {
         name
         cuid
       }
@@ -67,12 +67,15 @@ export const Success = ({ groupRole }) => {
   )
 
   const onSubmit = (data) => {
-    onSave(data, groupRole.id)
+    console.log({ functon: 'onSubmit', data})
+    onSave(data, groupRole.cuid)
   }
   const onSave = (input, cuid) => {
     const castInput = Object.assign(input, {
       groupCuid: input.group,
     })
+    delete castInput.group
+    console.log({ functon: 'onSave', castInput })
     updateGroupRole({ variables: { cuid, input: castInput } })
   }
 
@@ -127,8 +130,8 @@ export const Success = ({ groupRole }) => {
       type: 'reference',
       display: 'name',
       value: 'cuid',
-      defaultValue: groupRole?.group?.cuid,
-      defaultDisplay: groupRole?.group?.name,
+      defaultValue: groupRole?.Group?.cuid,
+      defaultDisplay: groupRole?.Group?.name,
       QUERY: gql`
         query Find_referencedModelHere_FromGroupRoles(
           $filter: String

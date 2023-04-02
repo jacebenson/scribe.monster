@@ -259,6 +259,12 @@ export const chunkData = (data, chunkSize) => {
   }
   return chunks
 }
+export const rewritePlainTextInMarkdown = async ({ content }) => {
+  console.log(`:: Rewrite Plain Text ::`)
+  let rewriteMemory = await db.memory.findFirst({
+    where: { title: 'Rewrite Plain Text' },
+  })
+}
 export const summarize = async ({ content, query }) => {
   console.log(`:: Summarize Context ::`)
   // we may need to chunk the context into tokens of 1000 characters each

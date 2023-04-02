@@ -5,7 +5,7 @@ export const schema = gql`
     updatedAt: DateTime!
     role: String!
     groupCuid: String!
-    group: Group!
+    Group: Group!
   }
 
   type GroupRoles {

@@ -56,7 +56,7 @@ model Preference {
   entity    String
   value     String?
   userCuid  String
-  User      User     @relation("UserPreference", fields: [userCuid], references: [cuid], onDelete: Cascade)
+  user      User     @relation("UserPreference", fields: [userCuid], references: [cuid], onDelete: Cascade)
 
   @@unique([entity, userCuid])
   @@index([userCuid])
@@ -78,8 +78,8 @@ model GroupMember {
   updatedAt DateTime @updatedAt
   userCuid  String
   groupCuid String
-  Group     Group    @relation(fields: [groupCuid], references: [cuid], onDelete: Cascade)
-  User      User     @relation("UserGroupMember", fields: [userCuid], references: [cuid], onDelete: Cascade)
+  group     Group    @relation(fields: [groupCuid], references: [cuid], onDelete: Cascade)
+  user      User     @relation("UserGroupMember", fields: [userCuid], references: [cuid], onDelete: Cascade)
 
   @@unique([userCuid, groupCuid])
   @@index([groupCuid])
@@ -92,7 +92,7 @@ model GroupRole {
   updatedAt DateTime @updatedAt
   role      String
   groupCuid String
-  Group     Group    @relation(fields: [groupCuid], references: [cuid], onDelete: Cascade)
+  group     Group    @relation(fields: [groupCuid], references: [cuid], onDelete: Cascade)
 
   @@unique([groupCuid, role])
   @@index([groupCuid])
@@ -127,82 +127,21 @@ model ModelInstance {
   frequencyPenalty Float      @default(0)
   presencePenalty  Float      @default(0)
   required         String     @default("action")
-  Activity         Activity[]
-}
-
-model ProceduralMemory {
-  cuid      String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  procedure String? //returns the BODY needed to use openai/cohere/ai21
-  // i would like to track the price and cost of the procedure
-  price     Float    @default(0.20)
-  cost      Float    @default(0.02)
-  active    Boolean  @default(true)
-  title     String
-  source    String?
-  sourceUrl String?
+  activity         Activity[]
 }
 
 // a place to store stews memories with vectors, content, active
 model Memory {
-  cuid      String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  content   String
-  vector    String?
-  active    Boolean  @default(true)
-  title     String
-  source    String?
-  sourceUrl String?
-  // from wikipedia https://en.wikipedia.org/wiki/Wikipedia:Contents/Categories
-  // general
-  // culture / arts
-  // geography / places
-  // health / fitness
-  // history / events
-  // human activities
-  // mathematics / logic
-  // natural / physical sciences
-  // people / self
-  // philosophy / thinking
-  // religion / belief
-  // society / social sciences
-  // technology / applied sciences
-  // now we are only going to use things related to servicenow today, but we can add more later
-  // general
-  // events
-  // places
-  // people
-  // technology
-  // business
-  // // let me think,
-  // "who is" question => people
-  // "what is" question => general
-  // "where is" question => place
-  // "when is" question => event
-  // "why is" question => reason
-  // "how do i" question => process
-  // "how is" question => state
-  // "tell me about" question => general
-  // "write me a script to" question => how do i => process
-  // "what is the best way to" question => how do i => process
-  // "tell me about" question => identify the subject => people, place, general thing, event
-  // list of  10 examples of each category
-  // 1. general
-  //   - what is a service catalog
-  //   - what is a service portal
-  //   - what is a service request
-  //   - what is a service offering
-  //   - tell me about the service catalog
-  //   - tell me about the service portal
-  //   - tell me about the service request
-  // 2. events
-  //  - when is the next release
-  //  - when is the next release of servicenow
-  //  - knowledge 2023 is when
-
-  type        String?       @default("general")
+  cuid        String        @id @default(cuid())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  content     String
+  vector      String?
+  active      Boolean       @default(true)
+  title       String
+  source      String?
+  sourceUrl   String?
+  // semantic, procedural, episodic
   MemoryChunk MemoryChunk[]
 }
 
@@ -215,7 +154,7 @@ model MemoryChunk {
   active     Boolean  @default(true)
   title      String
   memoryCuid String
-  Memory     Memory   @relation(fields: [memoryCuid], references: [cuid])
+  memory     Memory   @relation(fields: [memoryCuid], references: [cuid])
 
   @@index([memoryCuid])
 }
@@ -225,7 +164,7 @@ model Question {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
   userCuid            String?
-  User                User?     @relation(fields: [userCuid], references: [cuid])
+  user                User?     @relation(fields: [userCuid], references: [cuid])
   state               String    @default("open")
   text                String
   rephrasedText       String?
@@ -235,7 +174,7 @@ model Question {
   answeredAt          DateTime?
   answeredBy          String?   @default("stew")
   active              Boolean   @default(true)
-  Thread              Thread    @relation(fields: [threadCuid], references: [cuid])
+  thread              Thread    @relation(fields: [threadCuid], references: [cuid])
   threadCuid          String
 
   @@index([userCuid])
@@ -247,8 +186,8 @@ model Thread {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   userCuid  String?
-  User      User?      @relation(fields: [userCuid], references: [cuid])
-  Question  Question[]
+  user      User?      @relation(fields: [userCuid], references: [cuid])
+  question  Question[]
 
   @@index([userCuid])
 }
@@ -260,11 +199,11 @@ model Activity {
   queryTokens       Int
   responseTokens    Int
   modelInstanceCuid String
-  ModelInstance     ModelInstance @relation(fields: [modelInstanceCuid], references: [cuid])
+  modelInstance     ModelInstance @relation(fields: [modelInstanceCuid], references: [cuid])
   cost              Float
   price             Float
   userCuid          String
-  User              User          @relation(fields: [userCuid], references: [cuid])
+  user              User          @relation(fields: [userCuid], references: [cuid])
   action            String
 
   @@index([modelInstanceCuid])

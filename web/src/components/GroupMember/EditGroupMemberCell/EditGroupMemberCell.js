@@ -15,12 +15,12 @@ export const QUERY = gql`
       createdAt
       updatedAt
       userCuid
-      user {
+      User {
         cuid
         name
       }
       groupCuid
-      group {
+      Group {
         name
         cuid
       }
@@ -75,8 +75,8 @@ export const Success = ({ groupMember }) => {
   const onSave = (input, cuid) => {
     console.log({ input, cuid })
     const castInput = Object.assign(input, {
-      userCuid: input.user,
-      groupCuid: input.group,
+      userCuid: input.userCuid,
+      groupCuid: input.groupCuid,
     })
     updateGroupMember({ variables: { cuid, input: castInput } })
   }
@@ -106,8 +106,8 @@ export const Success = ({ groupMember }) => {
       type: 'reference',
       display: 'name',
       value: 'cuid',
-      defaultValue: groupMember.user.cuid,
-      defaultDisplay: groupMember.user.name,
+      defaultValue: groupMember.User.cuid,
+      defaultDisplay: groupMember.User.name,
       QUERY: gql`
         query Find_referencedModelHere_FromGroupMembers(
           $filter: String
@@ -138,8 +138,8 @@ export const Success = ({ groupMember }) => {
       type: 'reference',
       display: 'name',
       value: 'cuid',
-      defaultValue: groupMember.group.cuid,
-      defaultDisplay: groupMember.group.name,
+      defaultValue: groupMember.Group.cuid,
+      defaultDisplay: groupMember.Group.name,
       QUERY: gql`
         query FindGroupFromGroupMembers(
           $filter: String

@@ -5,8 +5,8 @@ export const schema = gql`
     updatedAt: DateTime!
     userCuid: String!
     groupCuid: String!
-    group: Group!
-    user: User!
+    Group: Group!
+    User: User!
   }
 
   type GroupMembers {

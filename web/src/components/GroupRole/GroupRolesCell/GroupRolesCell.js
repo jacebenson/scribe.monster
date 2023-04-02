@@ -67,7 +67,7 @@ export const QUERY = gql`
         updatedAt
         role
         groupCuid
-        group {
+        Group {
           cuid
           name
         }
