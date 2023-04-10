@@ -20,8 +20,6 @@ import {
   Spinner,
 } from '@chakra-ui/react'
 import { MdArrowDownward, MdArrowUpward, MdChevronLeft, MdChevronRight, MdFirstPage, MdLastPage, MdSortByAlpha } from 'react-icons/md'
-
-import { TbSortAscendingLetters, TbSortDescendingLetters } from "react-icons/tb";
 import camelCase from 'camelcase'
 import { getRecords, getSchema, readManyGQL } from 'src/lib/atomicFunctions'
 import { useAuth } from 'src/auth'
@@ -289,7 +287,7 @@ const ListPage = ({ table, params }) => {
                       <IconButton
                         aria-label={`Toggle Sort of ${header} to descending`}
                         _hover={{ backgroundColor: 'green.600' }}
-                        icon={<TbSortAscendingLetters />}
+                        icon={<MdArrowUpward />}
                         backgroundColor={'green.500'}
                         size={'sm'}
                         m={2}
@@ -308,7 +306,7 @@ const ListPage = ({ table, params }) => {
                       <IconButton
                         aria-label={`Toggle Sort of ${header} to descending`}
                         _hover={{ backgroundColor: 'green.600' }}
-                        icon={<TbSortDescendingLetters />}
+                        icon={<MdArrowDownward />}
                         backgroundColor={'green.500'}
                         size={'sm'}
                         m={2}
