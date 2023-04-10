@@ -18,8 +18,11 @@ import {
   Flex,
   Text,
   Spinner,
+  Select,
+  FormControl,
+  FormLabel,
 } from '@chakra-ui/react'
-import { MdArrowDownward, MdArrowUpward, MdChevronLeft, MdChevronRight, MdFirstPage, MdLastPage, MdSortByAlpha } from 'react-icons/md'
+import { MdArrowDownward, MdArrowUpward, MdChevronLeft, MdChevronRight, MdEdit, MdFirstPage, MdLastPage, MdSortByAlpha } from 'react-icons/md'
 import camelCase from 'camelcase'
 import { getRecords, getSchema, readManyGQL } from 'src/lib/atomicFunctions'
 import { useAuth } from 'src/auth'
@@ -126,7 +129,8 @@ let parseParamsAndVariables = ({ params }) => {
       if (param === 'orderBy') {
         // the next two params are the field and direction
         let field = paramsArray[index + 1]
-        let direction = paramsArray[index + 2]
+        let direction = paramsArray[index + 2].replace('/', '')
+        console.log({ param, field, direction })
         // if direction is not asc or desc, then it is not a valid orderBy
         // console.log the error and return and assume desc
         if (direction !== 'asc' && direction !== 'desc') {
@@ -201,10 +205,10 @@ const ListPage = ({ table, params }) => {
         setSchema(database.schema)
         //console.log('database.schema', database.schema)
         let token = await getToken()
-        if(!variables?.take) take = 10
-        if(!variables?.skip) variables.skip = 0
+        if (!variables?.take) take = 10
+        if (!variables?.skip) variables.skip = 0
         variables = { ...variables, take, skip: (page - 1) * take, orderBy, where }
-        console.log({function:'useEffect', variables})
+        console.log({ function: 'useEffect', variables })
         getRecords({ table: camelTable, schema: database.schema, token, variables }).then(
           (data) => {
             if (data.errors) {
@@ -232,22 +236,22 @@ const ListPage = ({ table, params }) => {
   }
   if (listState === 'loading') {
     return <Box
-    backgroundColor={'white'}
-    borderRadius={'lg'}
-    boxShadow={'lg'}
-    p={4}
+      backgroundColor={'white'}
+      borderRadius={'lg'}
+      boxShadow={'lg'}
+      p={4}
     >
-    <Heading pb={2}>
-      {spacedTable}
-    </Heading>
+      <Heading pb={2}>
+        {spacedTable}
+      </Heading>
 
-    <Spinner
-  thickness='4px'
-  speed='0.65s'
-  emptyColor='gray.200'
-  color='blue.500'
-  size='xl'
-/>
+      <Spinner
+        thickness='4px'
+        speed='0.65s'
+        emptyColor='gray.200'
+        color='blue.500'
+        size='xl'
+      />
     </Box>
 
   }
@@ -256,130 +260,139 @@ const ListPage = ({ table, params }) => {
       <MetaTags title="List" description="List page" />
 
       <Box
-      backgroundColor={'white'}
-      borderRadius={'lg'}
-      boxShadow={'lg'}
-      p={4}
-      minH={'calc(100vh - 200px)'}
+        backgroundColor={'white'}
+        borderRadius={'lg'}
+        boxShadow={'lg'}
+        p={4}
+        minH={'calc(100vh - 200px)'}
       >
-      <Heading pb={2}>
-        {spacedTable} ({count})
-      </Heading>
-      {error && <p>ERROR: {JSON.stringify(error)}</p>}
-      {!error && !schema && <p>Loading...</p>}
-      {!error && schema && !rows && <p>Loading...</p>}
-      {!error && schema && rows && (
-        <Table key={'table'} variant="striped" colorScheme={'green'} size="xs">
-          <TableCaption key={'tc'}>List of {table}</TableCaption>
-          <Thead key={'thead'}>
-            <Tr key={`${table}.heading`}>
-              {schema &&
-                schema.fields &&
-                schema.fields.map((field, index) => {
-                  let header = field?.definition?.label || field.name
-                  let sortable = field?.definition?.canSort
-                  let sortedBy = orderBy && orderBy[field.name]
-                  let sortedDirection = sortedBy
+        <Heading pb={2}>
+          {spacedTable} ({count})
+        </Heading>
+        {error && <p>ERROR: {JSON.stringify(error)}</p>}
+        {!error && !schema && <p>Loading...</p>}
+        {!error && schema && !rows && <p>Loading...</p>}
+        {!error && schema && rows && (
+          <Table key={'table'} variant="striped" colorScheme={'green'} size="xs">
+            <TableCaption key={'tc'}>List of {table}</TableCaption>
+            <Thead key={'thead'}>
+              <Tr key={`${table}.heading`}>
+                <Th />
+                {schema &&
+                  schema.fields &&
+                  schema.fields.map((field, index) => {
+                    let header = field?.definition?.label || field.name
+                    let sortable = field?.definition?.canSort
+                    let sortedBy = orderBy && orderBy[field.name]
+                    let sortedDirection = sortedBy
 
-                  return <Th key={`${table}.${field.name}`}>
-                    {header}
-                    {sortable && sortedBy && sortedDirection === 'asc' && (
-                      <IconButton
-                        aria-label={`Toggle Sort of ${header} to descending`}
-                        _hover={{ backgroundColor: 'green.600' }}
-                        icon={<MdArrowUpward />}
-                        backgroundColor={'green.500'}
-                        size={'sm'}
-                        m={2}
-                        onClick={() => {
-                          //
-                          let page = parseInt(paramsObject?.page || 1)
-                          let take = parseInt(paramsObject?.take || 10)
-                          setPage(page)
-                          setTake(take)
-                          setOrderBy({ [field.name]: 'desc' })
-                          navigate('/list/' + camelTable + '/page/' + page + '/take/' + take + '/orderBy/' + field.name + '/desc')
-                        }}
-                      />
-                    )}
-                    {sortable && sortedBy && sortedDirection === 'desc' && (
-                      <IconButton
-                        aria-label={`Toggle Sort of ${header} to descending`}
-                        _hover={{ backgroundColor: 'green.600' }}
-                        icon={<MdArrowDownward />}
-                        backgroundColor={'green.500'}
-                        size={'sm'}
-                        m={2}
-                        onClick={() => {
-                          let page = parseInt(paramsObject?.page || 1)
-                          let take = parseInt(paramsObject?.take || 10)
-                          setPage(page)
-                          setTake(take)
-                          setOrderBy({ [field.name]: 'asc' })
-                          navigate('/list/' + camelTable + '/page/' + page + '/take/' + take + '/orderBy/' + field.name + '/desc')
-                        }}
-                      />
-                    )}
-                    {sortable && !sortedBy && (
-                      <IconButton
-                        aria-label={`Sort ${header} descending`}
-                        _hover={{ backgroundColor: 'green.600' }}
-                        icon={<MdSortByAlpha />}
-                        backgroundColor={'green.500'}
-                        size={'sm'}
-                        m={2}
-                        onClick={() => {
-                          let page = parseInt(paramsObject?.page || 1)
-                          let take = parseInt(paramsObject?.take || 10)
-                          setPage(page)
-                          setTake(take)
-                          setOrderBy({ [field.name]: sortedDirection })
-                          navigate('/list/' + camelTable + '/page/' + page + '/take/' + take + '/orderBy/' + field.name + '/desc')
-                        }}
-                      />
-                    )}
-                  </Th>
-                })}
-            </Tr>
-          </Thead>
-          <Tbody key={'tbody'}>
-            {rows &&
-              rows.map((row, rowIndex) => {
-                return (
-                  <Tr key={row.cuid}>
-                    {schema &&
-                      schema.fields &&
-                      schema.fields.map((field, fieldIndex) => {
-                        let key = `${table}.${field.name}.${row.cuid}`
-                        let font = field?.definition?.fontFamily
-                        let reference = field?.reference && field?.definition?.display && field?.definition?.value
-                        let referenceCuid = row?.[field.name]?.[field.definition.value]
-                        let genericFormLink = routes.formEdit({ table: camelTable, cuid: row.cuid })
-                        if (fieldIndex === 0) {
-                          return (<Td key={key}>
-                            {/*<ChakraLink as={Link} to={routes[camelTable]({cuid: row.cuid})} fontFamily={font}>
+                    return <Th key={`${table}.${field.name}`}>
+                      {header}
+                      {sortable && sortedBy && sortedDirection === 'asc' && (
+                        <IconButton
+                          aria-label={`Toggle Sort of ${header} to descending`}
+                          _hover={{ backgroundColor: 'green.600' }}
+                          icon={<MdArrowUpward />}
+                          backgroundColor={'green.500'}
+                          size={'sm'}
+                          m={2}
+                          onClick={() => {
+                            //
+                            let page = parseInt(paramsObject?.page || 1)
+                            let take = parseInt(paramsObject?.take || 10)
+                            setPage(page)
+                            setTake(take)
+                            setOrderBy({ [field.name]: 'desc' })
+                            navigate('/list/' + camelTable + '/page/' + page + '/take/' + take + '/orderBy/' + field.name + '/desc/')
+                          }}
+                        />
+                      )}
+                      {sortable && sortedBy && sortedDirection === 'desc' && (
+                        <IconButton
+                          aria-label={`Toggle Sort of ${header} to descending`}
+                          _hover={{ backgroundColor: 'green.600' }}
+                          icon={<MdArrowDownward />}
+                          backgroundColor={'green.500'}
+                          size={'sm'}
+                          m={2}
+                          onClick={() => {
+                            let page = parseInt(paramsObject?.page || 1)
+                            let take = parseInt(paramsObject?.take || 10)
+                            setPage(page)
+                            setTake(take)
+                            setOrderBy({ [field.name]: 'asc' })
+                            navigate('/list/' + camelTable + '/page/' + page + '/take/' + take + '/orderBy/' + field.name + '/asc/')
+                          }}
+                        />
+                      )}
+                      {sortable && !sortedBy && (
+                        <IconButton
+                          aria-label={`Sort ${header} descending`}
+                          _hover={{ backgroundColor: 'green.600' }}
+                          icon={<MdSortByAlpha />}
+                          backgroundColor={'green.500'}
+                          size={'sm'}
+                          m={2}
+                          onClick={() => {
+                            let page = parseInt(paramsObject?.page || 1)
+                            let take = parseInt(paramsObject?.take || 10)
+                            setPage(page)
+                            setTake(take)
+                            setOrderBy({ [field.name]: sortedDirection })
+                            navigate('/list/' + camelTable + '/page/' + page + '/take/' + take + '/orderBy/' + field.name + '/desc/')
+                          }}
+                        />
+                      )}
+                    </Th>
+                  })}
+              </Tr>
+            </Thead>
+            <Tbody key={'tbody'}>
+              {rows &&
+                rows.map((row, rowIndex) => {
+                  return (
+                    <Tr key={row.cuid}>
+                      {schema &&
+                        schema.fields &&
+                        schema.fields.map((field, fieldIndex) => {
+                          let key = `${table}.${field.name}.${row.cuid}`
+                          let font = field?.definition?.fontFamily
+                          let reference = field?.reference && field?.definition?.display && field?.definition?.value
+                          let referenceCuid = row?.[field.name]?.[field.definition.value]
+                          let genericFormLink = routes.formEdit({ table: camelTable, cuid: row.cuid })
+                          if (fieldIndex === 0) {
+                            return (<Fragment key={key}>
+                              <Td>
+                                <IconButton
+                                  aria-label={`Edit row`} icon={<MdEdit />} backgroundColor={'green.500'} size={'sm'} m={2} onClick={() => {
+                                    navigate(genericFormLink)
+                                  }} />
+                              </Td>
+                              <Td>
+                                {/*<ChakraLink as={Link} to={routes[camelTable]({cuid: row.cuid})} fontFamily={font}>
                               {row[field.name]}
                             </ChakraLink>*/}
-                            <ChakraLink as={Link} to={genericFormLink} fontFamily={font}>
-                              {row[field.name]}
-                            </ChakraLink>
-                          </Td>)
-                        }
-                        if (reference && referenceCuid) {
-                          let referenceTable = camelCase(field.name, { pascalCase: false })
-                          return (<Td key={key}>
-                            <ChakraLink as={Link} to={routes[referenceTable]({ cuid: referenceCuid })} fontFamily={font}>
-                              {row[field.name][field.definition.display]}
-                            </ChakraLink>
-                          </Td>)
-                        }
-                        return <Td key={key}>{row[field.name]}</Td>
-                      })}
-                  </Tr>
-                )
-              })}
-          </Tbody>
-          {/*
+                                <ChakraLink as={Link} to={genericFormLink} fontFamily={font}>
+                                  {row[field.name]}
+                                </ChakraLink>
+                              </Td>
+                            </Fragment>)
+                          }
+                          if (reference && referenceCuid) {
+                            let referenceTable = camelCase(field.name, { pascalCase: false })
+                            return (<Td key={key}>
+                              <ChakraLink as={Link} to={routes[referenceTable]({ cuid: referenceCuid })} fontFamily={font}>
+                                {row[field.name][field.definition.display]}
+                              </ChakraLink>
+                            </Td>)
+                          }
+                          return <Td key={key}>{row[field.name]}</Td>
+                        })}
+                    </Tr>
+                  )
+                })}
+            </Tbody>
+            {/*
         <TableColumns
           columns={columns}
           orderBy={orderBy}
@@ -399,80 +412,110 @@ const ListPage = ({ table, params }) => {
           displayColumn={displayColumn}
         />
               */}
-        </Table>
-      )}
-      <Center>
-        <Box>
-          <Flex gap={1}>
-            <IconButton
-              aria-label="First Page"
-              backgroundColor={'green.500'}
-              _hover={{ backgroundColor: 'green.600' }}
-              icon={<MdFirstPage />}
-              onClick={() => {
-                //navigate(routes.list({ table: camelTable, to: 'page/2' }))
-                let take = parseInt(paramsObject?.take || 10)
-                setPage(1)
-                navigate('/list/' + camelTable + '/page/1' + '/take/' + take)
-              }}
-            />
-            <IconButton
-              aria-label="Previous Page"
-              backgroundColor={'green.500'}
-              _hover={{ backgroundColor: 'green.600' }}
-              icon={<MdChevronLeft />}
-              onClick={() => {
-                // get the page from the url
-                let page = parseInt(paramsObject?.page || 1)
+          </Table>
+        )}
+        <Center>
+          <Box>
+            <Flex gap={1}>
+              <IconButton
+                aria-label="First Page"
+                backgroundColor={'green.500'}
+                _hover={{ backgroundColor: 'green.600' }}
+                icon={<MdFirstPage />}
+                onClick={() => {
+                  //navigate(routes.list({ table: camelTable, to: 'page/2' }))
+                  let take = parseInt(paramsObject?.take || 10)
+                  setPage(1)
+                  navigate('/list/' + camelTable + '/page/1' + '/take/' + take)
+                }}
+              />
+              <IconButton
+                aria-label="Previous Page"
+                backgroundColor={'green.500'}
+                _hover={{ backgroundColor: 'green.600' }}
+                icon={<MdChevronLeft />}
+                onClick={() => {
+                  // get the page from the url
+                  let page = parseInt(paramsObject?.page || 1)
 
-                // if page is 1 or undefined, don't go back
-                if (page === 1 || page === undefined) {
-                  return
-                }
-                setPage(page)
-                navigate('/list/' + camelTable + '/page/' + (page - 1) + '/take/' + take)
-              }}
-            />
-            <IconButton
-              aria-label="Next Page"
-              backgroundColor={'green.500'}
-              _hover={{ backgroundColor: 'green.600' }}
-              icon={<MdChevronRight />}
-              onClick={() => {
-                // get the page from the url
-                let page = parseInt(paramsObject?.page || 1)
-                let take = parseInt(paramsObject?.take || 10)
-                // if count < page * take, go to the next page
-                if (count > page * take) {
+                  // if page is 1 or undefined, don't go back
+                  if (page === 1 || page === undefined) {
+                    return
+                  }
                   setPage(page)
-                  navigate('/list/' + camelTable + '/page/' + (page + 1) + '/take/' + take)
-                }
-              }}
-            />
-            <IconButton
-              aria-label="Last Page"
-              icon={<MdLastPage />}
-              backgroundColor={'green.500'}
-              _hover={{ backgroundColor: 'green.600' }}
-              onClick={() => {
-                // get the page from the url
-                let page = parseInt(paramsObject?.page || 1)
-                let take = parseInt(paramsObject?.take || 10)
-                if (count > take) {
-                  let lastPage = Math.ceil(count / take)
-                  setPage(lastPage)
-                  navigate('/list/' + camelTable + '/page/' + lastPage + '/take/' + take)
-                }
-              }}
-            />
-          </Flex>
-          <Center>
-            <Text>
-              Page {paramsObject?.page || 1} of {Math.ceil(count / (paramsObject?.take || 10))}
-            </Text>
-          </Center>
-        </Box>
-      </Center>
+                  navigate('/list/' + camelTable + '/page/' + (page - 1) + '/take/' + take)
+                }}
+              />
+              <IconButton
+                aria-label="Next Page"
+                backgroundColor={'green.500'}
+                _hover={{ backgroundColor: 'green.600' }}
+                icon={<MdChevronRight />}
+                onClick={() => {
+                  // get the page from the url
+                  let page = parseInt(paramsObject?.page || 1)
+                  let take = parseInt(paramsObject?.take || 10)
+                  // if count < page * take, go to the next page
+                  //if (count > page * take) {
+                    setPage(page)
+                    setTake(take)
+                    navigate('/list/' + camelTable + '/page/' + (page + 1) + '/take/' + take)
+                  //}
+                }}
+              />
+              <IconButton
+                aria-label="Last Page"
+                icon={<MdLastPage />}
+                backgroundColor={'green.500'}
+                _hover={{ backgroundColor: 'green.600' }}
+                onClick={() => {
+                  // get the page from the url
+                  let page = parseInt(paramsObject?.page || 1)
+                  let take = parseInt(paramsObject?.take || 10)
+                  if (count > take) {
+                    let lastPage = Math.ceil(count / take)
+                    setPage(lastPage)
+                    navigate('/list/' + camelTable + '/page/' + lastPage + '/take/' + take)
+                  }
+                }}
+              />
+            </Flex>
+            <Center>
+              <Text>
+                {paramsObject?.page || 1} / {Math.ceil(count / (paramsObject?.take || 10))}
+              </Text>
+            </Center>
+            {/**Load a chakraui select with a label to define the take qty */}
+            <Box>
+              <FormControl>
+              {/** I would like the label and field on one line */}
+              <Flex>
+                <FormLabel htmlFor="take">Take</FormLabel>
+                <Select
+
+                  id="take"
+                  name="take"
+                  value={paramsObject?.take || 10}
+                  onChange={(e) => {
+                    let take = parseInt(e.target.value)
+                    let page = parseInt(paramsObject?.page || 1)
+                    setTake(take)
+                    setPage(page)
+                    navigate('/list/' + camelTable + '/page/' + page + '/take/' + take)
+                  }}
+                >
+                {/**onle 10, 25, and 50 */}
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </Select>
+                </Flex>
+              </FormControl>
+
+            </Box>
+          </Box>
+
+        </Center>
       </Box>
       <details>
         <summary>Schema</summary>
