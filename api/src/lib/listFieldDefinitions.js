@@ -137,10 +137,10 @@ export const definitions = {
   activity: {
     'createdAt': {
       label: 'Created At',
+      canSort: true,
     },
     'ModelInstance': {
       label: 'Model Instance',
-      canSort: true,
       canFilter: true,
       canShowMatching: true,
       display: 'name',
@@ -148,7 +148,6 @@ export const definitions = {
     },
     'User': {
       label: 'User',
-      canSort: true,
       canFilter: true,
       canShowMatching: true,
       display: 'name',
