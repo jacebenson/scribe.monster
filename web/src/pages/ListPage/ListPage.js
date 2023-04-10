@@ -262,6 +262,7 @@ const ListPage = ({ table, params }) => {
       borderRadius={'lg'}
       boxShadow={'lg'}
       p={4}
+      minH={'calc(100vh - 200px)'}
       >
       <Heading pb={2}>
         {spacedTable} ({count})
@@ -402,16 +403,6 @@ const ListPage = ({ table, params }) => {
               */}
         </Table>
       )}
-      {/*
-      <Center>
-        <TablePagination
-          count={data.count}
-          skip={skip}
-          setSkip={setSkip}
-          take={take}
-        />
-      </Center>
-*/}
       <Center>
         <Box>
           <Flex gap={1}>
