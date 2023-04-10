@@ -136,12 +136,8 @@ export const definitions = {
     },
   },
   groupMember: {
-    'createdAt': {
-      label: 'Created At',
-    },
-    'cuid': {
-      label: 'Cuid',
-    },
+    'createdAt': { label: 'Created At' },
+    'cuid': { label: 'Cuid' },
     'User': {
       label: 'User',
       canSort: true,
@@ -176,6 +172,15 @@ export const definitions = {
     },
     source: {
       label: 'Source',
+    }
+  },
+  activity: {
+    'createdAt': { label: 'Created At' },
+    'updatedAt': { label: 'Updated At' },
+    'User': {
+      label: 'User',
+      display: 'name',
+      value: 'cuid'
     }
   }
 }

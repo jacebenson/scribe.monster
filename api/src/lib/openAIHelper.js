@@ -95,7 +95,7 @@ export const getMemoriesChunksSortedByVector = async (vector) => {
   console.log(`:: Getting Memories Chunks Sorted By Vector ::`)
   let activeChunks = await db.memoryChunk.findMany({
     where: {
-      memory: {
+      Memory: {
         active: true,
         vector: {
           not: null,
@@ -106,7 +106,7 @@ export const getMemoriesChunksSortedByVector = async (vector) => {
       title: true,
       content: true,
       vector: true,
-      memory: {
+      Memory: {
         select: {
           source: true,
           sourceUrl: true,

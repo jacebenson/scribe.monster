@@ -50,7 +50,7 @@ export default async ({ args }) => {
       }catch(error){
         console.log('error', error)
       }
-      return { tableName, data }
+      //return { tableName, data }
       } catch (error) {
         console.log('error', error)
       }

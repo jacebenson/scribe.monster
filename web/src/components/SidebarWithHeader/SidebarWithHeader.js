@@ -21,6 +21,7 @@ import {
   MenuList,
 } from '@chakra-ui/react'
 import {
+  MdList,
   MdGroups,
   MdPerson,
   MdHome,
@@ -80,6 +81,22 @@ const SidebarContent = ({ brand, onClose, ...rest }) => {
   const { hasRole, isAuthenticated } = useAuth()
   const LinkItems = [
     { name: 'Home', icon: MdHome, navigateTo: 'home' },
+    { name: 'Users', icon: MdList, role: 'userRead', navigateTo: 'list', table: 'users' },
+    { name: 'Groups', icon: MdList, role: 'groupRead', navigateTo: 'list', table: 'groups' },
+    { name: 'Group Members', icon: MdList, role: 'groupMemberRead', navigateTo: 'list', table: 'groupMembers' },
+    { name: 'Group Roles', icon: MdList, role: 'groupRoleRead', navigateTo: 'list', table: 'groupRoles' },
+    { name: 'Preferences', icon: MdList, role: 'preferenceRead', navigateTo: 'list', table: 'preferences' },
+    { name: 'Properties', icon: MdList, role: 'propertyRead', navigateTo: 'list', table: 'properties' },
+    { name: 'Messages', icon: MdList, role: 'messageRead', navigateTo: 'list', table: 'messages' },
+    { name: 'Logs', icon: MdList, role: 'logRead', navigateTo: 'list', table: 'logs' },
+    { name: 'Activities', icon: MdList, role: 'activityRead', navigateTo: 'list', table: 'activities' },
+    { name: 'Model Instances', icon: MdList, role: 'modelInstanceRead', navigateTo: 'list', table: 'modelInstances' },
+    { name: 'Memories', icon: MdList, role: 'memoryRead', navigateTo: 'list', table: 'memories' },
+    { name: 'Memory Chunks', icon: MdList, role: 'memoryChunkRead', navigateTo: 'list', table: 'memoryChunks' },
+    { name: 'Threads', icon: MdList, role: 'threadRead', navigateTo: 'list', table: 'threads' },
+    { name: 'Questions', icon: MdList, role: 'questionRead', navigateTo: 'list', table: 'questions' },
+
+    /*
     { name: 'Users', icon: MdPerson, role: 'userRead', navigateTo: 'users' },
     { name: 'Groups', icon: MdGroups, role: 'groupRead', navigateTo: 'groups' },
     {
@@ -154,7 +171,7 @@ const SidebarContent = ({ brand, onClose, ...rest }) => {
       role: 'admin',
       navigateTo: 'questions',
     },
-
+*/
     //{ name: 'Logout', icon: MdLogout, navigateTo: 'logout' },
   ].filter((item) => {
     if (item?.requireAuth === true && isAuthenticated) {
@@ -183,6 +200,7 @@ const SidebarContent = ({ brand, onClose, ...rest }) => {
         </Text>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
+
       {LinkItems.map((link) => (
         <NavItem
           pt={0}
@@ -192,6 +210,7 @@ const SidebarContent = ({ brand, onClose, ...rest }) => {
           icon={link.icon}
           navigateTo={link.navigateTo}
           onClick={onClose}
+          table={link?.table}
         >
           {link.name}
         </NavItem>

@@ -35,6 +35,7 @@ module.exports = {
       let questionVector = JSON.parse(data.rephrasedTextVector)
       //let memories = await getMemoriesSortedByVector(questionVector)
       let memories = await getMemoriesChunksSortedByVector(questionVector)
+      console.log({ function: 'getMemoriesChunksSortedByVector', memories })
       memories = await filterMemories({ memories, quantity: 5, score: 75 })
       if (memories.length === 0) {
         // i could look up some restful apis here

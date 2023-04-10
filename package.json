@@ -25,7 +25,7 @@
     "start": "rw dev",
     "postgres:up": "docker-compose up",
     "postgres:down": "docker-compose down",
-    "setupdev": "yarn rw prisma db push && yarn rw exec seed",
+    "dev": "yarn rw prisma db push && yarn rw exec seed && yarn rw dev",
     "test": "yarn postgres:down && yarn postgres:up && yarn rw test"
   },
   "packageManager": "yarn@3.3.1"

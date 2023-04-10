@@ -4,6 +4,7 @@ import { NavLink, routes } from '@redwoodjs/router'
 const NavItem = ({ icon, navigateTo, query, children, ...rest }) => {
   if (!query) {
     query = {}
+    if(rest?.table) query = { table: rest.table }
   }
   return (
     <NavLink
