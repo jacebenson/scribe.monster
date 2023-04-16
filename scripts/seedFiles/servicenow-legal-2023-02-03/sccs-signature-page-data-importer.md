@@ -1,0 +1,10 @@
+## ANNEX I 
+
+## A. LIST OF PARTIES 
+
+**MODULE TWO: Transfer controller to processor Data exporter(s):** [ _Identity and contact details of the data exporter(s) and, where applicable, of its/their data protection officer and/or representative in the European Union]_ Name: ... Address: ... Contact person’s name, position and contact details: ... Activities relevant to the data transferred under these Clauses: ... Signature and date: ... Role (controller/processor): ... **Data importer(s):** [ _Identity and contact details of the data importer(s), including any contact person with responsibility for data protection]_ Name: ... **See below.** Address: ... **See below.** Contact person’s name, position and contact details: ... **See below.** Activities relevant to the data transferred under these Clauses: ... **Please refer to the Agreement in which these Standard Contractual Clauses are incorporated.** Signature and date: ... **See below for signature. Date is the date of incorporation of these Standard Contractual Clauses into the Agreement.** Role (controller/processor): ... **Processor.** Name: ServiceNow, Inc. Address: 2225 Lawson Lane Santa Clara, California 95054 Contact details: Global Head of Privacy: privacy@servicenow.com Signature.............................................. On behalf of ServiceNow, Inc. 
+
+
+Name: ServiceNow Australia PTY LTD Address: Suite 9, Waverley Masonic Centre, 318 322 Stephensons Road Mount Waverley VIC 3149 Australia Contact details: Global Head of Privacy: privacy@servicenow.com Signature.............................................. On behalf of ServiceNow Australia PTY LTD Name: ServiceNow Software Development India Private Limited Address: Knowledge City, 7th Floor, Plot No 2, Phase 1, Survey No.83/1, Raidurg Village, Serilingampally Hyderabad Rangareddi TG 500081 IN Contact details: Global Head of Privacy: privacy@servicenow.com Signature.............................................. On behalf of ServiceNow Software Development India Private Limited 
+
+

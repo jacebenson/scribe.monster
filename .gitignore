@@ -1,5 +1,8 @@
 scripts/seedFiles/backup*
 api/db/postgres-test-data
+yarn.lock
+.yarnrc.yml
+.yarn/*
 .idea
 .DS_Store
 .env
