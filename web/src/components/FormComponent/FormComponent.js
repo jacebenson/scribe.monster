@@ -15,6 +15,8 @@ import {
   Switch,
   Text,
   Textarea,
+  Code,
+  Checkbox,
 } from '@chakra-ui/react'
 
 import { useAuth } from 'src/auth'
@@ -53,6 +55,16 @@ const FormComponent = ({
     if (field === fieldNames[index - 1])
       throw `Multiple fields with name "${field}" are present`
   })
+  // if fields.definitions.order is present, use it to sort the fields
+  fields = fields.sort((a, b) => {
+    if (a.definition?.order && b.definition?.order) {
+      return a.definition?.order - b.definition?.order
+    }
+    if (a.definition?.order) return -1
+    if (b.definition?.order) return 1
+    return 0
+  })
+
   let fieldsHtml = fields.map((field) => {
     field.pt = 2
     let html = (
@@ -88,7 +100,7 @@ const FormComponent = ({
           display="flex"
           alignItems="center"
         >
-          <FormLabel htmlFor={field.name}>{field.prettyName}</FormLabel>
+          <FormLabel htmlFor={field.name}>{field.prettyName} {value}({record?.[field.name]?.toString()})</FormLabel>
           <Switch
             colorScheme="green"
             id={field.name}
@@ -96,12 +108,18 @@ const FormComponent = ({
             {...register(field.name, {
               required: field?.required || false,
             })}
-            defaultChecked={record?.[field.name] || field.defaultValue}
-            //isChecked={record?.[field.name] || field.defaultValue}
+            defaultChecked={record?.[field.name]?.toString() || field.defaultValue}
+            //TODO:this is not working
           />
           <FormErrorMessage>
             {errors[field.name] && errors[field.name].message}
           </FormErrorMessage>
+          <details>
+          <summary>Boolean</summary>
+          <Code whiteSpace={'pre-wrap'} display={'block'} p={2} m={2}>
+            {JSON.stringify(debug, null, 2)}
+          </Code>
+          </details>
         </FormControl>
       )
     }
@@ -183,6 +201,21 @@ const FormComponent = ({
       )
     }
     if (field.type === 'select') {
+      // if field.options has strings, use them as both the value and the display
+      // if field.options has objects, use the value and display properties
+      let options = field.options.map((option) => {
+        if (typeof option === 'string') {
+          if(option === record?.[field.name]){
+            return <option key={option} value={option} selected>{option}</option>
+          }
+          return <option key={option} value={option}>{option}</option>
+        }
+        if(option.value === record?.[field.name]){
+          return <option key={option.value} value={option.value} selected>{option.display}</option>
+        }
+        return <option key={option.value} value={option.value}>{option.display}</option>
+      })
+
       html = (
         <FormControl pt={2} key={field.name} isInvalid={errors[field.name]}>
           <FormLabel htmlFor={field.name}>{field.prettyName}</FormLabel>
@@ -196,13 +229,8 @@ const FormComponent = ({
             })}
           >
             <option>Pick one</option>
-            {field.options.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
             {field.defaultOption}
-            {field.options}
+            {options}
           </Select>
           <FormErrorMessage>
             {errors[field.name] && errors[field.name].message}

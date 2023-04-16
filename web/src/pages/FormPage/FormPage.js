@@ -56,9 +56,33 @@ const FormPage = ({ table, cuid }) => {
     delete: ['groupMemberDelete'],
   }
   const onSubmit = (data) => {
-    console.log({ function: 'onSubmit', formData })
+    // data is "the" changed data
+    // formData is the loaded data
+    console.log({ function: 'onSubmit', formData, data })
+    delete data.cuid
+    // data has the changed data, so we need to merge with the formData for the original when data is missing values
+    // the problem is we may have values that are legit null or '', so we need to check for that
+    // if the value is null or '' then we need to use the value from formData
+    // so the data value should take precedence
+    data = { ...formData, ...data }
+    // if data[field] is null or '' then use formData[field]
+    data = Object.keys(data).reduce((acc, field) => {
+      if (data[field] == null || data[field] == '') {
+        acc[field] = formData[field]
+      } else {
+        acc[field] = data[field]
+      }
+      return acc
+    }, {})
+
     console.log('onSubmit', data)
   }
+  console.log({function: 'FormPage', formData, schema})
+  //schema.fields needs to be modified to move schema.fields[].definition.label to schema.fields[].prettyName
+  schema?.fields?.forEach((field) => {
+    field.prettyName = field.definition.label
+  })
+  console.log({ function: 'FormPage', formData })
   return (
     <>
       <MetaTags title="Form" description="Form page" />
