@@ -126,7 +126,7 @@ export const definitions = {
       // this will need the default display
       graphql: {
         table: 'group',
-        fields: ['name','cuid'],
+        fields: ['name', 'cuid'],
         filter: {},
         skip: 0,
         take: 10,

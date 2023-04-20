@@ -197,6 +197,7 @@ const ListPage = ({ table, params }) => {
     setError(null)
     setRows([])//clear the rows when the table changes
     setCount(0)//clear the count when the table changes
+    setOrderBy(orderBy)
     setListState('loading')//clear the listState when the table changes
     setOrderBy(orderBy)
     getSchema({ table: pascalTable })

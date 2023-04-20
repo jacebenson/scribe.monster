@@ -101,8 +101,8 @@ export const definitions = {
     'cuid': {
       label: 'Cuid',
     },
-   'User': {
-    reference: true,
+    'User': {
+      reference: true,
       label: 'User',
       canSort: true,
       canFilter: true,
@@ -153,7 +153,6 @@ export const definitions = {
       display: 'name',
       value: 'cuid'
     },
-
   },
   memory: {
     'createdAt': {
