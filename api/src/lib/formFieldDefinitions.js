@@ -126,7 +126,7 @@ export const definitions = {
       // this will need the default display
       graphql: {
         table: 'group',
-        fields: ['name','cuid'],
+        fields: ['name', 'cuid'],
         filter: {},
         skip: 0,
         take: 10,
@@ -182,5 +182,20 @@ export const definitions = {
       display: 'name',
       value: 'cuid'
     }
+  },
+  memory: {
+    'title': { label: 'Title', order: 100 },
+    'source': { label: 'Source', order: 200 },
+    'active': { label: 'Active', type: 'select',
+    options: [
+      { value: true, display: 'Active' },
+      { value: false, display: 'Inactive' },
+    ], order: 300 },
+    'content': { label: 'Content', type: 'textarea', order: 400 },
+  },
+  memoryChunk: {
+    'title': { label: 'Title' },
+    'active': { label: 'Active' },
+    'content': { label: 'Content' },
   }
 }

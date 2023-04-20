@@ -198,6 +198,7 @@ const ListPage = ({ table, params }) => {
     setError(null)
     setRows([])//clear the rows when the table changes
     setCount(0)//clear the count when the table changes
+    setOrderBy(orderBy)
     setListState('loading')//clear the listState when the table changes
     getSchema({ table: pascalTable })
       .then(async (database) => {
@@ -283,7 +284,8 @@ const ListPage = ({ table, params }) => {
                   schema.fields.map((field, index) => {
                     let header = field?.definition?.label || field.name
                     let sortable = field?.definition?.canSort
-                    let sortedBy = orderBy && orderBy[field.name]
+                    //let sortedBy = orderBy && orderBy[field.name]
+                    let sortedBy = orderBy?.[field.name]
                     let sortedDirection = sortedBy
 
                     return <Th key={`${table}.${field.name}`}>
@@ -338,7 +340,7 @@ const ListPage = ({ table, params }) => {
                             let take = parseInt(paramsObject?.take || 10)
                             setPage(page)
                             setTake(take)
-                            setOrderBy({ [field.name]: sortedDirection })
+                            setOrderBy({ [field.name]: sortedDirection || 'desc' })
                             navigate('/list/' + camelTable + '/page/' + page + '/take/' + take + '/orderBy/' + field.name + '/desc/')
                           }}
                         />

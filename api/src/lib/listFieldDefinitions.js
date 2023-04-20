@@ -101,8 +101,8 @@ export const definitions = {
     'cuid': {
       label: 'Cuid',
     },
-   'User': {
-    reference: true,
+    'User': {
+      reference: true,
       label: 'User',
       canSort: true,
       canFilter: true,
@@ -153,6 +153,33 @@ export const definitions = {
       display: 'name',
       value: 'cuid'
     },
-
+  },
+  memory: {
+    'createdAt': {
+      label: 'Created At',
+      canSort: true,
+    },
+    'source': {
+      label: 'Source',
+    },
+    'title': {
+      label: 'Title',
+      canSort: true,
+    },
+    'active': {
+      label: 'Active',
+    },
+  },
+  memoryChunk: {
+    'createdAt': {
+      label: 'Created At',
+      canSort: true,
+    },
+    'title': {
+      label: 'Title',
+    },
+    'active': {
+      label: 'Active',
+    }
   }
 }

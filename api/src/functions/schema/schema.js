@@ -105,6 +105,12 @@ export const handler = async (event /*, context*/) => {
       field.definition = {
         ...definitions?.[camelTable]?.[field.name]
       }
+      if(field?.definition?.type){
+        field.type = field.definition.type
+      }
+      if(field?.definition?.options){
+        field.options = field.definition.options
+      }
     })
   }
   // filter out the fields we don't want to show
