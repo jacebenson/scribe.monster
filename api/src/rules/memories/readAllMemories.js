@@ -14,7 +14,7 @@ module.exports = {
    * @returns
    */
   command: async function ({ where, filter, q }) {
-    if (context.currentUser.roles.includes('memoryChunkRead')) {
+    if (context.currentUser.roles.includes('memoryRead')) {
       where.push({ cuid: context.currentUser.cuid }) // required for all queries
     }
     if (filter) {
@@ -23,6 +23,8 @@ module.exports = {
           // not required
           { title: { contains: filter, mode: 'insensitive' } },
           //{ username: { contains: filter, mode: 'insensitive' } },
+          { source: { contains: filter, mode: 'insensitive' } },
+          { sourceUrl: { contains: filter, mode: 'insensitive' } },
           { content: { contains: filter, mode: 'insensitive' } },
         ],
       })

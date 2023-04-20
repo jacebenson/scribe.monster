@@ -192,7 +192,6 @@ const ListPage = ({ table, params }) => {
   let [take, setTake] = useState(paramsObject?.take || 10)
   let [orderBy, setOrderBy] = useState(paramsObject?.orderBy || {})
   let [where, setWhere] = useState(paramsObject?.where || {})
-
   let [error, setError] = useState()
   useEffect(() => {
     setError(null)
@@ -200,6 +199,7 @@ const ListPage = ({ table, params }) => {
     setCount(0)//clear the count when the table changes
     setOrderBy(orderBy)
     setListState('loading')//clear the listState when the table changes
+    setOrderBy(orderBy)
     getSchema({ table: pascalTable })
       .then(async (database) => {
         // filter the schema to only include the table
@@ -284,9 +284,9 @@ const ListPage = ({ table, params }) => {
                   schema.fields.map((field, index) => {
                     let header = field?.definition?.label || field.name
                     let sortable = field?.definition?.canSort
-                    //let sortedBy = orderBy && orderBy[field.name]
-                    let sortedBy = orderBy?.[field.name]
+                    let sortedBy = orderBy[field.name]
                     let sortedDirection = sortedBy
+                    console.log({ orderBy, sortedBy, sortedDirection })
 
                     return <Th key={`${table}.${field.name}`}>
                       {header}
