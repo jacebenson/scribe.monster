@@ -22,34 +22,37 @@ import {
 } from '@chakra-ui/react'
 import {
   MdList,
-  MdGroups,
-  MdPerson,
   MdHome,
-  MdPersonOutline,
-  MdWork,
-  MdRoomPreferences,
-  MdSettings,
-  MdLanguage,
-  MdLogout,
   MdMenu,
   MdDoorbell,
   MdOutlineKeyboardArrowDown,
-  MdSettingsApplications,
 } from 'react-icons/md'
 
 import { routes, navigate } from '@redwoodjs/router'
 
 import { useAuth } from 'src/auth'
-
+import { ListContext } from 'src/App.js'
 import NavItem from '../NavItem/NavItem'
 const SidebarWithHeader = ({ brand, children }) => {
+  const { table, setTable, page, setPage, take, setTake, where, setWhere, orderBy, setOrderBy } = React.useContext(ListContext)
   const { isOpen, onOpen, onClose } = useDisclosure()
+  let navigateAndClose = ({navigateTo, table, page, take, where, orderBy}) => {
+    if(navigateTo === 'list') {
+    setTable(table)
+    setPage(page || 1)
+    setTake(take || 10)
+    setWhere(where || '')
+    setOrderBy(orderBy || 'cuid/desc')
+    onClose()
+    }
+  }
   return (
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
       <SidebarContent
         onClose={() => onClose}
         display={{ base: 'none', md: 'block' }}
         brand={brand}
+        navigateAndClose={navigateAndClose}
       />
       <Drawer
         isOpen={isOpen}
@@ -77,102 +80,26 @@ const SidebarWithHeader = ({ brand, children }) => {
 // }
 
 //const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-const SidebarContent = ({ brand, onClose, ...rest }) => {
+const SidebarContent = ({ brand, onClose, navigateAndClose, ...rest }) => {
   const { hasRole, isAuthenticated } = useAuth()
-  const LinkItems = [
-    { name: 'Home', icon: MdHome, navigateTo: 'home' },
-    { name: 'Users', icon: MdList, role: 'userRead', navigateTo: 'list', table: 'users' },
-    { name: 'Groups', icon: MdList, role: 'groupRead', navigateTo: 'list', table: 'groups' },
-    { name: 'Group Members', icon: MdList, role: 'groupMemberRead', navigateTo: 'list', table: 'groupMembers' },
-    { name: 'Group Roles', icon: MdList, role: 'groupRoleRead', navigateTo: 'list', table: 'groupRoles' },
-    { name: 'Preferences', icon: MdList, role: 'preferenceRead', navigateTo: 'list', table: 'preferences' },
-    { name: 'Properties', icon: MdList, role: 'propertyRead', navigateTo: 'list', table: 'properties' },
-    { name: 'Messages', icon: MdList, role: 'messageRead', navigateTo: 'list', table: 'messages' },
-    { name: 'Logs', icon: MdList, role: 'logRead', navigateTo: 'list', table: 'logs' },
-    { name: 'Activities', icon: MdList, role: 'activityRead', navigateTo: 'list', table: 'activities' },
-    { name: 'Model Instances', icon: MdList, role: 'modelInstanceRead', navigateTo: 'list', table: 'modelInstances' },
-    { name: 'Memories', icon: MdList, role: 'memoryRead', navigateTo: 'list', table: 'memories' },
-    { name: 'Memory Chunks', icon: MdList, role: 'memoryChunkRead', navigateTo: 'list', table: 'memoryChunks' },
-    { name: 'Threads', icon: MdList, role: 'threadRead', navigateTo: 'list', table: 'threads' },
-    { name: 'Questions', icon: MdList, role: 'questionRead', navigateTo: 'list', table: 'questions' },
 
-    /*
-    { name: 'Users', icon: MdPerson, role: 'userRead', navigateTo: 'users' },
-    { name: 'Groups', icon: MdGroups, role: 'groupRead', navigateTo: 'groups' },
-    {
-      name: 'Group Members',
-      icon: MdPersonOutline,
-      role: 'groupMemberRead',
-      navigateTo: 'groupMembers',
-    },
-    {
-      name: 'Group roles',
-      icon: MdWork,
-      role: 'groupRoleRead',
-      navigateTo: 'groupRoles',
-    },
-    {
-      name: 'Preferences',
-      icon: MdRoomPreferences,
-      roles: 'preferenceRead',
-      navigateTo: 'preferences',
-    },
-    {
-      name: 'Properties',
-      icon: MdSettings,
-      role: 'propertyRead',
-      navigateTo: 'properties',
-    },
-    {
-      name: 'Messages',
-      icon: MdLanguage,
-      role: 'messageRead',
-      navigateTo: 'messages',
-    },
-    {
-      name: 'Logs',
-      icon: MdSettingsApplications,
-      role: 'admin',
-      navigateTo: 'logs',
-    },
-    //{
-    //  name: 'PromptTraining',
-    //  icon: MdSettingsApplications,
-    //  role: 'admin',
-    //  navigateTo: 'promptTrainingDatas',
-    //},
-    {
-      name: 'Model Instances',
-      icon: MdSettingsApplications,
-      role: 'admin',
-      navigateTo: 'modelInstances',
-    },
-    {
-      name: 'Memories',
-      icon: MdSettingsApplications,
-      role: 'admin',
-      navigateTo: 'memories',
-    },
-    {
-      name: 'MemoriesChunks',
-      icon: MdSettingsApplications,
-      role: 'admin',
-      navigateTo: 'memoryChunks',
-    },
-    {
-      name: 'Threads',
-      icon: MdSettingsApplications,
-      role: 'admin',
-      navigateTo: 'threads',
-    },
-    {
-      name: 'Questions',
-      icon: MdSettingsApplications,
-      role: 'admin',
-      navigateTo: 'questions',
-    },
-*/
-    //{ name: 'Logout', icon: MdLogout, navigateTo: 'logout' },
+  const LinkItems = [
+    { name: 'Home',            icon: MdHome, navigateTo: 'home' },
+    { name: 'Users',           icon: MdList, role: 'userRead',          table: 'users', orderBy: 'createdAt/desc' },
+    { name: 'Groups',          icon: MdList, role: 'groupRead',         table: 'groups' },
+    { name: 'Group Members',   icon: MdList, role: 'groupMemberRead',   table: 'groupMembers' },
+    { name: 'Group Roles',     icon: MdList, role: 'groupRoleRead',     table: 'groupRoles' },
+    { name: 'Preferences',     icon: MdList, role: 'preferenceRead',    table: 'preferences' },
+    { name: 'Properties',      icon: MdList, role: 'propertyRead',      table: 'properties' },
+    { name: 'Messages',        icon: MdList, role: 'messageRead',       table: 'messages' },
+    { name: 'Logs',            icon: MdList, role: 'logRead',           table: 'logs' },
+    { name: 'Activities',      icon: MdList, role: 'activityRead',      table: 'activities', orderBy: 'createdAt/desc' },
+    { name: 'Model Instances', icon: MdList, role: 'modelInstanceRead', table: 'modelInstances' },
+    { name: 'Memories',        icon: MdList, role: 'memoryRead',        table: 'memories'},
+    { name: 'Memory Chunks',   icon: MdList, role: 'memoryChunkRead',   table: 'memoryChunks' },
+    { name: 'Threads',         icon: MdList, role: 'threadRead',        table: 'threads' },
+    { name: 'Questions',       icon: MdList, role: 'questionRead',      table: 'questions' },
+
   ].filter((item) => {
     if (item?.requireAuth === true && isAuthenticated) {
       return (
@@ -181,7 +108,6 @@ const SidebarContent = ({ brand, onClose, ...rest }) => {
     }
     return hasRole(item.role) || hasRole('admin')
   })
-
   return (
     <Box
       overflowY={'scroll'}
@@ -201,20 +127,26 @@ const SidebarContent = ({ brand, onClose, ...rest }) => {
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
 
-      {LinkItems.map((link) => (
+      {LinkItems.map((link) => {
+        if(!link?.navigateTo) link.navigateTo = 'list'
+        //
+          //navigateTo={link.navigateTo}
+        return (
         <NavItem
           pt={0}
           pb={0}
           size={'sm'}
           key={link.name}
           icon={link.icon}
+          onClick={()=>{navigateAndClose({
+            ...link
+          })}}
           navigateTo={link.navigateTo}
-          onClick={onClose}
           table={link?.table}
         >
           {link.name}
-        </NavItem>
-      ))}
+        </NavItem>)
+      })}
     </Box>
   )
 }

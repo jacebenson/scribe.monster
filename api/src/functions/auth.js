@@ -51,9 +51,7 @@ export const handler = async (event, context) => {
       // if the loginTokenExpiresAt is set, and is in the past
       // then throw an error to prevent the user from logging in
       let loginTokenExpiresAt = new Date(user?.loginTokenExpiresAt)
-      console.log({ function: 'auth.js', loginTokenExpiresAt })
       let validToken = loginTokenExpiresAt < new Date()
-      console.log({ function: 'auth.js', validToken })
       if (validToken) {
         throw 'Login token expired'
       }
@@ -64,7 +62,6 @@ export const handler = async (event, context) => {
           loginTokenExpiresAt: null,
         },
       })
-      console.log({ function: 'auth.js', updateUser })
       return user
     },
 

@@ -23,7 +23,6 @@ export const generateLoginToken = async ({ email }) => {
   try {
     // look up if the user exists
     let lookupUser = await db[table].findFirst({ where: { username: email } })
-    console.log({ lookupUser })
     if (!lookupUser) return { message: 'Login Request received' }
 
     // here we're going to generate a random password of 6 numbers, then hash it properly
@@ -32,7 +31,6 @@ export const generateLoginToken = async ({ email }) => {
       if (number < 100000) number = number + 100000
       return number.toString()
     })()
-    console.log({ randomNumber })
     // because we're really just modifying how dbauth worked we have a salt
     // and a hashedPassword.  We're going to use the salt to hash the random number
     // and then store that in the hashedPassword field
@@ -48,12 +46,10 @@ export const generateLoginToken = async ({ email }) => {
       }
       return randomString
     })()
-    console.log({ salt })
     // now we'll hash the random number with the salt
     let loginToken = CryptoJS.PBKDF2(randomNumber, salt, {
       keySize: 256 / 32,
     }).toString()
-    console.log({ loginToken })
     // now we'll update the user with the new salt and hashedPassword
     let loginTokenExpiresAt = new Date()
     loginTokenExpiresAt.setMinutes(loginTokenExpiresAt.getMinutes() + 15)
@@ -61,7 +57,6 @@ export const generateLoginToken = async ({ email }) => {
       cuid: lookupUser.cuid,
       input: {
         salt,
-        //hashedPassword, // TODO: REmove
         loginToken,
         loginTokenExpiresAt,
         _unencryptedToken: randomNumber,
@@ -151,7 +146,7 @@ export const user = async ({ cuid }) => {
   }
 }
 export const updateUser = async ({ cuid, input }) => {
-  console.log({ function: 'updateUser', cuid, input })
+  //console.log({ function: 'updateUser', cuid, input })
   try {
     let { data, where } = await executeBeforeUpdateRulesV2({
       table,
@@ -169,7 +164,7 @@ export const updateUser = async ({ cuid, input }) => {
       data: updatedRecord,
       cuid,
     })
-    console.log({ function: 'updateUser after', record })
+    //console.log({ function: 'updateUser after', record })
     return { ...record }
   } catch (error) {
     throw new UserInputError(error.message)

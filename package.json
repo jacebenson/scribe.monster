@@ -23,10 +23,8 @@
   },
   "scripts": {
     "start": "rw dev",
-    "postgres:up": "docker-compose up",
-    "postgres:down": "docker-compose down",
     "dev": "yarn rw prisma db push && yarn rw exec seed && yarn rw dev",
-    "test": "yarn postgres:down && yarn postgres:up && yarn rw test"
+    "testDeploy": "yarn install && yarn rw deploy render web && yarn rw build api"
   },
   "packageManager": "yarn@3.3.1"
 }

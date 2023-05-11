@@ -10,7 +10,7 @@ export const definitions = {
    * defaultOptions (for simple lists) array of strings or objects with label and value
    *
    */
-  user: {
+  User: {
     'username': {
       label: 'User Name',
       canSort: false,
@@ -21,16 +21,8 @@ export const definitions = {
       label: 'Name',
       canSort: true,
     },
-    'cuid': {
-      label: 'Cuid',
-      fontFamily: 'mono',
-      canSort: true,
-      canFilter: true,
-      canShowMatching: true,
-    }
-
   },
-  preference: {
+  Preference: {
     'entity': {
       canSort: true,
       canFilter: true,
@@ -50,7 +42,7 @@ export const definitions = {
       value: 'cuid'
     },
   },
-  property: {
+  Property: {
     'name': {
       canSort: true,
       canFilter: true,
@@ -75,7 +67,7 @@ export const definitions = {
     //},
 
   },
-  message: {
+  Message: {
     'language': {
       label: 'Language',
     },
@@ -86,16 +78,17 @@ export const definitions = {
       label: 'Value',
     },
   },
-  group: {
+  Group: {
     'name': {
-      label: "Hello",
+      label: "Name",
+      minLength: 3,
     },
     'description': {
       label: 'Description',
     },
 
   },
-  groupRole: {
+  GroupRole: {
     'createdAt': {
       label: 'Created At',
     },
@@ -135,67 +128,74 @@ export const definitions = {
       }
     },
   },
-  groupMember: {
-    'createdAt': { label: 'Created At' },
-    'cuid': { label: 'Cuid' },
+  GroupMember: {
     'User': {
       label: 'User',
+      field: 'userCuid',
       canSort: true,
       canFilter: true,
       canShowMatching: true,
       display: 'name',
-      value: 'cuid'
+      value: 'cuid',
+      order: 100,
+      type: 'reference',
     },
 
     'Group': {
-      type: 'reference2',
       label: 'Group',
+      field: 'groupCuid',
       canSort: true,
       canFilter: true,
       canShowMatching: true,
       display: 'name',
       value: 'cuid',
       table: 'group',
-      display: 'name',
-      value: 'cuid',
+      type: 'reference',
+      order: 200,
     },
   },
-  log: {
-    'createdAt': {
-      label: 'Created At',
-    },
-    'updatedAt': {
-      label: 'Updated At',
-    },
-    'message': {
-      label: 'Message',
-    },
-    source: {
-      label: 'Source',
-    }
+  Log: {
+    createdAt: { label: 'Created At', },
+    updatedAt: { label: 'Updated At', },
+    message: { label: 'Message', },
+    source: { label: 'Source', }
   },
-  activity: {
-    'createdAt': { label: 'Created At' },
-    'updatedAt': { label: 'Updated At' },
-    'User': {
-      label: 'User',
-      display: 'name',
-      value: 'cuid'
-    }
+  Activity: {
+    createdAt: { label: 'Created At' },
+    updatedAt: { label: 'Updated At' },
+    User: { label: 'User', display: 'name', value: 'cuid' }
   },
-  memory: {
-    'title': { label: 'Title', order: 100 },
-    'source': { label: 'Source', order: 200 },
-    'active': { label: 'Active', type: 'select',
+  Memory: {
+    title: { label: 'Title', order: 100 },
+    source: { label: 'Source', order: 200 },
+    active: { label: 'Active', type: 'select',
     options: [
       { value: true, display: 'Active' },
       { value: false, display: 'Inactive' },
     ], order: 300 },
-    'content': { label: 'Content', type: 'textarea', order: 400 },
+    content: { label: 'Content', type: 'textarea', order: 400 },
   },
-  memoryChunk: {
-    'title': { label: 'Title' },
-    'active': { label: 'Active' },
-    'content': { label: 'Content' },
-  }
+  MemoryChunk: {
+    title: { label: 'Title' },
+    active: { label: 'Active' },
+    content: { label: 'Content' },
+  },
+  ModelInstance: {
+    'name': { label: 'Name' },
+    'version': { label: 'Version' },
+    'description': { label: 'Description' },
+    'endpoint': { label: 'Endpoint' },
+    'cost': { label: 'Cost' },
+    'price': { label: 'Price' },
+    'prompt': { label: 'Prompt', type: 'code' },
+    'tempature': { label: 'Tempature' },
+    'maxTokens': { label: 'Max Tokens' },
+    'topP': { label: 'Top P' },
+    'bestOf': { label: 'Best Of' },
+    'n': { label: 'N' },
+    'stop': { label: 'Stop' },
+    'frequencyPenalty': { label: 'Frequency Penalty' },
+    'presencePenalty': { label: 'Presence Penalty' },
+    'required': { label: 'Required' },
+  },
 }

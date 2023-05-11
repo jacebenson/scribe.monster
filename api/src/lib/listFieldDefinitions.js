@@ -1,5 +1,5 @@
 export const definitions = {
-  user: {
+  User: {
     'username': {
       label: 'User Name',
       canSort: false,
@@ -9,16 +9,9 @@ export const definitions = {
     'name': {
       canSort: true,
     },
-    'cuid': {
-      label: 'Cuid',
-      fontFamily: 'mono',
-      canSort: true,
-      canFilter: true,
-      canShowMatching: true,
-    }
 
   },
-  preference: {
+  Preference: {
     'entity': {
       canSort: true,
       canFilter: true,
@@ -39,7 +32,7 @@ export const definitions = {
       reference: true,
     },
   },
-  property: {
+  Property: {
     'name': {
       canSort: true,
       canFilter: true,
@@ -64,7 +57,7 @@ export const definitions = {
     //},
 
   },
-  message: {
+  Message: {
     'language': {
       label: 'Language',
     },
@@ -75,7 +68,7 @@ export const definitions = {
       label: 'Value',
     },
   },
-  group: {
+  Group: {
     'name': {
       canSort: true,
       canFilter: true,
@@ -88,18 +81,16 @@ export const definitions = {
     },
 
   },
-  groupRole: {
+  GroupRole: {
     'createdAt': {
       label: 'Created At',
     },
     'role': true
   },
-  groupMember: {
+  GroupMember: {
     'createdAt': {
       label: 'Created At',
-    },
-    'cuid': {
-      label: 'Cuid',
+      order: 50,
     },
     'User': {
       reference: true,
@@ -108,7 +99,8 @@ export const definitions = {
       canFilter: true,
       canShowMatching: true,
       display: 'name',
-      value: 'cuid'
+      value: 'cuid',
+      order: 100,
     },
 
     'Group': {
@@ -117,10 +109,11 @@ export const definitions = {
       canFilter: true,
       canShowMatching: true,
       display: 'name',
-      value: 'cuid'
+      value: 'cuid',
+      order: 200,
     },
   },
-  log: {
+  Log: {
     'createdAt': {
       label: 'Created At',
     },
@@ -134,7 +127,7 @@ export const definitions = {
       label: 'Source',
     }
   },
-  activity: {
+  Activity: {
     'createdAt': {
       label: 'Created At',
       canSort: true,
@@ -146,6 +139,7 @@ export const definitions = {
       display: 'name',
       value: 'cuid'
     },
+
     'User': {
       label: 'User',
       canFilter: true,
@@ -154,7 +148,7 @@ export const definitions = {
       value: 'cuid'
     },
   },
-  memory: {
+  Memory: {
     'createdAt': {
       label: 'Created At',
       canSort: true,
@@ -170,7 +164,7 @@ export const definitions = {
       label: 'Active',
     },
   },
-  memoryChunk: {
+  MemoryChunk: {
     'createdAt': {
       label: 'Created At',
       canSort: true,
@@ -181,5 +175,44 @@ export const definitions = {
     'active': {
       label: 'Active',
     }
+  },
+  ModelInstance: {
+    'name': {
+      label: 'Name',
+      canSort: true,
+      canFilter: true,
+      canShowMatching: true,
+    },
+    'version': {
+      label: 'Version',
+      canSort: true,
+      canFilter: true,
+      canShowMatching: true,
+    },
+    'createdAt': {
+      label: 'Created At',
+      canSort: true,
+
+    },
+    'updatedAt': {
+      label: 'Updated At',
+      canSort: true,
+    },
+  },
+  Thread: {
+    /*cuid      String     @id @default(cuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userCuid  String?
+  */
+    'createdAt': {
+      label: 'Created At',
+    },
+    'updatedAt': {
+      label: 'Updated At',
+    },
+    'userCuid': {
+      label: 'User Cuid',
+    },
   }
 }

@@ -3,7 +3,7 @@ export const render = ({ name, code, loginLink, brand }) => {
   return mjml2html(mjml(name, code, loginLink, brand), {})
 }
 let mjml = (name, code, loginLink, brand) => {
-  //console.log({ name, code, resetLink, brand })
+  console.log({ name, code, loginLink, brand })
   return `<mjml>
   <mj-body>
     <mj-raw>

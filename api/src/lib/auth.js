@@ -21,17 +21,10 @@ import { db } from './db'
  * seen if someone were to open the Web Inspector in their browser.
  */
 export const getCurrentUser = async (session) => {
-  console.log({ function: 'auth.js', session })
   if (!session || typeof session.id !== 'string') {
     throw new Error('Invalid session')
   }
-  console.log({ function: 'auth.js', session })
   return await getUserDBAuth(session, { context })
-
-  return await db.user.findUnique({
-    where: { cuid: session.id },
-    select: { cuid: true },
-  })
 }
 
 /**

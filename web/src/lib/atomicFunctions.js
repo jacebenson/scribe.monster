@@ -140,6 +140,7 @@ export const getRecords = async ({ table, schema, token, variables }) => {
   return data
 }
 export const tableNames = ({ table })=>{
+  if(typeof table != 'string') throw new Error(`tableNames requires a string, typeof table is ${typeof table}`)
   let camelTable = camelCase(table, { pascalCase: false })
   let pluralTable = pluralize(camelTable, 2)
   let singularTable = camelCase(pluralize(table, 1), { pascalCase: false })

@@ -67,7 +67,7 @@ const SignupForm = () => {
       justify={'center'}
       bg={useColorModeValue('gray.50', 'gray.800')}
     >
-      <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
+      <Toaster toastOptions={{ className: 'rw-toast', duration: 10000 }} />
       <Stack
         spacing={4}
         w={'full'}

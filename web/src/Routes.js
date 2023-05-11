@@ -24,7 +24,6 @@ const Routes = () => {
   return (
     <Router useAuth={useAuth}>
       <Route path="/form" page={FormPage} name="form" />
-      <Route path="/list" page={ListPage} name="list" />
       <Route path="/login" page={Login2Page} name="login" />
       <Route path="/ask" page={AskPage} name="ask" />
       <Route path="/resources" page={ResourcesPage} name="resources" />
@@ -139,8 +138,28 @@ const Routes = () => {
 
           <Set>
             {/*<Route path="/list/users" page={AboutPage} name="list" />{/*this is how to override one*/}
-            <Route path="/list/{table}/{params...}" page={ListPage} name="list" />
+            {/*page:int*/}
+            <Route path="/list/{table}/page/{page:Int}/take/{take:Int}/orderBy/{orderBy...}/where/{where...}" page={ListPage} name="list" />
+            <Route path="/list/{table}/page/{page:Int}/take/{take:Int}/orderBy/{orderBy...}" page={ListPage} name="list" />
+            <Route path="/list/{table}/page/{page:Int}/take/{take:Int}/where/{where...}" page={ListPage} name="list" />
+            <Route path="/list/{table}/page/{page:Int}/take/{take:Int}" page={ListPage} name="list" />
+            <Route path="/list/{table}/page/{page:Int}/orderBy/{orderBy...}/where/{where...}" page={ListPage} name="list" />
+            <Route path="/list/{table}/page/{page:Int}/orderBy/{orderBy...}" page={ListPage} name="list" />
+            <Route path="/list/{table}/page/{page:Int}/where/{where...}" page={ListPage} name="list" />
+            <Route path="/list/{table}/page/{page:Int}" page={ListPage} name="list" />
+            {/*take:int*/}
+            <Route path="/list/{table}/take/{take:Int}/orderBy/{orderBy...}/where/{where...}" page={ListPage} name="list" />
+            <Route path="/list/{table}/take/{take:Int}/where/{where...}" page={ListPage} name="list" />
+            <Route path="/list/{table}/take/{take:Int}" page={ListPage} name="list" />
+            {/*orderBy:string*/}
+            <Route path="/list/{table}/orderBy/{orderBy...}/where/{where...}" page={ListPage} name="list" />
+            <Route path="/list/{table}/orderBy/{orderBy...}" page={ListPage} name="list" />
+            {/*where:string*/}
+            <Route path="/list/{table}/where/{where...}" page={ListPage} name="list" />
+            {/*no params*/}
             <Route path="/list/{table}" page={ListPage} name="list" />
+            {/*<Route path="/list/{table}/{params...}" page={ListPage} name="list" />*/}
+            {/*<Route path="/list/{table}" page={ListPage} name="list" />*/}
 
 
             <Route path="/form/{table}/{cuid}" page={FormPage} name="formEdit" />
