@@ -55,7 +55,7 @@ export const Success = ({ myProfile }) => {
     {
       onCompleted: () => {
         toast.success('User updated')
-        navigate(routes.users())
+        navigate('/my-profile')
       },
       onError: (error) => {
         toast.error(error.message)

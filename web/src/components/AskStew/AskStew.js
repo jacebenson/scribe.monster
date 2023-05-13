@@ -14,7 +14,6 @@ import {
 import { useForm } from 'react-hook-form'
 import { MdAccountCircle, MdOpenInNew } from 'react-icons/md'
 
-//import { /*navigate,*/ routes } from '@redwoodjs/router'
 import { MetaTags, useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 
@@ -80,7 +79,6 @@ const AskStew = () => {
           when: now(),
         },
       ])
-      //navigate(routes.memories())
       setThread(response.createQuestion.threadCuid)
     },
     onError: (error) => {
@@ -234,7 +232,6 @@ const AskStew = () => {
         onSubmit={onSubmit}
         loading={loading}
         error={error}
-        //returnLink={routes.memories()}
         handleSubmit={handleSubmit}
         register={register}
         formState={{ errors, isSubmitting }}
@@ -271,7 +268,6 @@ export default AskStew
         onSubmit={onSubmit}
         loading={loading}
         error={error}
-        //returnLink={routes.memories()}
         handleSubmit={handleSubmit}
         register={register}
         formState={{ errors, isSubmitting }}

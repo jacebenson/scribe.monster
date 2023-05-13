@@ -360,19 +360,21 @@ const FormComponent = ({
       console.log({ field })
       html = (
         <Box key={field.name} pt={2}>
-          <Link to={routes[field.to](field.record)} key={field.name}>
+          {field.prettyName}
+          {/*<Link to={routes[field.to](field.record)} key={field.name}>
             {field.prettyName}
-          </Link>
+          </Link>*/}
         </Box>
       )
     }
     return html
   })
+  console.log({ error })
   return (
     <StrictMode>
       <Fragment>
         <Box key={'formComponentBox'} bg={'white'} p={3} style={style || ''}>
-          {error?.graphQLErrors[0]?.message && (
+          {error?.graphQLErrors?.[0]?.message && (
             <Alert status="error">
               <AlertIcon />
               {error?.graphQLErrors[0]?.message}
