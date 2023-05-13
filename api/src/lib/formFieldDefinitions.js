@@ -11,49 +11,49 @@ export const definitions = {
    *
    */
   User: {
-    'username': {
+    username: {
       label: 'User Name',
       canSort: false,
       canFilter: true,
       canShowMatching: true,
     },
-    'name': {
+    name: {
       label: 'Name',
       canSort: true,
     },
   },
   Preference: {
-    'entity': {
+    entity: {
       canSort: true,
       canFilter: true,
       canShowMatching: true,
     },
-    'value': {
+    value: {
       canSort: true,
       canFilter: true,
       canShowMatching: true,
     },
-    'User': {
+    User: {
       label: 'User',
       canSort: true,
       canFilter: true,
       canShowMatching: true,
       display: 'name',
-      value: 'cuid'
+      value: 'cuid',
     },
   },
   Property: {
-    'name': {
+    name: {
       canSort: true,
       canFilter: true,
       canShowMatching: true,
     },
-    'type': {
+    type: {
       canSort: true,
       canFilter: true,
       canShowMatching: true,
     },
-    'value': {
+    value: {
       canSort: true,
       canFilter: true,
       canShowMatching: true,
@@ -65,34 +65,32 @@ export const definitions = {
     //  canFilter: true,
     //  canShowMatching: true,
     //},
-
   },
   Message: {
-    'language': {
+    language: {
       label: 'Language',
     },
-    'entity': {
+    entity: {
       label: 'Entity',
     },
-    'value': {
+    value: {
       label: 'Value',
     },
   },
   Group: {
-    'name': {
-      label: "Name",
+    name: {
+      label: 'Name',
       minLength: 3,
     },
-    'description': {
+    description: {
       label: 'Description',
     },
-
   },
   GroupRole: {
-    'createdAt': {
+    createdAt: {
       label: 'Created At',
     },
-    'role': {
+    role: {
       label: 'Role',
       type: 'select',
       //options: [//this also works
@@ -104,9 +102,8 @@ export const definitions = {
         { label: 'Guest', value: 'guest' },
       ],
       value: 'cuid',
-
     },
-    'Group': {
+    Group: {
       label: 'Group',
       display: 'name',
       value: 'cuid',
@@ -125,11 +122,11 @@ export const definitions = {
         take: 10,
         defaultDisplay: 'name',
         defaultValue: 'cuid',
-      }
+      },
     },
   },
   GroupMember: {
-    'User': {
+    User: {
       label: 'User',
       field: 'userCuid',
       canSort: true,
@@ -141,7 +138,7 @@ export const definitions = {
       type: 'reference',
     },
 
-    'Group': {
+    Group: {
       label: 'Group',
       field: 'groupCuid',
       canSort: true,
@@ -155,24 +152,28 @@ export const definitions = {
     },
   },
   Log: {
-    createdAt: { label: 'Created At', },
-    updatedAt: { label: 'Updated At', },
-    message: { label: 'Message', },
-    source: { label: 'Source', }
+    createdAt: { label: 'Created At' },
+    updatedAt: { label: 'Updated At' },
+    message: { label: 'Message' },
+    source: { label: 'Source' },
   },
   Activity: {
     createdAt: { label: 'Created At' },
     updatedAt: { label: 'Updated At' },
-    User: { label: 'User', display: 'name', value: 'cuid' }
+    User: { label: 'User', display: 'name', value: 'cuid' },
   },
   Memory: {
     title: { label: 'Title', order: 100 },
     source: { label: 'Source', order: 200 },
-    active: { label: 'Active', type: 'select',
-    options: [
-      { value: true, display: 'Active' },
-      { value: false, display: 'Inactive' },
-    ], order: 300 },
+    active: {
+      label: 'Active',
+      type: 'select',
+      options: [
+        { value: true, display: 'Active' },
+        { value: false, display: 'Inactive' },
+      ],
+      order: 300,
+    },
     content: { label: 'Content', type: 'textarea', order: 400 },
   },
   MemoryChunk: {
@@ -181,21 +182,21 @@ export const definitions = {
     content: { label: 'Content' },
   },
   ModelInstance: {
-    'name': { label: 'Name' },
-    'version': { label: 'Version' },
-    'description': { label: 'Description' },
-    'endpoint': { label: 'Endpoint' },
-    'cost': { label: 'Cost' },
-    'price': { label: 'Price' },
-    'prompt': { label: 'Prompt', type: 'code' },
-    'tempature': { label: 'Tempature' },
-    'maxTokens': { label: 'Max Tokens' },
-    'topP': { label: 'Top P' },
-    'bestOf': { label: 'Best Of' },
-    'n': { label: 'N' },
-    'stop': { label: 'Stop' },
-    'frequencyPenalty': { label: 'Frequency Penalty' },
-    'presencePenalty': { label: 'Presence Penalty' },
-    'required': { label: 'Required' },
+    name: { label: 'Name' },
+    version: { label: 'Version' },
+    description: { label: 'Description' },
+    endpoint: { label: 'Endpoint' },
+    cost: { label: 'Cost' },
+    price: { label: 'Price' },
+    prompt: { label: 'Prompt', type: 'code' },
+    tempature: { label: 'Tempature' },
+    maxTokens: { label: 'Max Tokens' },
+    topP: { label: 'Top P' },
+    bestOf: { label: 'Best Of' },
+    n: { label: 'N' },
+    stop: { label: 'Stop' },
+    frequencyPenalty: { label: 'Frequency Penalty' },
+    presencePenalty: { label: 'Presence Penalty' },
+    required: { label: 'Required' },
   },
 }

@@ -30,20 +30,39 @@ import {
 
 import { routes, navigate } from '@redwoodjs/router'
 
-import { useAuth } from 'src/auth'
 import { ListContext } from 'src/App.js'
+import { useAuth } from 'src/auth'
+
 import NavItem from '../NavItem/NavItem'
 const SidebarWithHeader = ({ brand, children }) => {
-  const { table, setTable, page, setPage, take, setTake, where, setWhere, orderBy, setOrderBy } = React.useContext(ListContext)
+  const {
+    table,
+    setTable,
+    page,
+    setPage,
+    take,
+    setTake,
+    where,
+    setWhere,
+    orderBy,
+    setOrderBy,
+  } = React.useContext(ListContext)
   const { isOpen, onOpen, onClose } = useDisclosure()
-  let navigateAndClose = ({navigateTo, table, page, take, where, orderBy}) => {
-    if(navigateTo === 'list') {
-    setTable(table)
-    setPage(page || 1)
-    setTake(take || 10)
-    setWhere(where || '')
-    setOrderBy(orderBy || 'cuid/desc')
-    onClose()
+  let navigateAndClose = ({
+    navigateTo,
+    table,
+    page,
+    take,
+    where,
+    orderBy,
+  }) => {
+    if (navigateTo === 'list') {
+      setTable(table)
+      setPage(page || 1)
+      setTake(take || 10)
+      setWhere(where || '')
+      setOrderBy(orderBy || 'cuid/desc')
+      onClose()
     }
   }
   return (
@@ -84,22 +103,68 @@ const SidebarContent = ({ brand, onClose, navigateAndClose, ...rest }) => {
   const { hasRole, isAuthenticated } = useAuth()
 
   const LinkItems = [
-    { name: 'Home',            icon: MdHome, navigateTo: 'home' },
-    { name: 'Users',           icon: MdList, role: 'userRead',          table: 'users', orderBy: 'createdAt/desc' },
-    { name: 'Groups',          icon: MdList, role: 'groupRead',         table: 'groups' },
-    { name: 'Group Members',   icon: MdList, role: 'groupMemberRead',   table: 'groupMembers' },
-    { name: 'Group Roles',     icon: MdList, role: 'groupRoleRead',     table: 'groupRoles' },
-    { name: 'Preferences',     icon: MdList, role: 'preferenceRead',    table: 'preferences' },
-    { name: 'Properties',      icon: MdList, role: 'propertyRead',      table: 'properties' },
-    { name: 'Messages',        icon: MdList, role: 'messageRead',       table: 'messages' },
-    { name: 'Logs',            icon: MdList, role: 'logRead',           table: 'logs' },
-    { name: 'Activities',      icon: MdList, role: 'activityRead',      table: 'activities', orderBy: 'createdAt/desc' },
-    { name: 'Model Instances', icon: MdList, role: 'modelInstanceRead', table: 'modelInstances' },
-    { name: 'Memories',        icon: MdList, role: 'memoryRead',        table: 'memories'},
-    { name: 'Memory Chunks',   icon: MdList, role: 'memoryChunkRead',   table: 'memoryChunks' },
-    { name: 'Threads',         icon: MdList, role: 'threadRead',        table: 'threads' },
-    { name: 'Questions',       icon: MdList, role: 'questionRead',      table: 'questions' },
-
+    { name: 'Home', icon: MdHome, navigateTo: 'home' },
+    {
+      name: 'Users',
+      icon: MdList,
+      role: 'userRead',
+      table: 'users',
+      orderBy: 'createdAt/desc',
+    },
+    { name: 'Groups', icon: MdList, role: 'groupRead', table: 'groups' },
+    {
+      name: 'Group Members',
+      icon: MdList,
+      role: 'groupMemberRead',
+      table: 'groupMembers',
+    },
+    {
+      name: 'Group Roles',
+      icon: MdList,
+      role: 'groupRoleRead',
+      table: 'groupRoles',
+    },
+    {
+      name: 'Preferences',
+      icon: MdList,
+      role: 'preferenceRead',
+      table: 'preferences',
+    },
+    {
+      name: 'Properties',
+      icon: MdList,
+      role: 'propertyRead',
+      table: 'properties',
+    },
+    { name: 'Messages', icon: MdList, role: 'messageRead', table: 'messages' },
+    { name: 'Logs', icon: MdList, role: 'logRead', table: 'logs' },
+    {
+      name: 'Activities',
+      icon: MdList,
+      role: 'activityRead',
+      table: 'activities',
+      orderBy: 'createdAt/desc',
+    },
+    {
+      name: 'Model Instances',
+      icon: MdList,
+      role: 'modelInstanceRead',
+      table: 'modelInstances',
+    },
+    { name: 'Memories', icon: MdList, role: 'memoryRead', table: 'memories' },
+    {
+      name: 'Memory Chunks',
+      icon: MdList,
+      role: 'memoryChunkRead',
+      table: 'memoryChunks',
+    },
+    { name: 'Threads', icon: MdList, role: 'threadRead', table: 'threads' },
+    {
+      name: 'Questions',
+      icon: MdList,
+      role: 'questionRead',
+      table: 'questions',
+    },
   ].filter((item) => {
     if (item?.requireAuth === true && isAuthenticated) {
       return (
@@ -128,24 +193,27 @@ const SidebarContent = ({ brand, onClose, navigateAndClose, ...rest }) => {
       </Flex>
 
       {LinkItems.map((link) => {
-        if(!link?.navigateTo) link.navigateTo = 'list'
+        if (!link?.navigateTo) link.navigateTo = 'list'
         //
-          //navigateTo={link.navigateTo}
+        //navigateTo={link.navigateTo}
         return (
-        <NavItem
-          pt={0}
-          pb={0}
-          size={'sm'}
-          key={link.name}
-          icon={link.icon}
-          onClick={()=>{navigateAndClose({
-            ...link
-          })}}
-          navigateTo={link.navigateTo}
-          table={link?.table}
-        >
-          {link.name}
-        </NavItem>)
+          <NavItem
+            pt={0}
+            pb={0}
+            size={'sm'}
+            key={link.name}
+            icon={link.icon}
+            onClick={() => {
+              navigateAndClose({
+                ...link,
+              })
+            }}
+            navigateTo={link.navigateTo}
+            table={link?.table}
+          >
+            {link.name}
+          </NavItem>
+        )
       })}
     </Box>
   )

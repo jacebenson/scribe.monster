@@ -8,7 +8,7 @@ let providerSheet = ({ responseTokens, characters, provider }) => {
   if (!responseTokens) return 0
   if (!characters) return 0
   if (!provider) provider = 'openAi'
-  if(provider === 'openAi'){
+  if (provider === 'openAi') {
     return {
       name: 'OpenAI',
       models: {
@@ -71,7 +71,7 @@ let providerSheet = ({ responseTokens, characters, provider }) => {
       },
     }
   }
-  if(provider === 'cohere'){
+  if (provider === 'cohere') {
     return {
       name: 'Cohere',
       models: {
@@ -120,7 +120,7 @@ let providerSheet = ({ responseTokens, characters, provider }) => {
       },
     }
   }
-  if(provider === 'ai21'){
+  if (provider === 'ai21') {
     return {
       name: 'AI21',
       models: {
@@ -212,7 +212,8 @@ export const calculateCost = async ({
   const modelInstance = await db.modelInstance.findFirst({
     where: { cuid: modelInstanceCuid },
   })
-  if (!modelInstance) return { error: 'No model instance found ln215 file: scribeUtil' }
+  if (!modelInstance)
+    return { error: 'No model instance found ln215 file: scribeUtil' }
   const aiProviders = providerSheet({ responseTokens, characters, provider })
   if (!aiProviders) return { error: 'No provider found ln217, fiel:scribeUtil' }
   const modelSheet = aiProviders.models[modelInstance.model]
@@ -391,7 +392,8 @@ export let getTextCompletion = async ({
   let queryTokens = data?.usage?.prompt_tokens || 0
   let responseTokens = data?.usage?.completion_tokens || 0
   let responseText = () => {
-    if (data?.error || data?.error?.message) return data.error || data.error.message
+    if (data?.error || data?.error?.message)
+      return data.error || data.error.message
     let text = data?.choices?.[0]?.text || data?.choices?.[0]?.message?.content
     if (promptConfig?.prepend) return `${promptConfig.prepend}${text}`
     return text

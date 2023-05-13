@@ -1,6 +1,8 @@
-import Questions from 'src/components/Question/Questions'
 import { Fragment } from 'react'
+
 import { MetaTags } from '@redwoodjs/web'
+
+import Questions from 'src/components/Question/Questions'
 
 const QuestionsPage = () => {
   return (

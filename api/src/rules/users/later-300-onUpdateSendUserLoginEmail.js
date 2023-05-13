@@ -16,11 +16,6 @@ module.exports = {
       // we set the salt to null when they login without triggering this rule
       // so when they login, we set the salt to a random string
 
-
-
-
-
-
       if (typeof data._unencryptedToken !== 'string') return { data, status }
       // now we need to send the email
       // but first we need to base64 encode the username and password
@@ -28,7 +23,7 @@ module.exports = {
       let encoded = Buffer.from(`${data._email}:${code}`).toString('base64')
       let domain = (await getProperty('domain')) || 'https://example.com'
       let loginLink = `${domain}/login?magic=${encoded}`
-      if(process.env.ENV === 'DEV') {
+      if (process.env.ENV === 'DEV') {
         loginLink = `http://localhost:8910/login?magic=${encoded}`
         console.log({ function: 'onUpdateSendUserLoginEmail', code, loginLink })
         delete data._email
@@ -48,10 +43,13 @@ module.exports = {
         logger.error(client.error)
         console.log({ function: 'onUpdateSendUserLoginEmail', client })
       }
-      if (!client.error && process.env.ENV !== 'DEV' ) {
+      if (!client.error && process.env.ENV !== 'DEV') {
         await client.send({ to, from, subject, html }, (error) => {
           if (error) logger.error(error)
-          console.log({ function: 'onUpdateSendUserLoginEmail', message: `${to} requested login code` })
+          console.log({
+            function: 'onUpdateSendUserLoginEmail',
+            message: `${to} requested login code`,
+          })
         })
       }
       delete data._email

@@ -1,6 +1,8 @@
-import ModelInstances from 'src/components/ModelInstance/ModelInstances'
 import { Fragment } from 'react'
+
 import { MetaTags } from '@redwoodjs/web'
+
+import ModelInstances from 'src/components/ModelInstance/ModelInstances'
 
 const ModelInstancesPage = () => {
   return (

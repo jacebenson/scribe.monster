@@ -1,11 +1,18 @@
 import { useEffect, useState } from 'react'
+
+import { useForm } from 'react-hook-form'
+
 import { Link, routes } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
-import { useForm } from 'react-hook-form'
-import { getSchema, readGQL, getRecord, tableNames } from 'src/lib/atomicFunctions'
+
 import { useAuth } from 'src/auth'
 import FormComponent from 'src/components/FormComponent/FormComponent'
-
+import {
+  getSchema,
+  readGQL,
+  getRecord,
+  tableNames,
+} from 'src/lib/atomicFunctions'
 
 const FormPage = ({ table, cuid }) => {
   const { getToken } = useAuth()
@@ -21,27 +28,25 @@ const FormPage = ({ table, cuid }) => {
   useEffect(() => {
     setError(null)
     setFormState('loading')
-    getSchema({ table: pascalTable, form: true })
-      .then(async (database) => {
-        setSchema(database.schema)
-        let token = await getToken()
-        let buildQuery = readGQL({ table: singularTable, data: database })
-        if(cuid){
-          let result = await getRecord({ query: buildQuery, cuid, token })
-          if(result?.data?.[singularTable]){
-            setFormState('loaded')
-            setFormData(result.data[singularTable])
-          } else {
-            setError('Record not found')
-            setFormState('notFound')
-          }
-        }
-        if(!cuid) {
+    getSchema({ table: pascalTable, form: true }).then(async (database) => {
+      setSchema(database.schema)
+      let token = await getToken()
+      let buildQuery = readGQL({ table: singularTable, data: database })
+      if (cuid) {
+        let result = await getRecord({ query: buildQuery, cuid, token })
+        if (result?.data?.[singularTable]) {
           setFormState('loaded')
+          setFormData(result.data[singularTable])
+        } else {
+          setError('Record not found')
+          setFormState('notFound')
         }
-      })
+      }
+      if (!cuid) {
+        setFormState('loaded')
+      }
+    })
   }, [table, cuid])
-
 
   //TODO: Get submit to work
   //TODO: Get New to work
@@ -77,7 +82,7 @@ const FormPage = ({ table, cuid }) => {
 
     console.log('onSubmit', data)
   }
-  console.log({function: 'FormPage', formData, schema})
+  console.log({ function: 'FormPage', formData, schema })
   //schema.fields needs to be modified to move schema.fields[].definition.label to schema.fields[].prettyName
   schema?.fields?.forEach((field) => {
     field.prettyName = field.definition.label
@@ -104,12 +109,8 @@ const FormPage = ({ table, cuid }) => {
           setFormData={setFormData}
         />
       )}
-      {formState == 'loading' && (
-        <p>Loading...</p>
-      )}
-      {error && (
-        <p>ERROR: {error}</p>
-      )}
+      {formState == 'loading' && <p>Loading...</p>}
+      {error && <p>ERROR: {error}</p>}
     </>
   )
 }

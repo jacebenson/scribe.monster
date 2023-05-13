@@ -19,12 +19,13 @@ import {
   Checkbox,
 } from '@chakra-ui/react'
 
+import { Link, NavLink, routes } from '@redwoodjs/router'
+
 import { useAuth } from 'src/auth'
 
 import MonacoEditor from '../MonacoEditor/MonacoEditor'
 import PasswordField from '../PasswordField/PasswordField'
 import ReferenceField from '../ReferenceField/ReferenceField'
-import { Link, NavLink, routes } from '@redwoodjs/router'
 const FormComponent = ({
   record,
   fields,
@@ -100,7 +101,9 @@ const FormComponent = ({
           display="flex"
           alignItems="center"
         >
-          <FormLabel htmlFor={field.name}>{field.prettyName} {value}({record?.[field.name]?.toString()})</FormLabel>
+          <FormLabel htmlFor={field.name}>
+            {field.prettyName} {value}({record?.[field.name]?.toString()})
+          </FormLabel>
           <Switch
             colorScheme="green"
             id={field.name}
@@ -108,17 +111,19 @@ const FormComponent = ({
             {...register(field.name, {
               required: field?.required || false,
             })}
-            defaultChecked={record?.[field.name]?.toString() || field.defaultValue}
+            defaultChecked={
+              record?.[field.name]?.toString() || field.defaultValue
+            }
             //TODO:this is not working
           />
           <FormErrorMessage>
             {errors[field.name] && errors[field.name].message}
           </FormErrorMessage>
           <details>
-          <summary>Boolean</summary>
-          <Code whiteSpace={'pre-wrap'} display={'block'} p={2} m={2}>
-            {JSON.stringify(debug, null, 2)}
-          </Code>
+            <summary>Boolean</summary>
+            <Code whiteSpace={'pre-wrap'} display={'block'} p={2} m={2}>
+              {JSON.stringify(debug, null, 2)}
+            </Code>
           </details>
         </FormControl>
       )
@@ -205,15 +210,31 @@ const FormComponent = ({
       // if field.options has objects, use the value and display properties
       let options = field.options.map((option) => {
         if (typeof option === 'string') {
-          if(option === record?.[field.name]){
-            return <option key={option} value={option} selected>{option}</option>
+          if (option === record?.[field.name]) {
+            return (
+              <option key={option} value={option} selected>
+                {option}
+              </option>
+            )
           }
-          return <option key={option} value={option}>{option}</option>
+          return (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          )
         }
-        if(option.value === record?.[field.name]){
-          return <option key={option.value} value={option.value} selected>{option.display}</option>
+        if (option.value === record?.[field.name]) {
+          return (
+            <option key={option.value} value={option.value} selected>
+              {option.display}
+            </option>
+          )
         }
-        return <option key={option.value} value={option.value}>{option.display}</option>
+        return (
+          <option key={option.value} value={option.value}>
+            {option.display}
+          </option>
+        )
       })
 
       html = (
@@ -336,15 +357,13 @@ const FormComponent = ({
       )
     }
     if (field.type === 'link') {
-      console.log({ field  })
+      console.log({ field })
       html = (
         <Box key={field.name} pt={2}>
           <Link to={routes[field.to](field.record)} key={field.name}>
-              {field.prettyName}
-
+            {field.prettyName}
           </Link>
-          </Box>
-
+        </Box>
       )
     }
     return html

@@ -161,12 +161,9 @@ const Routes = () => {
             {/*<Route path="/list/{table}/{params...}" page={ListPage} name="list" />*/}
             {/*<Route path="/list/{table}" page={ListPage} name="list" />*/}
 
-
             <Route path="/form/{table}/{cuid}" page={FormPage} name="formEdit" />
             <Route path="/form/{table}" page={FormPage} name="form" />
-
           </Set>
-
         </Private>
       </Set>
       <Route notfound page={NotFoundPage} />

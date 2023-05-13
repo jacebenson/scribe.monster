@@ -17,7 +17,6 @@ module.exports = {
       // if the content is markdown, identify each section, and determine if the section size is too large
       // if the section is too large, have openAI rewrite it in markdown with sections
 
-
       // if active is false, exit
       if (data?.active === false) {
         return { cuid, data, status }
@@ -32,13 +31,18 @@ module.exports = {
         })
         if (previousMemory?.content === data.content) {
           // content has not changed, so we can exit
-          console.log('::: rewriteToMarkdownWIthSections.js ::: content has not changed')
+          console.log(
+            '::: rewriteToMarkdownWIthSections.js ::: content has not changed'
+          )
           return { cuid, data, status }
         }
-        console.log('::: rewriteToMarkdownWIthSections.js ::: content changed', {
-          previousMemory: previousMemory,
-          newMemory: data.content,
-        })
+        console.log(
+          '::: rewriteToMarkdownWIthSections.js ::: content changed',
+          {
+            previousMemory: previousMemory,
+            newMemory: data.content,
+          }
+        )
       }
       console.log('::: rewriteToMarkdownWIthSections.js :::')
 
@@ -53,11 +57,8 @@ module.exports = {
           break
         }
       }
-      if (isPlainText) {}
-
-
-
-
+      if (isPlainText) {
+      }
 
       // now we need to create the chunks
       // lets chunk it at each paragraph

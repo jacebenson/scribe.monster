@@ -66,8 +66,11 @@ export const prompts = async ({
       prepend: context?.prepend || '',
       provider: 'openAi',
     }
-    if(context.messages) {
-      console.log({ function: 'promptDB', messages: JSON.stringify(context.messages) })
+    if (context.messages) {
+      console.log({
+        function: 'promptDB',
+        messages: JSON.stringify(context.messages),
+      })
       returnObj.ai.messages = context.messages
       delete returnObj.ai.prompt
       delete returnObj.ai.suffix

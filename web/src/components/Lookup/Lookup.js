@@ -1,7 +1,8 @@
-import { Box, Input, Text } from "@chakra-ui/react"
-import LookupCell from "src/components/LookupCell"
-import { useFormContext } from "react-hook-form"
-const Lookup = ({ table, field,  }) => {
+import { Box, Input, Text } from '@chakra-ui/react'
+import { useFormContext } from 'react-hook-form'
+
+import LookupCell from 'src/components/LookupCell'
+const Lookup = ({ table, field }) => {
   const { register } = useFormContext()
   let [where, setWhere] = React.useState(null)
   let [query, setQuery] = React.useState('')
@@ -12,11 +13,15 @@ const Lookup = ({ table, field,  }) => {
     setQuery(value)
     // we need to debounce this
     clearTimeout(filterTimeout)
-    if (e.target.value === "") { setQuery(''); setWhere(null); return }
+    if (e.target.value === '') {
+      setQuery('')
+      setWhere(null)
+      return
+    }
     filterTimeout = setTimeout(() => {
       // we need a where object like so
       // where: { name: { contains: value, mode: 'insensitive' } }
-      setWhere( `${field}/contains/${value}`)
+      setWhere(`${field}/contains/${value}`)
     }, 500)
   }
   return (
@@ -32,7 +37,6 @@ const Lookup = ({ table, field,  }) => {
           minLength: field?.definition?.minLength || 0,
           onChange: field?.definition?.onChange || null,
         })}
-
       />
       <Input
         value={query}
@@ -46,7 +50,6 @@ const Lookup = ({ table, field,  }) => {
         setQuery={setQuery}
       />
     </Box>
-
   )
 }
 

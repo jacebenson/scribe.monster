@@ -1,6 +1,8 @@
 import { Box, Flex, Icon } from '@chakra-ui/react'
-import { ListContext } from 'src/App.js'
+
 import { NavLink, routes } from '@redwoodjs/router'
+
+import { ListContext } from 'src/App.js'
 const NavItem = ({ icon, navigateTo, query, children, ...rest }) => {
   const { table, setTable } = React.useContext(ListContext)
   if (!query) {
@@ -13,7 +15,6 @@ const NavItem = ({ icon, navigateTo, query, children, ...rest }) => {
     <NavLink
       to={routes?.[navigateTo](query)}
       activeClassName="activeLink"
-
       _focus={{ boxShadow: 'none' }}
       onClick={() => {
         if (rest?.table) setTable(rest.table)
@@ -43,12 +44,9 @@ const NavItem = ({ icon, navigateTo, query, children, ...rest }) => {
             as={icon}
           />
         )}
-        <Box
-          rounded={'md'}
-          py={2}
-          >{children}</Box>
-
-
+        <Box rounded={'md'} py={2}>
+          {children}
+        </Box>
       </Flex>
     </NavLink>
   )
