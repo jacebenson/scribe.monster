@@ -1,6 +1,8 @@
-import Threads from 'src/components/Thread/Threads'
 import { Fragment } from 'react'
+
 import { MetaTags } from '@redwoodjs/web'
+
+import Threads from 'src/components/Thread/Threads'
 
 const ThreadsPage = () => {
   return (

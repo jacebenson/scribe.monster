@@ -4,6 +4,7 @@ import fs from 'fs'
 
 import { PrismaClient } from '@prisma/client'
 import cuid from 'cuid'
+
 const dotenv = require('dotenv')
 dotenv.config()
 
@@ -14,7 +15,8 @@ let generateDateXDaysAgo = (days) => {
   date.setDate(date.getDate() - days)
   let year = date.getFullYear()
   // month and day should be padded with a 0 if it's less than 10
-  let month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
+  let month =
+    date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
   let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
   let dateString = `${year}-${month}-${day}`
   return dateString
@@ -69,8 +71,6 @@ if (seedFilesDir) {
 
     // for users, groups we're going to upsert individual records
     // for everything esle, we're going ot bulk insert after modifing the JSON in memory
-
-
 
     // users + groups
     console.log('in main')
@@ -180,11 +180,11 @@ if (seedFilesDir) {
     return
   }
   main()
-  .catch((e) => {
-    console.error(e)
-    process.exit(1)
-  })
-  .finally(async () => {
-    await db.$disconnect()
-  })
+    .catch((e) => {
+      console.error(e)
+      process.exit(1)
+    })
+    .finally(async () => {
+      await db.$disconnect()
+    })
 }

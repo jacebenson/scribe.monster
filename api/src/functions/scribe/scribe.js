@@ -36,8 +36,11 @@ export const handler = async (event /*, context*/) => {
         data: { error: user.error, code: user.error },
       })
     }
-    if(promptConfig.ai.messages){
-      console.log({ function: 'scribeV2', messages: JSON.stringify(promptConfig.ai.messages) })
+    if (promptConfig.ai.messages) {
+      console.log({
+        function: 'scribeV2',
+        messages: JSON.stringify(promptConfig.ai.messages),
+      })
     }
     let response = await getTextCompletion({
       promptConfig,

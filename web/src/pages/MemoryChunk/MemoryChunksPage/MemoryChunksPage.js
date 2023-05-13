@@ -1,6 +1,8 @@
-import MemoryChunks from 'src/components/MemoryChunk/MemoryChunks'
 import { Fragment } from 'react'
+
 import { MetaTags } from '@redwoodjs/web'
+
+import MemoryChunks from 'src/components/MemoryChunk/MemoryChunks'
 
 const MemoryChunksPage = () => {
   return (

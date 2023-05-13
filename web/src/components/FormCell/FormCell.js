@@ -1,22 +1,27 @@
-import { Text, Box, Button, Center, FormControl, FormLabel, Input, Spinner } from '@chakra-ui/react'
-import { tableNames } from 'src/lib/atomicFunctions'
-import { useForm, FormProvider, useFormContext } from 'react-hook-form'
-import { MetaTags, useMutation } from '@redwoodjs/web'
-import { toast, Toaster } from '@redwoodjs/web/toast'
-import AutoResizeTextarea from 'src/components/AutoResizeTextarea'
-import Lookup from 'src/components/Lookup'
-import LookupCell from "src/components/LookupCell"
+import {
+  Text,
+  Box,
+  Button,
+  Center,
+  FormControl,
+  FormLabel,
+  Input,
+  Spinner,
+} from '@chakra-ui/react'
 import camelCase from 'camelcase'
 import pluralize from 'pluralize'
+import { useForm, FormProvider, useFormContext } from 'react-hook-form'
+
+import { MetaTags, useMutation } from '@redwoodjs/web'
+import { toast, Toaster } from '@redwoodjs/web/toast'
+
+import AutoResizeTextarea from 'src/components/AutoResizeTextarea'
+import Lookup from 'src/components/Lookup'
+import LookupCell from 'src/components/LookupCell'
+import { tableNames } from 'src/lib/atomicFunctions'
 export const QUERY = gql`
-  query FindRecord(
-    $table: String!
-    $cuid: String
-    ) {
-    form: readRecord(
-      table: $table
-      cuid: $cuid
-    ) {
+  query FindRecord($table: String!, $cuid: String) {
+    form: readRecord(table: $table, cuid: $cuid) {
       table
       cuid
       fields
@@ -69,20 +74,26 @@ export const beforeQuery = ({ table, cuid }) => {
   let output = {
     variables: {
       table: pascalTable,
-      cuid: cuid
+      cuid: cuid,
     },
   }
   //console.log({ file: 'listcell.js', function: 'beforeQuery', output })
   return output
 }
 
-export const Loading = () => <Center><Spinner size={'xl'} /></Center>
+export const Loading = () => (
+  <Center>
+    <Spinner size={'xl'} />
+  </Center>
+)
 
 export const Empty = () => <div>Empty</div>
 
 export const Failure = ({ error }) => (
-  <div style={{ color: 'red' }}>Error: {error?.message} {error?.graphQLErrors[0]?.extensions?.originalError?.message}</div>
-
+  <div style={{ color: 'red' }}>
+    Error: {error?.message}{' '}
+    {error?.graphQLErrors[0]?.extensions?.originalError?.message}
+  </div>
 )
 
 export const Success = ({ form }) => {
@@ -95,49 +106,57 @@ export const Success = ({ form }) => {
     getValues,
     formState: { errors, isSubmitting },
   } = methods
-  const [updateRecord, { loading, error }] = useMutation(UPDATE_RECORD_MUTATION, {
-    onCompleted: () => {
-      if (form.cuid) {
-        toast.success('Record updated')
-      }
-      if (!form.cuid) {
-        toast.success('Record created')
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    },
-  })
+  const [updateRecord, { loading, error }] = useMutation(
+    UPDATE_RECORD_MUTATION,
+    {
+      onCompleted: () => {
+        if (form.cuid) {
+          toast.success('Record updated')
+        }
+        if (!form.cuid) {
+          toast.success('Record created')
+        }
+      },
+      onError: (error) => {
+        toast.error(error.message)
+      },
+    }
+  )
 
-  const [createRecord, { loadingCreate, errorCreate }] = useMutation(CREATE_RECORD_MUTATION, {
-    onCompleted: () => {
-      if (form.cuid) {
-        toast.success('Record updated')
-      }
-      if (!form.cuid) {
-        toast.success('Record created')
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    },
-  })
+  const [createRecord, { loadingCreate, errorCreate }] = useMutation(
+    CREATE_RECORD_MUTATION,
+    {
+      onCompleted: () => {
+        if (form.cuid) {
+          toast.success('Record updated')
+        }
+        if (!form.cuid) {
+          toast.success('Record created')
+        }
+      },
+      onError: (error) => {
+        toast.error(error.message)
+      },
+    }
+  )
 
-  const [deleteRecord, { loadingDelete, errorDelete }] = useMutation(DELETE_RECORD_MUTATION, {
-    onCompleted: () => {
-      toast.success('Record deleted')
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    },
-  })
+  const [deleteRecord, { loadingDelete, errorDelete }] = useMutation(
+    DELETE_RECORD_MUTATION,
+    {
+      onCompleted: () => {
+        toast.success('Record deleted')
+      },
+      onError: (error) => {
+        toast.error(error.message)
+      },
+    }
+  )
 
   const onSubmit = (data) => {
     console.log({ function: 'onSubmit', data })
     onSave(data)
   }
   const onSave = (data) => {
-
     let isUpdate = form.cuid ? true : false
     let isCreate = form.cuid ? false : true
     // lts use getValues() instead of data
@@ -149,7 +168,7 @@ export const Success = ({ form }) => {
         variables: {
           table: form.table,
           cuid: form.cuid,
-          data: formValues
+          data: formValues,
         },
       })
     }
@@ -157,12 +176,11 @@ export const Success = ({ form }) => {
       createRecord({
         variables: {
           table: form.table,
-          data: data
+          data: data,
         },
       })
     }
   }
-
 
   // Parse the fields and sort them by order
   let fields = JSON.parse(JSON.stringify(form.fields))
@@ -192,26 +210,21 @@ export const Success = ({ form }) => {
             <Text>Generally Hidden</Text>
             <FormControl>
               <FormLabel>Table</FormLabel>
-              <Input
-                readOnly={true}
-                defaultValue={form.table}
-              />
+              <Input readOnly={true} defaultValue={form.table} />
             </FormControl>
             <FormControl>
               <FormLabel>Cuid</FormLabel>
-              <Input
-                readOnly={true}
-                defaultValue={form.cuid}
-              />
+              <Input readOnly={true} defaultValue={form.cuid} />
             </FormControl>
           </Box>
           {form.fields.map((field, index) => {
             let fieldType = field?.definition?.type || 'text'
 
-
             // from lookup.js
             let [where, setWhere] = React.useState(null)
-            let [query, setQuery] = React.useState(form?.result?.[field.type]?.[field.definition.display] || null)
+            let [query, setQuery] = React.useState(
+              form?.result?.[field.type]?.[field.definition.display] || null
+            )
             let [lookUpValue, setLookUpValue] = React.useState('')
             let setCuidField = (field, value) => {
               //console.log({ function: 'setCuidField', field, value })
@@ -223,7 +236,11 @@ export const Success = ({ form }) => {
               setQuery(value)
               // we need to debounce this
               clearTimeout(filterTimeout)
-              if (e.target.value === "") { setQuery(''); setWhere(null); return }
+              if (e.target.value === '') {
+                setQuery('')
+                setWhere(null)
+                return
+              }
               filterTimeout = setTimeout(() => {
                 // we need a where object like so
                 // where: { name: { contains: value, mode: 'insensitive' } }
@@ -254,7 +271,11 @@ export const Success = ({ form }) => {
                       minLength: field?.definition?.minLength || 0,
                       onChange: field?.definition?.onChange || null,
                     })}
-                    defaultValue={form?.result?.[field.name] || field?.definition?.defaultValue || ''}
+                    defaultValue={
+                      form?.result?.[field.name] ||
+                      field?.definition?.defaultValue ||
+                      ''
+                    }
                   />
                 )}
                 {fieldType === 'textarea' && (
@@ -266,7 +287,11 @@ export const Success = ({ form }) => {
                       minLength: field?.definition?.minLength || 0,
                       onChange: field?.definition?.onChange || null,
                     })}
-                    defaultValue={form?.result?.[field.name] || field?.definition?.defaultValue || ''}
+                    defaultValue={
+                      form?.result?.[field.name] ||
+                      field?.definition?.defaultValue ||
+                      ''
+                    }
                   />
                 )}
                 {fieldType === 'code' && (
@@ -279,7 +304,11 @@ export const Success = ({ form }) => {
                       minLength: field?.definition?.minLength || 0,
                       onChange: field?.definition?.onChange || null,
                     })}
-                    defaultValue={form?.result?.[field.name] || field?.definition?.defaultValue || ''}
+                    defaultValue={
+                      form?.result?.[field.name] ||
+                      field?.definition?.defaultValue ||
+                      ''
+                    }
                   />
                 )}
                 {fieldType === 'reference' && (
@@ -298,7 +327,7 @@ export const Success = ({ form }) => {
                     />
                     {lookUpValue}
                     <Input
-                      value={ query }
+                      value={query}
                       onChange={(e) => handleInput(e)}
                       placeholder="Search..."
                     />
@@ -312,7 +341,6 @@ export const Success = ({ form }) => {
                     />
                   </Box>
                 )}
-
               </FormControl>
             )
           })}

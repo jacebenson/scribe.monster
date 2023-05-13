@@ -1,5 +1,6 @@
 //import { Link, routes } from '@redwoodjs/router'
 import { Fragment, useEffect, useState } from 'react'
+
 import {
   //SimpleGrid,
   Table,
@@ -22,12 +23,23 @@ import {
   FormControl,
   FormLabel,
 } from '@chakra-ui/react'
-import { MdArrowDownward, MdArrowUpward, MdChevronLeft, MdChevronRight, MdEdit, MdFirstPage, MdLastPage, MdSortByAlpha } from 'react-icons/md'
 import camelCase from 'camelcase'
-import { getRecords, getSchema, readManyGQL } from 'src/lib/atomicFunctions'
-import { useAuth } from 'src/auth'
-import { MetaTags } from '@redwoodjs/web'
+import {
+  MdArrowDownward,
+  MdArrowUpward,
+  MdChevronLeft,
+  MdChevronRight,
+  MdEdit,
+  MdFirstPage,
+  MdLastPage,
+  MdSortByAlpha,
+} from 'react-icons/md'
+
 import { Link, navigate, routes } from '@redwoodjs/router'
+import { MetaTags } from '@redwoodjs/web'
+
+import { useAuth } from 'src/auth'
+import { getRecords, getSchema, readManyGQL } from 'src/lib/atomicFunctions'
 import { tableNames } from 'src/lib/atomicFunctions'
 
 let transformData = ({ data, schema }) => {
@@ -45,7 +57,7 @@ let transformData = ({ data, schema }) => {
   })
   return data
 }
-let parseParamsAndVariables = ({ params, page, take,orderBy, where }) => {
+let parseParamsAndVariables = ({ params, page, take, orderBy, where }) => {
   // params may be undefined or may be a string seperated by `/`
   // if it is a string, convert it to an object
   let paramsObject = {}
@@ -85,7 +97,7 @@ let parseParamsAndVariables = ({ params, page, take,orderBy, where }) => {
           ['lt', 'lt'],
           ['lte', 'lte'],
           ['gt', 'gt'],
-          ['gte', 'gte']
+          ['gte', 'gte'],
         ]
 
         whereArray.forEach((param, index) => {
@@ -120,11 +132,9 @@ let parseParamsAndVariables = ({ params, page, take,orderBy, where }) => {
               whereObject[relation] = { [field]: { [operator]: value } }
             }
             //console.log({ key, operator, value })
-
           }
         })
         where = whereObject
-
       }
       if (param === 'orderBy') {
         // the next two params are the field and direction
@@ -158,14 +168,22 @@ let parseParamsAndVariables = ({ params, page, take,orderBy, where }) => {
         paramsObject.q = JSON.stringify(where)
       }
     })
-    if(page) paramsObject.page = page
-    if(take) paramsObject.take = take
+    if (page) paramsObject.page = page
+    if (take) paramsObject.take = take
 
     params = paramsObject
   }
   let variables = {}
   // if any of the "variables" are in the params, move them to the variables
-  if (params?.take || params?.skip || params?.orderBy || params?.filter || params?.q || params?.page || params?.where) {
+  if (
+    params?.take ||
+    params?.skip ||
+    params?.orderBy ||
+    params?.filter ||
+    params?.q ||
+    params?.page ||
+    params?.where
+  ) {
     if (params?.take) variables.take = params.take || take
     if (params?.page) {
       let skip = ((params?.page || page) - 1) * (params?.take || 10)
@@ -178,19 +196,32 @@ let parseParamsAndVariables = ({ params, page, take,orderBy, where }) => {
   }
   return { paramsObject, variables }
 }
-const ListPage = ({ table, page: rawPage, take: rawTake, where: rawWhere, params }) => {
+const ListPage = ({
+  table,
+  page: rawPage,
+  take: rawTake,
+  where: rawWhere,
+  params,
+}) => {
   console.log({ table, params })
 
-  let { paramsObject, variables } = parseParamsAndVariables({ params, page: rawPage, take: rawTake, where: rawWhere })
+  let { paramsObject, variables } = parseParamsAndVariables({
+    params,
+    page: rawPage,
+    take: rawTake,
+    where: rawWhere,
+  })
   console.log({ paramsObject, variables })
   console.log({
     paramsObject,
     rawPage,
     rawTake,
-    rawWhere
+    rawWhere,
   })
   const { getToken } = useAuth()
-  let { camelTable, pascalTable, pluralTable, spacedTable } = tableNames({ table })
+  let { camelTable, pascalTable, pluralTable, spacedTable } = tableNames({
+    table,
+  })
   let [schema, setSchema] = useState()
   let [rows, setRows] = useState()
   let [count, setCount] = useState(0)
@@ -202,10 +233,10 @@ const ListPage = ({ table, page: rawPage, take: rawTake, where: rawWhere, params
   let [error, setError] = useState()
   useEffect(() => {
     setError(null)
-    setRows([])//clear the rows when the table changes
-    setCount(0)//clear the count when the table changes
+    setRows([]) //clear the rows when the table changes
+    setCount(0) //clear the count when the table changes
     setOrderBy(orderBy)
-    setListState('loading')//clear the listState when the table changes
+    setListState('loading') //clear the listState when the table changes
     setOrderBy(orderBy)
     getSchema({ table: pascalTable })
       .then(async (database) => {
@@ -215,23 +246,32 @@ const ListPage = ({ table, page: rawPage, take: rawTake, where: rawWhere, params
         let token = await getToken()
         if (!variables?.take) take = 10
         if (!variables?.skip) variables.skip = 0
-        variables = { ...variables, take, skip: (page - 1) * take, orderBy, where }
+        variables = {
+          ...variables,
+          take,
+          skip: (page - 1) * take,
+          orderBy,
+          where,
+        }
         console.log({ function: 'useEffect', variables })
-        getRecords({ table: camelTable, schema: database.schema, token, variables }).then(
-          (data) => {
-            if (data.errors) {
-              setListState('error')
-              setError(data.errors)
-              return
-            }
-            let results = data.data[pluralTable].results
-            let count = data.data[pluralTable].count
-            transformData({ data: results, schema: database.schema })
-            setCount(count)
-            setRows(results)
-            setListState('loaded')
+        getRecords({
+          table: camelTable,
+          schema: database.schema,
+          token,
+          variables,
+        }).then((data) => {
+          if (data.errors) {
+            setListState('error')
+            setError(data.errors)
+            return
           }
-        )
+          let results = data.data[pluralTable].results
+          let count = data.data[pluralTable].count
+          transformData({ data: results, schema: database.schema })
+          setCount(count)
+          setRows(results)
+          setListState('loaded')
+        })
       })
       .catch((error) => {
         setError(error.message)
@@ -243,25 +283,19 @@ const ListPage = ({ table, page: rawPage, take: rawTake, where: rawWhere, params
     return <p>ERROR: {JSON.stringify(error)}</p>
   }
   if (listState === 'loading') {
-    return <Box
-      backgroundColor={'white'}
-      borderRadius={'lg'}
-      boxShadow={'lg'}
-      p={4}
-    >
-      <Heading pb={2}>
-        {spacedTable}
-      </Heading>
+    return (
+      <Box backgroundColor={'white'} borderRadius={'lg'} boxShadow={'lg'} p={4}>
+        <Heading pb={2}>{spacedTable}</Heading>
 
-      <Spinner
-        thickness='4px'
-        speed='0.65s'
-        emptyColor='gray.200'
-        color='blue.500'
-        size='xl'
-      />
-    </Box>
-
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="blue.500"
+          size="xl"
+        />
+      </Box>
+    )
   }
   return (
     <Fragment>
@@ -281,7 +315,12 @@ const ListPage = ({ table, page: rawPage, take: rawTake, where: rawWhere, params
         {!error && !schema && <p>Loading...</p>}
         {!error && schema && !rows && <p>Loading...</p>}
         {!error && schema && rows && (
-          <Table key={'table'} variant="striped" colorScheme={'green'} size="xs">
+          <Table
+            key={'table'}
+            variant="striped"
+            colorScheme={'green'}
+            size="xs"
+          >
             <TableCaption key={'tc'}>List of {table}</TableCaption>
             <Thead key={'thead'}>
               <Tr key={`${table}.heading`}>
@@ -295,63 +334,97 @@ const ListPage = ({ table, page: rawPage, take: rawTake, where: rawWhere, params
                     let sortedDirection = sortedBy
                     console.log({ orderBy, sortedBy, sortedDirection })
 
-                    return <Th key={`${table}.${field.name}`}>
-                      {header}
-                      {sortable && sortedBy && sortedDirection === 'asc' && (
-                        <IconButton
-                          aria-label={`Toggle Sort of ${header} to descending`}
-                          _hover={{ backgroundColor: 'green.600' }}
-                          icon={<MdArrowUpward />}
-                          backgroundColor={'green.500'}
-                          size={'sm'}
-                          m={2}
-                          onClick={() => {
-                            //
-                            let take = parseInt(paramsObject?.take || 10)
-                            setPage(page)
-                            setTake(take)
-                            setOrderBy({ [field.name]: 'desc' })
-                            navigate('/list/' + camelTable + '/page/' + page + '/take/' + take + '/orderBy/' + field.name + '/desc/')
-                          }}
-                        />
-                      )}
-                      {sortable && sortedBy && sortedDirection === 'desc' && (
-                        <IconButton
-                          aria-label={`Toggle Sort of ${header} to descending`}
-                          _hover={{ backgroundColor: 'green.600' }}
-                          icon={<MdArrowDownward />}
-                          backgroundColor={'green.500'}
-                          size={'sm'}
-                          m={2}
-                          onClick={() => {
-                            let page = parseInt(paramsObject?.page || 1)
-                            let take = parseInt(paramsObject?.take || 10)
-                            setPage(page)
-                            setTake(take)
-                            setOrderBy({ [field.name]: 'asc' })
-                            navigate('/list/' + camelTable + '/page/' + page + '/take/' + take + '/orderBy/' + field.name + '/asc/')
-                          }}
-                        />
-                      )}
-                      {sortable && !sortedBy && (
-                        <IconButton
-                          aria-label={`Sort ${header} descending`}
-                          _hover={{ backgroundColor: 'green.600' }}
-                          icon={<MdSortByAlpha />}
-                          backgroundColor={'green.500'}
-                          size={'sm'}
-                          m={2}
-                          onClick={() => {
-                            let page = parseInt(paramsObject?.page || 1)
-                            let take = parseInt(paramsObject?.take || 10)
-                            setPage(page)
-                            setTake(take)
-                            setOrderBy({ [field.name]: sortedDirection || 'desc' })
-                            navigate('/list/' + camelTable + '/page/' + page + '/take/' + take + '/orderBy/' + field.name + '/desc/')
-                          }}
-                        />
-                      )}
-                    </Th>
+                    return (
+                      <Th key={`${table}.${field.name}`}>
+                        {header}
+                        {sortable && sortedBy && sortedDirection === 'asc' && (
+                          <IconButton
+                            aria-label={`Toggle Sort of ${header} to descending`}
+                            _hover={{ backgroundColor: 'green.600' }}
+                            icon={<MdArrowUpward />}
+                            backgroundColor={'green.500'}
+                            size={'sm'}
+                            m={2}
+                            onClick={() => {
+                              //
+                              let take = parseInt(paramsObject?.take || 10)
+                              setPage(page)
+                              setTake(take)
+                              setOrderBy({ [field.name]: 'desc' })
+                              navigate(
+                                '/list/' +
+                                  camelTable +
+                                  '/page/' +
+                                  page +
+                                  '/take/' +
+                                  take +
+                                  '/orderBy/' +
+                                  field.name +
+                                  '/desc/'
+                              )
+                            }}
+                          />
+                        )}
+                        {sortable && sortedBy && sortedDirection === 'desc' && (
+                          <IconButton
+                            aria-label={`Toggle Sort of ${header} to descending`}
+                            _hover={{ backgroundColor: 'green.600' }}
+                            icon={<MdArrowDownward />}
+                            backgroundColor={'green.500'}
+                            size={'sm'}
+                            m={2}
+                            onClick={() => {
+                              let page = parseInt(paramsObject?.page || 1)
+                              let take = parseInt(paramsObject?.take || 10)
+                              setPage(page)
+                              setTake(take)
+                              setOrderBy({ [field.name]: 'asc' })
+                              navigate(
+                                '/list/' +
+                                  camelTable +
+                                  '/page/' +
+                                  page +
+                                  '/take/' +
+                                  take +
+                                  '/orderBy/' +
+                                  field.name +
+                                  '/asc/'
+                              )
+                            }}
+                          />
+                        )}
+                        {sortable && !sortedBy && (
+                          <IconButton
+                            aria-label={`Sort ${header} descending`}
+                            _hover={{ backgroundColor: 'green.600' }}
+                            icon={<MdSortByAlpha />}
+                            backgroundColor={'green.500'}
+                            size={'sm'}
+                            m={2}
+                            onClick={() => {
+                              let page = parseInt(paramsObject?.page || 1)
+                              let take = parseInt(paramsObject?.take || 10)
+                              setPage(page)
+                              setTake(take)
+                              setOrderBy({
+                                [field.name]: sortedDirection || 'desc',
+                              })
+                              navigate(
+                                '/list/' +
+                                  camelTable +
+                                  '/page/' +
+                                  page +
+                                  '/take/' +
+                                  take +
+                                  '/orderBy/' +
+                                  field.name +
+                                  '/desc/'
+                              )
+                            }}
+                          />
+                        )}
+                      </Th>
+                    )
                   })}
               </Tr>
             </Thead>
@@ -365,34 +438,63 @@ const ListPage = ({ table, page: rawPage, take: rawTake, where: rawWhere, params
                         schema.fields.map((field, fieldIndex) => {
                           let key = `${table}.${field.name}.${row.cuid}`
                           let font = field?.definition?.fontFamily
-                          let reference = field?.reference && field?.definition?.display && field?.definition?.value
-                          let referenceCuid = row?.[field.name]?.[field.definition.value]
-                          let genericFormLink = routes.formEdit({ table: camelTable, cuid: row.cuid })
+                          let reference =
+                            field?.reference &&
+                            field?.definition?.display &&
+                            field?.definition?.value
+                          let referenceCuid =
+                            row?.[field.name]?.[field.definition.value]
+                          let genericFormLink = routes.formEdit({
+                            table: camelTable,
+                            cuid: row.cuid,
+                          })
                           if (fieldIndex === 0) {
-                            return (<Fragment key={key}>
-                              <Td>
-                                <IconButton
-                                  aria-label={`Edit row`} icon={<MdEdit />} backgroundColor={'green.500'} size={'sm'} m={2} onClick={() => {
-                                    navigate(genericFormLink)
-                                  }} />
-                              </Td>
-                              <Td>
-                                {/*<ChakraLink as={Link} to={routes[camelTable]({cuid: row.cuid})} fontFamily={font}>
+                            return (
+                              <Fragment key={key}>
+                                <Td>
+                                  <IconButton
+                                    aria-label={`Edit row`}
+                                    icon={<MdEdit />}
+                                    backgroundColor={'green.500'}
+                                    size={'sm'}
+                                    m={2}
+                                    onClick={() => {
+                                      navigate(genericFormLink)
+                                    }}
+                                  />
+                                </Td>
+                                <Td>
+                                  {/*<ChakraLink as={Link} to={routes[camelTable]({cuid: row.cuid})} fontFamily={font}>
                               {row[field.name]}
                             </ChakraLink>*/}
-                                <ChakraLink as={Link} to={genericFormLink} fontFamily={font}>
-                                  {row[field.name]}
-                                </ChakraLink>
-                              </Td>
-                            </Fragment>)
+                                  <ChakraLink
+                                    as={Link}
+                                    to={genericFormLink}
+                                    fontFamily={font}
+                                  >
+                                    {row[field.name]}
+                                  </ChakraLink>
+                                </Td>
+                              </Fragment>
+                            )
                           }
                           if (reference && referenceCuid) {
-                            let referenceTable = camelCase(field.name, { pascalCase: false })
-                            return (<Td key={key}>
-                              <ChakraLink as={Link} to={routes[referenceTable]({ cuid: referenceCuid })} fontFamily={font}>
-                                {row[field.name][field.definition.display]}
-                              </ChakraLink>
-                            </Td>)
+                            let referenceTable = camelCase(field.name, {
+                              pascalCase: false,
+                            })
+                            return (
+                              <Td key={key}>
+                                <ChakraLink
+                                  as={Link}
+                                  to={routes[referenceTable]({
+                                    cuid: referenceCuid,
+                                  })}
+                                  fontFamily={font}
+                                >
+                                  {row[field.name][field.definition.display]}
+                                </ChakraLink>
+                              </Td>
+                            )
                           }
                           return <Td key={key}>{row[field.name]}</Td>
                         })}
@@ -431,7 +533,14 @@ const ListPage = ({ table, page: rawPage, take: rawTake, where: rawWhere, params
                     return
                   }
                   setPage(page)
-                  navigate('/list/' + camelTable + '/page/' + (page - 1) + '/take/' + take)
+                  navigate(
+                    '/list/' +
+                      camelTable +
+                      '/page/' +
+                      (page - 1) +
+                      '/take/' +
+                      take
+                  )
                 }}
               />
               <IconButton
@@ -445,9 +554,16 @@ const ListPage = ({ table, page: rawPage, take: rawTake, where: rawWhere, params
                   let take = parseInt(paramsObject?.take || 10)
                   // if count < page * take, go to the next page
                   //if (count > page * take) {
-                    setPage(page)
-                    setTake(take)
-                    navigate('/list/' + camelTable + '/page/' + (page + 1) + '/take/' + take)
+                  setPage(page)
+                  setTake(take)
+                  navigate(
+                    '/list/' +
+                      camelTable +
+                      '/page/' +
+                      (page + 1) +
+                      '/take/' +
+                      take
+                  )
                   //}
                 }}
               />
@@ -463,46 +579,58 @@ const ListPage = ({ table, page: rawPage, take: rawTake, where: rawWhere, params
                   if (count > take) {
                     let lastPage = Math.ceil(count / take)
                     setPage(lastPage)
-                    navigate('/list/' + camelTable + '/page/' + lastPage + '/take/' + take)
+                    navigate(
+                      '/list/' +
+                        camelTable +
+                        '/page/' +
+                        lastPage +
+                        '/take/' +
+                        take
+                    )
                   }
                 }}
               />
             </Flex>
             <Center>
               <Text>
-                {paramsObject?.page || 1} / {Math.ceil(count / (paramsObject?.take || 10))}
+                {paramsObject?.page || 1} /{' '}
+                {Math.ceil(count / (paramsObject?.take || 10))}
               </Text>
             </Center>
             {/**Load a chakraui select with a label to define the take qty */}
             <Box>
               <FormControl>
-              {/** I would like the label and field on one line */}
-              <Flex>
-                <FormLabel htmlFor="take">Take</FormLabel>
-                <Select
-
-                  id="take"
-                  name="take"
-                  value={paramsObject?.take || 10}
-                  onChange={(e) => {
-                    let take = parseInt(e.target.value)
-                    let page = parseInt(paramsObject?.page || 1)
-                    setTake(take)
-                    setPage(page)
-                    navigate('/list/' + camelTable + '/page/' + page + '/take/' + take)
-                  }}
-                >
-                {/**onle 10, 25, and 50 */}
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                </Select>
+                {/** I would like the label and field on one line */}
+                <Flex>
+                  <FormLabel htmlFor="take">Take</FormLabel>
+                  <Select
+                    id="take"
+                    name="take"
+                    value={paramsObject?.take || 10}
+                    onChange={(e) => {
+                      let take = parseInt(e.target.value)
+                      let page = parseInt(paramsObject?.page || 1)
+                      setTake(take)
+                      setPage(page)
+                      navigate(
+                        '/list/' +
+                          camelTable +
+                          '/page/' +
+                          page +
+                          '/take/' +
+                          take
+                      )
+                    }}
+                  >
+                    {/**onle 10, 25, and 50 */}
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                  </Select>
                 </Flex>
               </FormControl>
-
             </Box>
           </Box>
-
         </Center>
       </Box>
       <details>

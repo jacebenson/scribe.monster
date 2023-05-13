@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState } from 'react'
+
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import {
   Center,
@@ -132,7 +133,7 @@ const AskStew = () => {
       readOnly: true,
       defaultValue: thread || '',
       //type: 'hidden',
-      display: 'none'
+      display: 'none',
     },
   ]
 
@@ -178,12 +179,12 @@ const AskStew = () => {
               {context.map((sourceData, index) => (
                 <Box as="li" key={index} p={0} m={0} fontSize={'10px'}>
                   {sourceData.sourceUrl && (
-                  <Link href={sourceData.sourceUrl} isExternal>
-                    {sourceData.score}% {sourceData.source}
-                    <ExternalLinkIcon mx="2px" />
-                  </Link>
+                    <Link href={sourceData.sourceUrl} isExternal>
+                      {sourceData.score}% {sourceData.source}
+                      <ExternalLinkIcon mx="2px" />
+                    </Link>
                   )}
-                  {!sourceData.sourceUrl  && (
+                  {!sourceData.sourceUrl && (
                     <Text>
                       {sourceData.score}% {sourceData.source}
                     </Text>

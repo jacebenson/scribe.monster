@@ -67,7 +67,7 @@ export const Success = ({ groupRole }) => {
   )
 
   const onSubmit = (data) => {
-    console.log({ functon: 'onSubmit', data})
+    console.log({ functon: 'onSubmit', data })
     onSave(data, groupRole.cuid)
   }
   const onSave = (input, cuid) => {

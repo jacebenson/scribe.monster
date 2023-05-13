@@ -1,6 +1,7 @@
-import { routes } from '@redwoodjs/router'
-import pluralize from 'pluralize'
 import camelCase from 'camelcase'
+import pluralize from 'pluralize'
+
+import { routes } from '@redwoodjs/router'
 
 export const showMatching = (model, field, value) => {
   var _value = `"${value}"`
@@ -23,7 +24,8 @@ export const copy = (value) => {
 }
 export const getSchema = async ({ table, form }) => {
   let endpoint = '/.redwood/functions/schema'
-  if(form){ // append the form as a query parameter
+  if (form) {
+    // append the form as a query parameter
     endpoint = `${endpoint}?form=${form}`
   }
   let response = await fetch(endpoint, {
@@ -41,15 +43,20 @@ export const readGQL = ({ table, data }) => {
   let fields = ''
   data.schema.fields.forEach((field) => {
     if (!field.definition) {
-      console.log({ 'message': 'no definition', table, field})
+      console.log({ message: 'no definition', table, field })
       throw new Error(`readGQL call for table ${table} definition missing`)
     }
     if (field.definition && !field.reference) {
-      console.log({ 'message': 'no reference', table, field})
+      console.log({ message: 'no reference', table, field })
       fields += `\t\t\t${field.name}\n`
     }
-    if (field.definition && field.reference && field?.definition?.display && field?.definition?.value) {
-      console.log({ 'message': 'reference', table, field})
+    if (
+      field.definition &&
+      field.reference &&
+      field?.definition?.display &&
+      field?.definition?.value
+    ) {
+      console.log({ message: 'reference', table, field })
       fields += `\t\t\t${field.reference.name} {\n`
       fields += `\t\t\t\t${field.definition.value}\n`
       fields += `\t\t\t\t${field.definition.display}\n`
@@ -61,7 +68,7 @@ export const readGQL = ({ table, data }) => {
     ${fields}
   }
 }`
-console.log(gql)
+  console.log(gql)
   return gql
 }
 export const readManyGQL = ({ table, schema }) => {
@@ -76,7 +83,12 @@ export const readManyGQL = ({ table, schema }) => {
     if (field.definition && !field.reference) {
       fields += `\t\t\t${field.name}\n`
     }
-    if (field.definition && field.reference && field?.definition?.display && field?.definition?.value) {
+    if (
+      field.definition &&
+      field.reference &&
+      field?.definition?.display &&
+      field?.definition?.value
+    ) {
       fields += `\t\t\t${field.reference.name} {\n`
       fields += `\t\t\t\t${field.definition.value}\n`
       fields += `\t\t\t\t${field.definition.display}\n`
@@ -84,7 +96,10 @@ export const readManyGQL = ({ table, schema }) => {
     }
   })
   return `query ReadMany${table}($filter: String, $skip: Int, $take: Int, $q: String, $orderBy: OrderByInput) {
-    ${pluralize(table,2)}(filter: $filter, skip: $skip, take: $take, q: $q, orderBy: $orderBy) {
+    ${pluralize(
+      table,
+      2
+    )}(filter: $filter, skip: $skip, take: $take, q: $q, orderBy: $orderBy) {
       count
       take
       skip
@@ -108,7 +123,7 @@ export const getRecord = async ({ query, cuid, token }) => {
     body: JSON.stringify({
       query: query,
       variables: {
-        cuid: cuid
+        cuid: cuid,
       },
     }),
   })
@@ -117,10 +132,10 @@ export const getRecord = async ({ query, cuid, token }) => {
   return data
 }
 export const getRecords = async ({ table, schema, token, variables }) => {
-  if(!variables) variables = {}
-  if(!variables.take) variables.take = 10
-  if(!variables.skip) variables.skip = 0
-  if(!variables.orderBy) variables.orderBy = { 'cuid': 'desc'}
+  if (!variables) variables = {}
+  if (!variables.take) variables.take = 10
+  if (!variables.skip) variables.skip = 0
+  if (!variables.orderBy) variables.orderBy = { cuid: 'desc' }
   let query = readManyGQL({ table, schema })
   let response = await fetch('/.redwood/functions/graphql', {
     credentials: 'include',
@@ -132,15 +147,18 @@ export const getRecords = async ({ table, schema, token, variables }) => {
     method: 'POST',
     body: JSON.stringify({
       query,
-      variables
+      variables,
     }),
   })
   let data = await response.json()
   if (data.error) throw new Error(data.error)
   return data
 }
-export const tableNames = ({ table })=>{
-  if(typeof table != 'string') throw new Error(`tableNames requires a string, typeof table is ${typeof table}`)
+export const tableNames = ({ table }) => {
+  if (typeof table != 'string')
+    throw new Error(
+      `tableNames requires a string, typeof table is ${typeof table}`
+    )
   let camelTable = camelCase(table, { pascalCase: false })
   let pluralTable = pluralize(camelTable, 2)
   let singularTable = camelCase(pluralize(table, 1), { pascalCase: false })
@@ -161,7 +179,7 @@ export const tableNames = ({ table })=>{
   if (word.length > 0) {
     words.push(word)
   }
-  let spacedTable = pluralize(words.join(' '),2)
+  let spacedTable = pluralize(words.join(' '), 2)
 
   return { camelTable, pluralTable, singularTable, pascalTable, spacedTable }
 }

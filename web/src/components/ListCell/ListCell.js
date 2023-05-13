@@ -1,40 +1,54 @@
-import { Tr, Td, Box, Center, SimpleGrid, Spinner, Table, Tbody, Flex, Spacer } from "@chakra-ui/react"
+import {
+  Tr,
+  Td,
+  Box,
+  Center,
+  SimpleGrid,
+  Spinner,
+  Table,
+  Tbody,
+  Flex,
+  Spacer,
+} from '@chakra-ui/react'
+
 import { tableNames } from 'src/lib/atomicFunctions'
-import ListHeader from "../ListHeader/ListHeader"
-import ListRowHeader from "../ListRowHeader/ListRowHeader"
-import ListRow from "../ListRow/ListRow"
-import ListRowFooter from "../ListRowFooter/ListRowFooter"
+
+import ListHeader from '../ListHeader/ListHeader'
+import ListRow from '../ListRow/ListRow'
+import ListRowFooter from '../ListRowFooter/ListRowFooter'
+import ListRowHeader from '../ListRowHeader/ListRowHeader'
 export let QUERY = gql`
   query FindRecords(
-	$table: String!,
-	$page: Int,
-	$take: Int,
-	$where: String,
-	$orderBy: String
-) {
-	data: readRecords(
-		table: $table,
-		page: $page,
-		take: $take,
-		where: $where,
-		orderBy: $orderBy
-	) {
-		table
-		page
-		take
-		where
-    filter
-		orderBy
-    order
-    fields
-    select
-    total
-		results
-	}
-}
+    $table: String!
+    $page: Int
+    $take: Int
+    $where: String
+    $orderBy: String
+  ) {
+    data: readRecords(
+      table: $table
+      page: $page
+      take: $take
+      where: $where
+      orderBy: $orderBy
+    ) {
+      table
+      page
+      take
+      where
+      filter
+      orderBy
+      order
+      fields
+      select
+      total
+      results
+    }
+  }
 `
 export const beforeQuery = ({ table, page, take, where, orderBy }) => {
-  let { camelTable, pascalTable, pluralTable, spacedTable, singularTable } = tableNames({ table: table })
+  let { camelTable, pascalTable, pluralTable, spacedTable, singularTable } =
+    tableNames({ table: table })
   //console.log({ file: 'listcell.js', function: 'beforeQuery', table, page, take, where, orderBy, camelTable, pascalTable, pluralTable, spacedTable, singularTable })
   let output = {
     variables: {
@@ -42,7 +56,7 @@ export const beforeQuery = ({ table, page, take, where, orderBy }) => {
       page: parseInt(page),
       take: parseInt(take),
       where,
-      orderBy
+      orderBy,
     },
   }
   //console.log({ file: 'listcell.js', function: 'beforeQuery', output })
@@ -50,9 +64,7 @@ export const beforeQuery = ({ table, page, take, where, orderBy }) => {
 }
 export const Loading = () => {
   return (
-    <Box
-    bg={'white'}
-      m={2} rounded={'md'} p={2}>
+    <Box bg={'white'} m={2} rounded={'md'} p={2}>
       <Center>
         <Spinner size={'xl'} />
       </Center>
@@ -76,16 +88,22 @@ export const Success = ({ data }) => {
     <Box>
       <details>
         <summary>Debug Data</summary>
-        <Box fontFamily={'monospace'} whiteSpace={'pre-wrap'}>{JSON.stringify(data, null, 2)}</Box>
+        <Box fontFamily={'monospace'} whiteSpace={'pre-wrap'}>
+          {JSON.stringify(data, null, 2)}
+        </Box>
       </details>
       <Box
-      bg={'white'}
+        bg={'white'}
         display={{ base: 'none', md: 'block', lg: 'block' }}
-        m={2} rounded={'md'} p={2}>
+        m={2}
+        rounded={'md'}
+        p={2}
+      >
         <ListHeader
           table={data.table}
           count={data.results.length}
-          total={data.total} />
+          total={data.total}
+        />
         <Table variant="striped" colorScheme="green">
           <ListRowHeader fields={data.fields} />
           <Tbody>
@@ -96,7 +114,6 @@ export const Success = ({ data }) => {
                   record={record}
                   fields={data.fields}
                   table={data.table}
-
                 />
               )
             })}
@@ -105,40 +122,45 @@ export const Success = ({ data }) => {
         <ListRowFooter total={data.total} />
       </Box>
       <Box display={{ base: 'block', md: 'none', lg: 'none' }}>
-      <ListHeader table={data.table} count={data.results.length} />
+        <ListHeader table={data.table} count={data.results.length} />
         <SimpleGrid>
-            {data.results.map((record) => {
-              let cardKey = `card-${record.cuid}`
-              return (
-                <Box key={cardKey} m={2} border={'1px solid black'} rounded={'md'} p={2}>
-                  {Object.keys(record).map((key) => {
-                    if (key !== 'cuid') {
-                      let value = record[key]
-                      if(value?.length > 20) {
-                        value = value.substring(0, 17)
-                        value += '...'
-                      }
-                      return (
-                        <Box key={`${cardKey}-${key}`}>
-                          {/*<Flex>
+          {data.results.map((record) => {
+            let cardKey = `card-${record.cuid}`
+            return (
+              <Box
+                key={cardKey}
+                m={2}
+                border={'1px solid black'}
+                rounded={'md'}
+                p={2}
+              >
+                {Object.keys(record).map((key) => {
+                  if (key !== 'cuid') {
+                    let value = record[key]
+                    if (value?.length > 20) {
+                      value = value.substring(0, 17)
+                      value += '...'
+                    }
+                    return (
+                      <Box key={`${cardKey}-${key}`}>
+                        {/*<Flex>
                             {key}
                             <Spacer />
                             <Box>
                               {value}
                             </Box>
                           </Flex>*/}
-                            <Box border={'1px solid black'}  ></Box>
-                          </Box>
-                      )
-                    }
-                  })}
-                </Box>
-              )
-            })}
+                        <Box border={'1px solid black'}></Box>
+                      </Box>
+                    )
+                  }
+                })}
+              </Box>
+            )
+          })}
         </SimpleGrid>
         <ListRowFooter />
       </Box>
     </Box>
-
   )
 }

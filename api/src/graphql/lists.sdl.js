@@ -21,7 +21,6 @@ export const schema = gql`
     result: JSON
   }
 
-
   type Query {
     readRecords(
       table: String!
@@ -32,24 +31,15 @@ export const schema = gql`
       filter: JSON
       results: [JSON]
     ): List! @requireAuth(roles: ["activityRead", "admin"])
-    readRecord(
-      table: String!
-      cuid: String
-    ): Form! @requireAuth(roles: ["activityRead", "admin"])
+    readRecord(table: String!, cuid: String): Form!
+      @requireAuth(roles: ["activityRead", "admin"])
   }
   type Mutation {
-    createRecord(
-      table: String!
-      data: JSON!
-    ): Form! @requireAuth(roles: ["activityCreate", "admin"])
-    updateRecord(
-      table: String!
-      cuid: String!
-      data: JSON!
-    ): Form! @requireAuth(roles: ["activityUpdate", "admin"])
-    deleteRecord(
-      table: String!
-      cuid: String!
-    ): Form! @requireAuth(roles: ["activityDelete", "admin"])
+    createRecord(table: String!, data: JSON!): Form!
+      @requireAuth(roles: ["activityCreate", "admin"])
+    updateRecord(table: String!, cuid: String!, data: JSON!): Form!
+      @requireAuth(roles: ["activityUpdate", "admin"])
+    deleteRecord(table: String!, cuid: String!): Form!
+      @requireAuth(roles: ["activityDelete", "admin"])
   }
 `

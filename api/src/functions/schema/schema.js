@@ -1,10 +1,11 @@
 import { PrismaClient } from '@prisma/client'
-
-import { definitions as listDefinitions } from 'src/lib/listFieldDefinitions'
-import { definitions as formDefinitions } from 'src/lib/formFieldDefinitions'
-import { logger } from 'src/lib/logger'
 import { camelCase } from 'camel-case'
+
+import { definitions as formDefinitions } from 'src/lib/formFieldDefinitions'
 import { pluralize, singularize } from 'src/lib/libPluralize'
+import { definitions as listDefinitions } from 'src/lib/listFieldDefinitions'
+import { logger } from 'src/lib/logger'
+
 /**
  * The handler function is your code that processes http request events.
  * You can use return and throw to send a response or error, respectively.
@@ -28,7 +29,7 @@ export const handler = async (event /*, context*/) => {
   // get the query parameter "form" and make a variable
   let form = event.queryStringParameters.form
   // get the post body
-  let definitions = (form) ? formDefinitions : listDefinitions
+  let definitions = form ? formDefinitions : listDefinitions
   let body = JSON.parse(event.body)
   if (!table) {
     table = body?.table
@@ -90,12 +91,18 @@ export const handler = async (event /*, context*/) => {
       ) {
         console.log({ field })
         dmmf.datamodel.models.forEach((model) => {
-          console.log({ model: model.name, type: field.type, match: model.name === field.type })
+          console.log({
+            model: model.name,
+            type: field.type,
+            match: model.name === field.type,
+          })
           if (model.name === field.type) {
             // only include the fields from the definition
             model.fields = model.fields.filter((item) => {
-              console.log({ field: field.name, camelTable})
-              return definitions?.[camelTable]?.[field.name]?.fields?.includes(item.name)
+              console.log({ field: field.name, camelTable })
+              return definitions?.[camelTable]?.[field.name]?.fields?.includes(
+                item.name
+              )
             })
             field.reference = model
           }
@@ -103,12 +110,12 @@ export const handler = async (event /*, context*/) => {
       }
       // append the definition to the field
       field.definition = {
-        ...definitions?.[camelTable]?.[field.name]
+        ...definitions?.[camelTable]?.[field.name],
       }
-      if(field?.definition?.type){
+      if (field?.definition?.type) {
         field.type = field.definition.type
       }
-      if(field?.definition?.options){
+      if (field?.definition?.options) {
         field.options = field.definition.options
       }
     })

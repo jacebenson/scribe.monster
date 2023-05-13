@@ -4,13 +4,15 @@ import {
   Flex,
   Heading,
   Spacer,
-  useDisclosure
-} from "@chakra-ui/react"
-import { ListContext } from 'src/App.js'
-import ModalUpdatePageSize from "./ModalUpdatePageSize"
-const ListHeader = ({ table, count, total }) => {
+  useDisclosure,
+} from '@chakra-ui/react'
 
-  const { page, setPage, take, setTake, orderBy, setOrderBy } = React.useContext(ListContext)
+import { ListContext } from 'src/App.js'
+
+import ModalUpdatePageSize from './ModalUpdatePageSize'
+const ListHeader = ({ table, count, total }) => {
+  const { page, setPage, take, setTake, orderBy, setOrderBy } =
+    React.useContext(ListContext)
   const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <Box>
@@ -18,10 +20,9 @@ const ListHeader = ({ table, count, total }) => {
         <Flex>
           {table}
           <Spacer />
-          <Box
-            fontSize={'sm'}
-          >
-            Showing <Button
+          <Box fontSize={'sm'}>
+            Showing{' '}
+            <Button
               variant={'ghost'}
               size={'sm'}
               onClick={() => {
@@ -30,9 +31,9 @@ const ListHeader = ({ table, count, total }) => {
             >
               {count}
               <ModalUpdatePageSize isOpen={isOpen} onClose={onClose} />
-            </Button> of {total}
+            </Button>{' '}
+            of {total}
           </Box>
-
         </Flex>
       </Heading>
     </Box>

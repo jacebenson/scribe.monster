@@ -1,28 +1,27 @@
 export const definitions = {
   User: {
-    'username': {
+    username: {
       label: 'User Name',
       canSort: false,
       canFilter: true,
       canShowMatching: true,
     },
-    'name': {
+    name: {
       canSort: true,
     },
-
   },
   Preference: {
-    'entity': {
+    entity: {
       canSort: true,
       canFilter: true,
       canShowMatching: true,
     },
-    'value': {
+    value: {
       canSort: true,
       canFilter: true,
       canShowMatching: true,
     },
-    'User': {
+    User: {
       label: 'User',
       canSort: true,
       canFilter: true,
@@ -33,17 +32,17 @@ export const definitions = {
     },
   },
   Property: {
-    'name': {
+    name: {
       canSort: true,
       canFilter: true,
       canShowMatching: true,
     },
-    'type': {
+    type: {
       canSort: true,
       canFilter: true,
       canShowMatching: true,
     },
-    'value': {
+    value: {
       canSort: true,
       canFilter: true,
       canShowMatching: true,
@@ -55,44 +54,42 @@ export const definitions = {
     //  canFilter: true,
     //  canShowMatching: true,
     //},
-
   },
   Message: {
-    'language': {
+    language: {
       label: 'Language',
     },
-    'entity': {
+    entity: {
       label: 'Entity',
     },
-    'value': {
+    value: {
       label: 'Value',
     },
   },
   Group: {
-    'name': {
+    name: {
       canSort: true,
       canFilter: true,
       canShowMatching: true,
     },
-    'description': {
+    description: {
       canSort: true,
       canFilter: true,
       canShowMatching: true,
     },
-
   },
   GroupRole: {
-    'createdAt': {
+    createdAt: {
       label: 'Created At',
     },
-    'role': true
+    role: true,
   },
   GroupMember: {
-    'createdAt': {
+    createdAt: {
       label: 'Created At',
       order: 50,
     },
-    'User': {
+    User: {
       reference: true,
       label: 'User',
       canSort: true,
@@ -103,7 +100,7 @@ export const definitions = {
       order: 100,
     },
 
-    'Group': {
+    Group: {
       label: 'Group',
       canSort: true,
       canFilter: true,
@@ -114,87 +111,86 @@ export const definitions = {
     },
   },
   Log: {
-    'createdAt': {
+    createdAt: {
       label: 'Created At',
     },
-    'updatedAt': {
+    updatedAt: {
       label: 'Updated At',
     },
-    'message': {
+    message: {
       label: 'Message',
     },
     source: {
       label: 'Source',
-    }
+    },
   },
   Activity: {
-    'createdAt': {
+    createdAt: {
       label: 'Created At',
       canSort: true,
     },
-    'ModelInstance': {
+    ModelInstance: {
       label: 'Model Instance',
       canFilter: true,
       canShowMatching: true,
       display: 'name',
-      value: 'cuid'
+      value: 'cuid',
     },
 
-    'User': {
+    User: {
       label: 'User',
       canFilter: true,
       canShowMatching: true,
       display: 'name',
-      value: 'cuid'
+      value: 'cuid',
     },
   },
   Memory: {
-    'createdAt': {
+    createdAt: {
       label: 'Created At',
       canSort: true,
     },
-    'source': {
+    source: {
       label: 'Source',
     },
-    'title': {
+    title: {
       label: 'Title',
       canSort: true,
     },
-    'active': {
+    active: {
       label: 'Active',
     },
   },
   MemoryChunk: {
-    'createdAt': {
+    createdAt: {
       label: 'Created At',
       canSort: true,
     },
-    'title': {
+    title: {
       label: 'Title',
     },
-    'active': {
+    active: {
       label: 'Active',
-    }
+    },
   },
   ModelInstance: {
-    'name': {
+    name: {
       label: 'Name',
       canSort: true,
       canFilter: true,
       canShowMatching: true,
     },
-    'version': {
+    version: {
       label: 'Version',
       canSort: true,
       canFilter: true,
       canShowMatching: true,
     },
-    'createdAt': {
+    createdAt: {
       label: 'Created At',
       canSort: true,
-
     },
-    'updatedAt': {
+    updatedAt: {
       label: 'Updated At',
       canSort: true,
     },
@@ -205,14 +201,14 @@ export const definitions = {
   updatedAt DateTime   @updatedAt
   userCuid  String?
   */
-    'createdAt': {
+    createdAt: {
       label: 'Created At',
     },
-    'updatedAt': {
+    updatedAt: {
       label: 'Updated At',
     },
-    'userCuid': {
+    userCuid: {
       label: 'User Cuid',
     },
-  }
+  },
 }
