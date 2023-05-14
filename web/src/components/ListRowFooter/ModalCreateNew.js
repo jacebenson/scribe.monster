@@ -30,12 +30,12 @@ const ModalCreateNew = ({ isOpen, onClose, table, children }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent bg={'white'}>
         <ModalHeader>Create New</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {/**figrue out how to allow closing modals from children */}
-          {children}
+          {React.cloneElement(children, { onClose: onClose })}
         </ModalBody>
       </ModalContent>
     </Modal>

@@ -7,6 +7,7 @@ import {
   FormLabel,
   Input,
   Spinner,
+  Textarea,
 } from '@chakra-ui/react'
 import camelCase from 'camelcase'
 import pluralize from 'pluralize'
@@ -21,7 +22,7 @@ import LookupCell from 'src/components/LookupCell'
 import { tableNames } from 'src/lib/atomicFunctions'
 export const QUERY = gql`
   query FindRecord($table: String!, $cuid: String) {
-    form: readRecord(table: $table, cuid: $cuid) {
+    record: readRecord(table: $table, cuid: $cuid) {
       table
       cuid
       fields
@@ -96,7 +97,8 @@ export const Failure = ({ error }) => (
   </div>
 )
 
-export const Success = ({ form }) => {
+export const Success = ({ record, onClose }) => {
+  console.log({ file: 'formcell.js', function: 'Success', record, onClose })
   // Prep the form for submission
   const methods = useForm()
   const {
@@ -110,11 +112,15 @@ export const Success = ({ form }) => {
     UPDATE_RECORD_MUTATION,
     {
       onCompleted: () => {
-        if (form.cuid) {
+        if (record.cuid) {
           toast.success('Record updated')
         }
-        if (!form.cuid) {
+        if (!record.cuid) {
           toast.success('Record created')
+        }
+        if(onClose) {
+          onClose()
+          window.location.reload()//TODO: this is a hack, fix it
         }
       },
       onError: (error) => {
@@ -127,11 +133,15 @@ export const Success = ({ form }) => {
     CREATE_RECORD_MUTATION,
     {
       onCompleted: () => {
-        if (form.cuid) {
+        if (record.cuid) {
           toast.success('Record updated')
         }
-        if (!form.cuid) {
+        if (!record.cuid) {
           toast.success('Record created')
+        }
+        if(onClose) {
+          onClose()
+          window.location.reload()//TODO: this is a hack, fix it
         }
       },
       onError: (error) => {
@@ -145,6 +155,10 @@ export const Success = ({ form }) => {
     {
       onCompleted: () => {
         toast.success('Record deleted')
+        if(onClose) {
+          onClose()
+          window.location.reload()//TODO: this is a hack, fix it
+        }
       },
       onError: (error) => {
         toast.error(error.message)
@@ -157,8 +171,8 @@ export const Success = ({ form }) => {
     onSave(data)
   }
   const onSave = (data) => {
-    let isUpdate = form.cuid ? true : false
-    let isCreate = form.cuid ? false : true
+    let isUpdate = record.cuid ? true : false
+    let isCreate = record.cuid ? false : true
     // lts use getValues() instead of data
     let formValues = getValues()
     console.log({ function: 'onSave', data, isUpdate, isCreate })
@@ -166,8 +180,8 @@ export const Success = ({ form }) => {
     if (isUpdate) {
       updateRecord({
         variables: {
-          table: form.table,
-          cuid: form.cuid,
+          table: record.table,
+          cuid: record.cuid,
           data: formValues,
         },
       })
@@ -175,7 +189,7 @@ export const Success = ({ form }) => {
     if (isCreate) {
       createRecord({
         variables: {
-          table: form.table,
+          table: record.table,
           data: data,
         },
       })
@@ -183,7 +197,7 @@ export const Success = ({ form }) => {
   }
 
   // Parse the fields and sort them by order
-  let fields = JSON.parse(JSON.stringify(form.fields))
+  let fields = JSON.parse(JSON.stringify(record.fields))
   fields = fields.map((field) => {
     if (!field.definition.order) field.definition.order = 0
     return field
@@ -196,34 +210,35 @@ export const Success = ({ form }) => {
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
+      {/*<form onSubmit={(e) => { e.preventDefault(); handleSubmit(onSubmit) }}>*/}
         <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
         <Box>
           <details>
             <summary>Debug Form Fields</summary>
-            <pre>{JSON.stringify(form.fields, null, 2)}</pre>
+            <pre>{JSON.stringify(record.fields, null, 2)}</pre>
           </details>
           <details>
             <summary>Debug Form Result</summary>
-            <pre>{JSON.stringify(form.result, null, 2)}</pre>
+            <pre>{JSON.stringify(record.result, null, 2)}</pre>
           </details>
           <Box border={'1px solid black'} p={2} m={2} rounded={'md'}>
             <Text>Generally Hidden</Text>
             <FormControl>
               <FormLabel>Table</FormLabel>
-              <Input readOnly={true} defaultValue={form.table} />
+              <Input readOnly={true} defaultValue={record.table} />
             </FormControl>
             <FormControl>
               <FormLabel>Cuid</FormLabel>
-              <Input readOnly={true} defaultValue={form.cuid} />
+              <Input readOnly={true} defaultValue={record.cuid} />
             </FormControl>
           </Box>
-          {form.fields.map((field, index) => {
+          {record.fields.map((field, index) => {
             let fieldType = field?.definition?.type || 'text'
 
             // from lookup.js
             let [where, setWhere] = React.useState(null)
             let [query, setQuery] = React.useState(
-              form?.result?.[field.type]?.[field.definition.display] || null
+              record?.result?.[field.type]?.[field.definition.display] || null
             )
             let [lookUpValue, setLookUpValue] = React.useState('')
             let setCuidField = (field, value) => {
@@ -254,7 +269,7 @@ export const Success = ({ form }) => {
                             field={field?.definition?.display}
                             id={field.name}
                             //TODO: This does not work
-                            defaultValue={form?.result?.[field.name] || field?.definition?.defaultValue || ''}
+                            defaultValue={record?.result?.[field.name] || field?.definition?.defaultValue || ''}
                           />
                           */
             // end from lookup.js
@@ -272,40 +287,46 @@ export const Success = ({ form }) => {
                       onChange: field?.definition?.onChange || null,
                     })}
                     defaultValue={
-                      form?.result?.[field.name] ||
+                      record?.result?.[field.name] ||
                       field?.definition?.defaultValue ||
                       ''
                     }
                   />
                 )}
                 {fieldType === 'textarea' && (
+                  <Box>
+                  <details>
+                    <summary>Debug Field</summary>
+                    <pre>{JSON.stringify(field, null, 2)}</pre>
+                  </details>
                   <AutoResizeTextarea
                     id={field.name}
-                    {...register(field.name, {
-                      required: field?.definition?.required || false,
-                      maxLength: field?.definition?.maxLength || 255,
-                      minLength: field?.definition?.minLength || 0,
-                      onChange: field?.definition?.onChange || null,
-                    })}
+                    {...register(field.name)}
                     defaultValue={
-                      form?.result?.[field.name] ||
+                      record?.result?.[field.name] ||
                       field?.definition?.defaultValue ||
                       ''
                     }
                   />
+                  {/*
+                  <Textarea
+                    id={field.name}
+                    {...register(field.name)}
+                    defaultValue={
+                      record?.result?.[field.name] ||
+                      field?.definition?.defaultValue ||
+                      ''
+                    }
+                  />*/}
+                  </Box>
                 )}
                 {fieldType === 'code' && (
                   <AutoResizeTextarea
                     id={field.name}
                     fontFamily={'mono'}
-                    {...register(field.name, {
-                      required: field?.definition?.required || false,
-                      maxLength: field?.definition?.maxLength || 255,
-                      minLength: field?.definition?.minLength || 0,
-                      onChange: field?.definition?.onChange || null,
-                    })}
+                    {...register(field.name)}
                     defaultValue={
-                      form?.result?.[field.name] ||
+                      record?.result?.[field.name] ||
                       field?.definition?.defaultValue ||
                       ''
                     }
@@ -360,8 +381,8 @@ export const Success = ({ form }) => {
             onClick={() => {
               deleteRecord({
                 variables: {
-                  table: form.table,
-                  cuid: form.cuid,
+                  table: record.table,
+                  cuid: record.cuid,
                 },
               })
             }}

@@ -1,15 +1,22 @@
-/* eslint-disable no-console */
-
+// To access your database
+// Append api/* to import from api and web/* to import from web
+import { db } from 'api/src/lib/db'
 import fs from 'fs'
-
 import { PrismaClient } from '@prisma/client'
-import cuid from 'cuid'
 
 const dotenv = require('dotenv')
 dotenv.config()
 
-// get today's date and work backwards until you find a seed file
-let seedFilesDir = null
+let debug = false
+let debugLogs = []
+let debugLog = (message) => {
+  debugLogs.push(message)
+  if (debug) {
+    console.log(message)
+  }
+}
+let now = (value) => new Date(value)
+
 let generateDateXDaysAgo = (days) => {
   let date = new Date()
   date.setDate(date.getDate() - days)
@@ -21,170 +28,156 @@ let generateDateXDaysAgo = (days) => {
   let dateString = `${year}-${month}-${day}`
   return dateString
 }
-for (let i = 0; i < 10; i++) {
-  let dateString = generateDateXDaysAgo(i)
-  // check if directory exists
-  let dir = `./scripts/seedFiles/backup-${dateString}/`
-  console.log('checking for seed files in', dir)
-  if (fs.existsSync(dir)) {
-    console.log('found seed files in', dir)
-    seedFilesDir = `./seedFiles/backup-${dateString}/`
-    break
+
+let getSeedFilesDir = () => {
+
+  let seedFilesDir = null
+
+  for (let i = 0; i < 10; i++) {
+    let dateString = generateDateXDaysAgo(i)
+    // check if directory exists
+    let dir = `./scripts/seedFiles/backup-${dateString}/`
+    //console.log('checking for seed files in', dir)
+    if (i === 10 && !fs.existsSync(dir)) {
+      console.log('no seed files found')
+      process.exit(1)
+    }
+    if (fs.existsSync(dir)) {
+      console.log('found seed files in', dir)
+      seedFilesDir = `./seedFiles/backup-${dateString}/`
+      break
+    }
+  }
+  return seedFilesDir
+}
+
+let makeUserAdmin = async ({ username }) => {
+  try {
+    if (!username) {
+      console.log('enviroment variable ADMIN_USERNAME not set')
+      return
+    }
+
+    let user = await db.user.findUnique({ where: { username } })
+    if (!user) {
+      console.log(`Cannot find user with username "${username}" when creating local admin`)
+      return
+    }
+    let group = await db.group.findUnique({ where: { name: 'Administrators' } })
+    if (!group) {
+      console.log('Cannot find Administrator\'s group when creating local admin')
+      return
+    }
+    let groupMember = { userCuid: user.cuid, groupCuid: group.cuid }
+    await db.groupMember.deleteMany({}) // delete all records
+    await db.groupMember.create({ data: groupMember })
+    let groupRole = { groupCuid: group.cuid, role: 'admin' }
+    await db.groupRole.deleteMany({}) // delete all records
+    await db.groupRole.create({ data: groupRole })
+    console.log(`Made "${username}" admin`)
+    return
+  } catch (e) {
+    console.error(e)
+    process.exit(1)
   }
 }
 
-if (!seedFilesDir) {
-  console.log('no seed files found')
-  process.exit(1)
+let seedHandler = async ({ seedObject }) => {
+
+
+  //for (const [key, value] of Object.entries(firstSeed)) {
+  for (const [key, value] of Object.entries(seedObject)) {
+    try {
+      debugLog(`${key} - ${value.length} records`)
+      await db?.[key]?.deleteMany({}) // delete all records
+      debugLog(`${key} - deleted ${value.length} records`)
+      let newData = []
+      for (let record of value) {
+        record.createdAt = now(record.createdAt)
+        record.updatedAt = now(record.updatedAt)
+        //console.log(`upserting ${key} record: ${record.cuid}`)
+        newData.push(record)
+      }
+      debugLog(`${key} - bulk inserting ${newData.length} records`)
+      let fristSeedResult = await db[key].createMany({
+        data: newData,
+        skipDuplicates: true,
+      })
+      debugLog(`${key} - inserted ${fristSeedResult.count} records`)
+      if (debugLogs) {
+        let message = ''
+        debugLogs.forEach((log) => {
+          message += `${log}\n`
+        })
+        debugLogs = []
+        if (!debug) console.log(message)
+
+      }
+    } catch (error) {
+      console.log({ function: 'firstSeedCreateMany', error })
+      throw new Error(error)
+    }
+  }
+
+
+
 }
-if (seedFilesDir) {
-  console.log('using seed files from', seedFilesDir)
 
-  //import activity from /*      */ './seedFiles/backup-2023-02-07/activity.json'
-  //import group from /*         */ './seedFiles/backup-2023-02-07/group.json'
-  //import memory from /*        */ './seedFiles/backup-2023-02-07/memory.json' // not needed
-  //import modelInstance from /* */ './seedFiles/backup-2023-02-07/modelInstance.json'
-  //import property from /*      */ './seedFiles/backup-2023-02-07/property.json'
-  //import question from /*      */ './seedFiles/backup-2023-02-07/question.json'
-  //import thread from /*        */ './seedFiles/backup-2023-02-07/thread.json'
-  //import user from /*          */ './seedFiles/backup-2023-02-07/user.json'
+export default async ({ args }) => {
+  console.log(':: Executing script with args ::')
+  console.log(args)
+  console.log({ "args._": args._[1] })
+  debug = args._[1] === 'debug'
+  if (debug) {
+    console.log(':: Debug mode enabled ::')
+  }
 
-  // lets make a list of the seed objects we want to seed where the key is the table name
-  const firstSeed = {
-    group: require(`${seedFilesDir}Group.json`),
-    user: require(`${seedFilesDir}User.json`),
+
+  let seedFilesDir = getSeedFilesDir()
+  if (!seedFilesDir) {
+    console.log('no seed files found')
+    process.exit(1)
   }
-  const secondSeed = {
-    modelInstance: require(`${seedFilesDir}ModelInstance.json`),
-    property: require(`${seedFilesDir}Property.json`),
-    memory: require(`${seedFilesDir}Memory.json`),
-    thread: require(`${seedFilesDir}Thread.json`),
-    question: require(`${seedFilesDir}Question.json`),
-    activity: require(`${seedFilesDir}Activity.json`),
-  }
-  //console.log('firstSeed', firstSeed)
-  const db = new PrismaClient()
-  let now = (value) => new Date(value)
-  async function main() {
+  if (seedFilesDir) {
+    console.log('using seed files from', seedFilesDir)
+    // lets make a list of the seed objects we want to seed where the key is the table name
+    const firstSeed = {
+      group: require(`${seedFilesDir}Group.json`),
+      user: require(`${seedFilesDir}User.json`),
+
+    }
+    const secondSeed = {
+
+      modelInstance: require(`${seedFilesDir}ModelInstance.json`),
+      activity: require(`${seedFilesDir}Activity.json`),
+      property: require(`${seedFilesDir}Property.json`),
+      memory: require(`${seedFilesDir}Memory.json`),
+      thread: require(`${seedFilesDir}Thread.json`),
+      question: require(`${seedFilesDir}Question.json`),
+
+
+    }
+
+    //console.log('firstSeed', firstSeed)
+    const db = new PrismaClient()
+    // delete complicated tables first
+    await db.activity.deleteMany({})
+    await db.question.deleteMany({})
+
     // loop through the seed object and console.log the name of the seed object
     // and the number of records in the seed object
 
     // for users, groups we're going to upsert individual records
     // for everything esle, we're going ot bulk insert after modifing the JSON in memory
 
-    // users + groups
-    console.log('in main')
-    for (const [key, value] of Object.entries(firstSeed)) {
-      db[key].deleteMany({}) // delete all records
-      let newData = []
-      for (let record of value) {
-        record.createdAt = now(record.createdAt)
-        record.updatedAt = now(record.updatedAt)
-        if (key === 'user') {
-          // if name is null, generate a name
-          if (!record.name) {
-            //let name = `${
-            //  firstNames[Math.floor(Math.random() * firstNames.length)]
-            //} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`
-            //let username =
-            //  name.replace(' ', '').toLowerCase() +
-            //  Math.floor(Math.random() * 1000)
-            //record.name = name
-            //record.username = username
-            //record.email = `${username}@example.com`
-          }
-          //record.resetToken = null
-          //record.resetTokenExpiresAt = null
-          delete record.resetToken
-          delete record.resetTokenExpiresAt
-          record.loginToken = record.hashedPassword
-          delete record.hashedPassword
-          if (record.verifiedAt !== null) {
-            record.verifiedAt = now(record.verifiedAt)
-          } else {
-            record.verifiedAt = null
-          }
-        }
-        if (record.id) {
-          delete record.id
-          record.cuid = cuid()
-        }
-        //console.log(`upserting ${key} record: ${record.cuid}`)
-        newData.push(record)
-      }
-      console.log(`bulk inserting ${key} records: ${newData.length}`)
-      let fristSeedResult = await db[key].createMany({
-        data: newData,
-        skipDuplicates: true,
-      })
-      console.log(fristSeedResult)
-    }
+
+
+    await seedHandler({ seedObject: firstSeed })
+
+    await seedHandler({ seedObject: secondSeed })
     // everything else
-    for (const [key, value] of Object.entries(secondSeed)) {
-      db[key].deleteMany({}) // delete all records
-      let newData = []
-      // load up users into memory
-      let users = await db.user.findMany({
-        select: { cuid: true, username: true },
-      })
-      for (let record of value) {
-        if (!record?.cuid) {
-          record.cuid = cuid()
-        }
-        record.createdAt = now(record.createdAt)
-        record.updatedAt = now(record.updatedAt)
-        if (key === 'prompt' || key === 'scribeRequest') {
-          // we now have users in memory
-          // look up the user's cuid
-          //console.log({ users })
-          users.filter((user) => {
-            if (user.username === record['userId.username']) {
-              record.userCuid = user.cuid
-            }
-          })
-          delete record['userId.username']
-        }
-        delete record.id
-        // push the record into the new array
-        newData.push(record)
-      }
-      // bulk insert the new array
-      console.log(`bulk inserting ${key} records: ${newData.length}`)
-      await db[key].createMany({
-        data: newData,
-        skipDuplicates: true,
-      })
-    }
     // now look up the admin group, and the user jacebenson
     // then create a groupMember record for jacebenson in the admin group
-    const adminGroup = await db.group.findUnique({
-      where: { name: 'Administrators' },
-    })
-    const jace = await db.user.findUnique({
-      where: { username: 'jace@benson.run' },
-    })
-
-    let groupMember = {
-      userCuid: jace.cuid,
-      groupCuid: adminGroup.cuid,
-    }
-    await db.groupMember.deleteMany({}) // delete all records
-    await db.groupMember.create({ data: groupMember })
-    // create the grouprole for admin
-    let groupRole = {
-      groupCuid: adminGroup.cuid,
-      role: 'admin',
-    }
-    await db.groupRole.deleteMany({}) // delete all records
-    await db.groupRole.create({ data: groupRole })
-    return
+    await makeUserAdmin({ username: process.env.ADMIN_USERNAME })
   }
-  main()
-    .catch((e) => {
-      console.error(e)
-      process.exit(1)
-    })
-    .finally(async () => {
-      await db.$disconnect()
-    })
 }
