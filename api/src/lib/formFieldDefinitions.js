@@ -1,3 +1,28 @@
+import * as FaIcons from 'react-icons/fa';
+const FaIconsKeys = Object.keys(FaIcons);
+let FaIconsMap = FaIconsKeys.map((icon)=>{
+  return {
+    label: icon,
+    value: icon
+  }
+})
+import * as SiIcons from 'react-icons/si';
+const SiIconsKeys = Object.keys(SiIcons)
+let SiIconsMap = SiIconsKeys.map((icon)=>{
+  return {
+    label: icon,
+    value: icon
+  }
+})
+import * as MdIcons from 'react-icons/md';
+const MdIconsKeys = Object.keys(MdIcons)
+let MdIconsMap = MdIconsKeys.map((icon)=>{
+  return {
+    label: icon,
+    value: icon
+  }
+})
+
 export const definitions = {
   /**
    * Options
@@ -13,6 +38,12 @@ export const definitions = {
   User: {
     username: {
       label: 'User Name',
+      canSort: false,
+      canFilter: true,
+      canShowMatching: true,
+    },
+    email: {
+      label: 'Email',
       canSort: false,
       canFilter: true,
       canShowMatching: true,
@@ -43,7 +74,7 @@ export const definitions = {
     },
   },
   Property: {
-    name: {
+    entity: {
       canSort: true,
       canFilter: true,
       canShowMatching: true,
@@ -165,13 +196,23 @@ export const definitions = {
   Memory: {
     title: { label: 'Title', order: 100 },
     source: { label: 'Source', order: 200 },
+    sourceUrl: { label: 'Source Url', order: 250 },
+    type: { label: 'Type', order: 300 },
     active: {
+      label: 'Active(booolean)',
+      type: 'boolean',
+      options: [
+        { value: 'true', display: 'Active' },
+        { value: 'false', display: 'Inactive' },
+      ],
+      /*
       label: 'Active',
       type: 'select',
       options: [
-        { value: true, display: 'Active' },
-        { value: false, display: 'Inactive' },
+        { value: "true", display: 'Active' },
+        { value: "false", display: 'Inactive' },
       ],
+      */
       order: 300,
     },
     content: { label: 'Content', type: 'textarea', order: 400 },
@@ -179,7 +220,8 @@ export const definitions = {
   MemoryChunk: {
     title: { label: 'Title' },
     active: { label: 'Active' },
-    content: { label: 'Content' },
+    content: { label: 'Content',
+      type: 'textarea', },
   },
   ModelInstance: {
     name: { label: 'Name' },
@@ -198,5 +240,89 @@ export const definitions = {
     frequencyPenalty: { label: 'Frequency Penalty', type: 'number' },
     presencePenalty: { label: 'Presence Penalty', type: 'number' },
     required: { label: 'Required' },
+  },
+  SideBarItem: {
+    name: {
+      label: 'Name',
+    },
+    type: {
+      label: 'Type',
+      type: 'select',
+      options: [
+        { label: 'Pick something', value: '' },
+        { label: 'Internal Link', value: 'link' },
+        { label: 'External Link', value: 'externalLink' },
+      ]
+    },
+    link: {
+      label: 'Link',
+    },
+    icon: {
+      label: 'Icon',
+      type: 'select',
+      options: [
+        { label: 'Pick something', value: '' },
+        ...FaIconsMap,
+        ...SiIconsMap,
+        ...MdIconsMap,
+      ],
+    },
+    order: {
+      label: 'Order',
+      type: 'number',
+    },
+    iconFamily: {
+      label: 'Icon Family',
+      type: 'select',
+      //options: [//this also works
+      //  'admin','user','guest'
+      //]
+      options: [
+        { label: 'Pick The Icon family (first two letters) from icon', value: '' },
+        { label: 'Material Design', value: 'MdIcons' },
+        { label: 'Simple Icons', value: 'SiIcons' },
+        { label: 'Font Awesome', value: 'FaIcons' },
+      ],
+      value: 'cuid',
+    },
+  },
+  Question: {
+    text: {
+      label: 'Text',
+    },
+    context: {
+      label: 'Context',
+    },
+
+    Thread: {
+      label: 'thread',
+      field: 'threadCuid',
+      canSort: true,
+      canFilter: true,
+      canShowMatching: true,
+      display: 'title',
+      value: 'cuid',
+      type: 'reference',
+    },
+  },
+  Thread: {
+    title: {
+      label: 'Title',
+    },
+    summary: {
+      label: 'Summary',
+      type: 'textarea',
+    },
+    User: {
+      label: 'User',
+      field: 'userCuid',
+      canSort: true,
+      canFilter: true,
+      canShowMatching: true,
+      display: 'name',
+      value: 'cuid',
+      order: 100,
+      type: 'reference',
+    },
   },
 }

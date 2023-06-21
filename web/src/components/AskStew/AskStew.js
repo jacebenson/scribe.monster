@@ -38,7 +38,7 @@ const ASK_STEW = gql`
     }
   }
 `
-const AskStew = () => {
+const AskStew = ({cuid}) => {
   let now = () => {
     return new Date().toLocaleTimeString('en-US', {
       hour: 'numeric',
@@ -81,10 +81,10 @@ const AskStew = () => {
       ])
       setThread(response.createQuestion.threadCuid)
     },
-    onError: (error) => {
-      console.log({ function: 'useMutation.onError', error })
-      toast.error(error.message)
-    },
+    //onError: (error) => {
+    //  console.log({ function: 'useMutation.onError', error })
+    //  toast.error(error.message)
+    //},
   })
   const onSubmit = async (data) => {
     console.log({ function: 'askStew component', data })
@@ -104,14 +104,33 @@ const AskStew = () => {
     // get the last message and scroll to it
   }
 
-  const onSave = async (input) => {
-    await createQuestion({ variables: { input } })
+  const onSave = async (data) => {
+    let isUpdate = cuid ? true : false
+    let isCreate = cuid ? false : true
+    // lts use getValues() instead of data
+    let formValues = getValues()
+    let formData = (()=>{
+      if(isUpdate){
+        return formValues
+      }
+      if(isCreate){
+        return data
+      }
+    })()
+    let variables = {
+      table: 'question',
+      input: formData,
+    }
+    console.log({ function: 'onSave', variables })
+    await createQuestion({
+      variables
+    })
   }
   const fields = [
     {
       value: text,
       name: 'text',
-      prettyName: '',
+      prettyName: 'Question',
       placeholder: ` `,
       //type: 'textarea',
       required: 'This is required',
@@ -124,20 +143,23 @@ const AskStew = () => {
       },
       spellCheck: 'true',
     },
+
     {
       name: 'threadCuid',
       prettyName: 'Thread',
-      placeholder: ` `,
-      readOnly: true,
+      placeholder: `??`,
+      //readOnly: true,
       defaultValue: thread || '',
-      //type: 'hidden',
-      display: 'none',
+      type: 'text',
+      //display: 'none',
     },
   ]
 
   const {
     handleSubmit,
     register,
+    setValue,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm()
   const chatMessage = ({ message, name, when, context }) => (

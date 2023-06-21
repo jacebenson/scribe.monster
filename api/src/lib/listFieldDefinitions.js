@@ -32,7 +32,7 @@ export const definitions = {
     },
   },
   Property: {
-    name: {
+    entity: {
       canSort: true,
       canFilter: true,
       canShowMatching: true,
@@ -124,6 +124,27 @@ export const definitions = {
       label: 'Source',
     },
   },
+  SideBarItem: {
+    name: {
+      label: 'Name',
+    },
+    type: {
+      label: 'Type',
+    },
+    link: {
+      label: 'Link',
+    },
+    icon: {
+      label: 'Icon',
+    },
+    order: {
+      label: 'Order',
+      canSort: true,
+    },
+    iconFamily: {
+      label: 'Icon Family',
+    },
+  },
   Activity: {
     createdAt: {
       label: 'Created At',
@@ -155,6 +176,10 @@ export const definitions = {
     },
     title: {
       label: 'Title',
+      canSort: true,
+    },
+    type: {
+      label: 'Type',
       canSort: true,
     },
     active: {
@@ -201,14 +226,25 @@ export const definitions = {
   updatedAt DateTime   @updatedAt
   userCuid  String?
   */
-    createdAt: {
-      label: 'Created At',
+    title: {
+      label: 'Title',
     },
-    updatedAt: {
-      label: 'Updated At',
-    },
-    userCuid: {
-      label: 'User Cuid',
-    },
+    User: {
+      label: 'User',
+      canSort: true,
+      canFilter: true,
+      canShowMatching: true,
+      display: 'name',
+      value: 'cuid',
+      type: 'reference',
+    }
   },
+  Question: {
+    text: {
+      label: 'Text',
+    },
+    answer: {
+      label: 'Answer',
+    }
+  }
 }

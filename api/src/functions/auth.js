@@ -162,7 +162,7 @@ export const handler = async (event, context) => {
     // something like `id` or `userId` or even `email`)
     authFields: {
       id: 'cuid',
-      username: 'username',
+      username: 'email',
       hashedPassword: 'loginToken',
       salt: 'salt',
       resetToken: 'resetToken',

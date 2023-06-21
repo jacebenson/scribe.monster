@@ -85,6 +85,7 @@ export const Success = ({
   setLookUpValue,
   setQuery,
   field,
+  display,
   setCuidField,
 }) => {
   let [show, setShow] = React.useState(true)
@@ -96,13 +97,30 @@ export const Success = ({
     setShow(false)
   }
   if (!show) return <></>
-  return result.results.map((record, index) => {
+  let returnButtons = result.results.map((record, index) => {
     return (
       <Box key={`lookup-${index}-${record.cuid}`}>
         <Button variant={'ghost'} onClick={() => setValue(record)}>
-          {record.name}
+          {record[display]}
         </Button>
       </Box>
     )
   })
+  return (
+    <Box>
+      <details>
+        <summary>Debug {field}</summary>
+        <pre>{JSON.stringify(result, null, 2)}</pre>
+      </details>
+      <Text>Choose a record</Text>
+      {returnButtons}
+      <Box>
+        <Button variant={'ghost'} onClick={() => setShow(false)}>
+          Cancel
+        </Button>
+      </Box>
+    </Box>
+  )
+
+
 }

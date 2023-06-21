@@ -10,7 +10,7 @@ import CallToActionWithVideo from 'src/components/CallToActionWithVideo/'
 import Welcome from 'src/components/Welcome'
 
 //import InstallExtension from '../InstallExtension/InstallExtension'
-const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
+const AboutComponent = () => {
   const { isAuthenticated } = useAuth()
 
   let header = {
@@ -29,9 +29,6 @@ const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
     return null
   }
   let loginButtonString = 'Login'
-  if (auth0?.domain) {
-    loginButtonString = 'Login/Signup'
-  }
   let unauthenticatedCTA = (
     <Box p={3} bg={'white'}>
       <CallToActionWithVideo
@@ -58,7 +55,6 @@ const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
         </Button>
 
         <Fragment>
-          {!auth0?.domain && (
             <Button
               rounded={'full'}
               size={'lg'}
@@ -72,7 +68,6 @@ const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
             >
               Sign up!
             </Button>
-          )}
           <Button
             rounded={'full'}
             size={'lg'}
@@ -81,21 +76,9 @@ const AboutComponent = ({ auth0 /*, isAuthenticated, currentUser*/ }) => {
             backgroundColor={'green'}
             color={'white'}
             onClick={async () => {
-              if (type === 'auth0') {
-                if (isAuthenticated) {
-                  await logOut({ returnTo: auth0.redirect })
-                } else {
-                  const searchParams = new URLSearchParams(
-                    window.location.search
-                  )
-                  await logIn({
-                    appState: { targetUrl: searchParams.get('redirectTo') },
-                  })
-                }
-              }
-              if (type === 'dbAuth') {
+              //if (type === 'dbAuth') {
                 navigate('/login')
-              }
+              //}
             }}
           >
             {loginButtonString}

@@ -1,113 +1,47 @@
-# Notes
+# Scribe.Monster
+## Roadmap
 
-## When creating new tables
+- [ ] Core
+   - [x] Authentication Targets
+      - [x] dbAuth (passwordless)
+   - [ ] Security
+      - [ ] Table level security
+      - [ ] Field level security
+      - [ ] Row level security
+      - [ ] Roles controlled on your database applied from the group to the user
+      - [ ] Field level security
+         - [ ] Field data on Read can be hidden (by modifying returned data)
+         - [ ] Field data on ReadAll can be hidden (by modifying returned data)
+         - [ ] Field data on Create OR Update can be rejected (by changing status from 'success')
+         - [ ] Field data on Create OR Update can be removed (by deleting incoming data)
+   - [x] Email Providers
+      - [x] Mailgun
+   - [x] Privacy
+      - [x] No third-party data gets your data
+      - [x] Users' emails/usernames masked by directives
+      - [x] By default, users' can delete their accounts
+- [ ] ServiceNow Specific Features
+  - [ ] Code Completion (complete)
+  - [ ] Code Edits (edit)
+  - [ ] Explain Code (explain)
+  - [ ] Code Reviews (code-reviewer)
+  - [ ] Inline code completion (tbd)
+- [ ] Less specific features
+   - [ ] Docs
+     - [ ] Process Maker
+     - [ ] Project Ideas
+     - [ ] Product Requirements
+     - [ ] Diagrams
+   - [ ] Summary
+     - [ ] Cliffnotes
+     - [ ] Highlights
+     - [ ] Deep Dive
+   - [ ] AMA
+     - [ ] No modifier
+     - [ ] Simple Terms
+     - [ ] Pirate
+     - [ ] Step by step
 
-1. create schema
-2. verify you're connected to the test database!
-3. yarn rw prisma push
-4. yarn rw g scaffold modelName
-5. update ./web/Routes.js
-   - Move the routes to the bottom of the file.
-   - Copy the page for the edit route into the modelName route
-   - Fix the SCaffold thing..
-6. add it to the SidebarWithHeader.js
-7. update the new and edit components to cast the inputs
-   - plural.js - update references to use accessor of oh
-5. remove stuff not used....
-  1.???
-
-
-
-Seedling is the beginning of your next project.  It builds on RedwoodJS with some conventions that will save you time at the cost of choice.  However, if you're prototyping you may not want to choose how auth, email, and automation are built in and would rather just write the code that adds value.
-
-# Technologies
-
-This is dependent on the following technologies.
-
-- [RedwoodJS](https://redwoodjs.com)
-  - [dbAuth](https://redwoodjs.com/docs/authentication.html#self-hosted-auth-installation-and-setup)
-  - [Auth0](https://redwoodjs.com/docs/authentication.html#auth0)
-- [Postgresql]()
-- [MJML](https://mjml.io)
-- [Chakra UI](https://chakra-ui.com)
-
-# Features
-
-<details><summary>Convention over configuration</summary><br/>
-
-We want a clear way to solve most problems, if it can be solved it should be done in a repeatable way.<hr /></details>
-
-<details><summary>Authentication providers</summary><br/>
-
-Today we support dbAuth, and Auth0. Just change your environment variables to switch.<hr /></details>
-
-<details><summary>Beautiful Responsive Emails</summary><br/>
-
-No one likes the minefield that is email. MJML helps build your templates and make them beautiful on every client.<hr /></details>
-
-<details><summary>Privacy is important to us</summary><br/>
-
-We've taken steps to ensure that your users' privacy is respected.<hr /></details>
-
-<details><summary>Security Roles</summary><br/>
-
-Table and field level roles by default are set so you can simply give them out and not figure them out.<hr /></details>
-
-<details><summary>Row Level Security</summary><br/>
-
-Row Level Security is hard, we a convention for how to do this that makes sense.<hr /></details>
-
-<details><summary>Automate with rules</summary><br/>
-
-Rules are api side logic that run before and after create, read, update and delete operations.<hr /></details>
-
-<details><summary>Accessibility</summary><br/>
-
-We use Chakra-UI to make these sites as accessible as possible.<hr /></details>
-
-<details><summary>Forms and Lists</summary><br/>
-
-When generating pages and components from models, we build out sortable, searchable, filterable lists, and common forms.<hr /></details>
-
-<details><summary>Own your data</summary><br/>
-
-When you own it, you can do whatever you want with it. That's a tool hard to replace when you give away your keys.<hr /></details>
-<br/>
-
-# Roadmap
-
-- [x] Authentication Targets
-   - [x] dbAuth
-   - [x] Auth0
-   - [ ] Clerk
-   - [ ] Azure Active Directory
-   - [ ] Magic.Link
-   - [ ] Supabase
-- [x] Security
-   - [x] Table level security
-   - [x] Field level security
-   - [x] Row level security
-   - [x] Roles controlled on your database applied from the group to the user
-   - [x] Field level security
-      - [x] Field data on Read can be hidden (by modifying returned data)
-      - [x] Field data on ReadAll can be hidden (by modifying returned data)
-      - [x] Field data on Create OR Update can be rejected (by changing status from 'success')
-      - [x] Field data on Create OR Update can be removed (by deleting incoming data)
-   - [x] Secure by default
-      - [x] We've included roles when you generate new models to control who can Create, Read, Update, and Delete
-      - [x] Protective steps to mitigate XSS, and Clickjacking have been taken
-- [ ] Email Providers
-   - [x] Mailgun
-   - [ ] Mailchimp
-   - [ ] Mailjet
-   - [ ] Nodemailer
-   - [ ] Sendinblue
-   - [ ] Sendgrid
-   - [ ] Amazon SES
-- [ ] Privacy
-   - [x] No third-party data gets your data
-   - [x] Users' emails/usernames masked by directives
-   - [x] By default, users' can delete their accounts
 
 # Getting Started, want to give it a go?
 

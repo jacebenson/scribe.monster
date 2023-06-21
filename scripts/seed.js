@@ -51,16 +51,16 @@ let getSeedFilesDir = () => {
   return seedFilesDir
 }
 
-let makeUserAdmin = async ({ username }) => {
+let makeUserAdmin = async ({ email }) => {
   try {
-    if (!username) {
+    if (!email) {
       console.log('enviroment variable ADMIN_USERNAME not set')
       return
     }
 
-    let user = await db.user.findUnique({ where: { username } })
+    let user = await db.user.findUnique({ where: { email } })
     if (!user) {
-      console.log(`Cannot find user with username "${username}" when creating local admin`)
+      console.log(`Cannot find user with email "${email}" when creating local admin`)
       return
     }
     let group = await db.group.findUnique({ where: { name: 'Administrators' } })
@@ -74,7 +74,7 @@ let makeUserAdmin = async ({ username }) => {
     let groupRole = { groupCuid: group.cuid, role: 'admin' }
     await db.groupRole.deleteMany({}) // delete all records
     await db.groupRole.create({ data: groupRole })
-    console.log(`Made "${username}" admin`)
+    console.log(`Made "${email}" admin`)
     return
   } catch (e) {
     console.error(e)
@@ -144,8 +144,13 @@ export default async ({ args }) => {
     const firstSeed = {
       group: require(`${seedFilesDir}Group.json`),
       user: require(`${seedFilesDir}User.json`),
-
     }
+    // firstSeed.user needs to remove the .username
+    firstSeed.user = firstSeed.user.map((user) => {
+      delete user.username
+      return user
+    })
+
     const secondSeed = {
 
       modelInstance: require(`${seedFilesDir}ModelInstance.json`),
@@ -154,8 +159,8 @@ export default async ({ args }) => {
       memory: require(`${seedFilesDir}Memory.json`),
       thread: require(`${seedFilesDir}Thread.json`),
       question: require(`${seedFilesDir}Question.json`),
-
-
+      sideBarItem: require(`${seedFilesDir}SideBarItem.json`),
+      memoryChunk: require(`${seedFilesDir}MemoryChunk.json`),
     }
 
     //console.log('firstSeed', firstSeed)
@@ -163,6 +168,8 @@ export default async ({ args }) => {
     // delete complicated tables first
     await db.activity.deleteMany({})
     await db.question.deleteMany({})
+    await db.thread.deleteMany({})
+    await db.memoryChunk.deleteMany({})
 
     // loop through the seed object and console.log the name of the seed object
     // and the number of records in the seed object
@@ -178,6 +185,6 @@ export default async ({ args }) => {
     // everything else
     // now look up the admin group, and the user jacebenson
     // then create a groupMember record for jacebenson in the admin group
-    await makeUserAdmin({ username: process.env.ADMIN_USERNAME })
+    await makeUserAdmin({ email: process.env.ADMIN_USERNAME })
   }
 }

@@ -24,7 +24,8 @@
   "scripts": {
     "start": "rw dev",
     "dev": "yarn rw prisma db push && yarn rw exec seed && yarn rw dev",
-    "testDeploy": "yarn install && yarn rw deploy render web && yarn rw build api"
+    "testDeploy": "yarn install && yarn rw deploy render web && yarn rw build api",
+    "betterStart": "yarn rw prisma db push && yarn rw exec seed && ./start.sh"
   },
   "packageManager": "yarn@3.3.1"
 }

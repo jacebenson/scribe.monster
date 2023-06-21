@@ -23,7 +23,10 @@ module.exports = {
       // then we'll summarize the list of memories
       // and ask the rephrased question with the context of the
       // summarized memories
-      if (!data.rephrasedTextVector) {
+      let hasRephrasedText = data?.rephrasedText
+      console.log({ function: '3-research.js', hasRephrasedText })
+      //if (!data.rephrasedTextVector) {
+      if (!hasRephrasedText) {
         return {
           data,
           status: {
@@ -34,7 +37,9 @@ module.exports = {
       }
       let questionVector = JSON.parse(data.rephrasedTextVector)
       //let memories = await getMemoriesSortedByVector(questionVector)
+      console.log({ function: '3-research.js - before memorychunk lookup sorted' })
       let memories = await getMemoriesChunksSortedByVector(questionVector)
+      console.log({ function: '3-research.js', memories })
       console.log({ function: 'getMemoriesChunksSortedByVector', memories })
       memories = await filterMemories({ memories, quantity: 5, score: 75 })
       if (memories.length === 0) {

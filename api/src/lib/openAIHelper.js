@@ -97,9 +97,9 @@ export const getMemoriesChunksSortedByVector = async (vector) => {
     where: {
       Memory: {
         active: true,
-        vector: {
-          not: null,
-        },
+        //vector: {
+        //  not: null,
+        //},
       },
     },
     select: {
@@ -118,15 +118,21 @@ export const getMemoriesChunksSortedByVector = async (vector) => {
   if (activeChunks.length === 0) return []
   // filter out any chunks that don't have a vector
   let results = activeChunks.map((chunk) => {
+    try{
     let parsedVector = JSON.parse(chunk.vector)
     let score = parseFloat((dot(parsedVector, vector) * 100).toFixed(2))
     let title = chunk.title
+    console.log({ score, title })
     return {
       score,
       title,
       content: chunk.content,
       source: chunk.title,
-      sourceUrl: chunk.memory.sourceUrl,
+      sourceUrl: chunk.Memory.sourceUrl,
+    }
+    } catch(e){
+      console.log({e})
+      return null
     }
   })
   results.sort((a, b) => {
@@ -134,7 +140,8 @@ export const getMemoriesChunksSortedByVector = async (vector) => {
   })
   // log the title and score of the results > 75
   results.forEach((result) => {
-    if (result.score > 75) {
+    console.log({result})
+    if (result.score > 50) {
       console.log({ score: result.score, title: result.title.substring(0, 20) })
     }
   })
@@ -602,6 +609,7 @@ export const rephraseQuestion = async ({ question, recentQuestions }) => {
     select: { content: true },
     take: 1,
   })
+  console.log(':: Rephrase Memory ::', rephraseMemory)
   let prompt = rephraseMemory.content.replace('{{QUESTION}}', question)
   prompt = prompt.replace('{{RECENTQUESTION}}', recentQuestions[0].text)
   prompt = prompt.replace('{{RECENTANSWER}}', recentQuestions[0].answer || '')

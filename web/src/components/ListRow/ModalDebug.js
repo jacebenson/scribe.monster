@@ -12,7 +12,7 @@ const ModalDebug = ({ isOpen, onClose, children }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent bg={'white'}>
         <ModalHeader>Details?</ModalHeader>
         <ModalCloseButton />
         <ModalBody>{children}</ModalBody>

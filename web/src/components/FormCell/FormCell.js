@@ -7,7 +7,10 @@ import {
   FormLabel,
   Input,
   Spinner,
+  Select,
   Textarea,
+  Checkbox,
+  Switch,
 } from '@chakra-ui/react'
 import camelCase from 'camelcase'
 import pluralize from 'pluralize'
@@ -15,11 +18,12 @@ import { useForm, FormProvider, useFormContext } from 'react-hook-form'
 
 import { MetaTags, useMutation } from '@redwoodjs/web'
 import { toast, Toaster } from '@redwoodjs/web/toast'
-
+import JSONField from '../FormComponents/JSONField/JSONField'
 import AutoResizeTextarea from 'src/components/AutoResizeTextarea'
-import Lookup from 'src/components/Lookup'
 import LookupCell from 'src/components/LookupCell'
 import { tableNames } from 'src/lib/atomicFunctions'
+import IconPicker from '../IconPicker/IconPicker'
+import { useEffect } from 'react'
 export const QUERY = gql`
   query FindRecord($table: String!, $cuid: String) {
     record: readRecord(table: $table, cuid: $cuid) {
@@ -65,7 +69,6 @@ let DELETE_RECORD_MUTATION = gql`
   }
 `
 export const beforeQuery = ({ table, cuid }) => {
-  console.log({ file: 'formcell.js', function: 'beforeQuery', table, cuid })
   //let { pascalTable } = tableNames({ table })
   let camelTable = camelCase(table, { pascalCase: false })
   let pluralTable = pluralize(camelTable, 2)
@@ -97,8 +100,11 @@ export const Failure = ({ error }) => (
   </div>
 )
 
-export const Success = ({ record, onClose }) => {
-  console.log({ file: 'formcell.js', function: 'Success', record, onClose })
+export const Success = ({ record, onClose, table, emptyTable, formDefinition }) => {
+  if(!formDefinition) {
+    // makeit an empty object
+    formDefinition = "{}"
+  }
   // Prep the form for submission
   const methods = useForm()
   const {
@@ -106,8 +112,22 @@ export const Success = ({ record, onClose }) => {
     register,
     setValue,
     getValues,
-    formState: { errors, isSubmitting },
+    formState: { isDirty, dirtyFields, errors, isSubmitting },
   } = methods
+    // lets make a client script for the 'formDefinitions' table that when the form is loaded, sets the value to the
+  // to the table name
+  let [updateCount, setUpdateCount] = React.useState(0)
+  useEffect(() => {
+    // onload scripts here
+    let loadedValues = getValues()
+    console.log({function: 'useEffect', loadedValues, dirtyFields, emptyTable, table})
+    if(emptyTable === 'test') {
+      setValue('table', loadedValues.table || table)
+      setValue('content', loadedValues.content || `{\n\t"table":""\n}`)
+    }
+    loadedValues = getValues()
+  }, [updateCount])
+//
   const [updateRecord, { loading, error }] = useMutation(
     UPDATE_RECORD_MUTATION,
     {
@@ -118,7 +138,7 @@ export const Success = ({ record, onClose }) => {
         if (!record.cuid) {
           toast.success('Record created')
         }
-        if(onClose) {
+        if (onClose) {
           onClose()
           window.location.reload()//TODO: this is a hack, fix it
         }
@@ -139,7 +159,7 @@ export const Success = ({ record, onClose }) => {
         if (!record.cuid) {
           toast.success('Record created')
         }
-        if(onClose) {
+        if (onClose) {
           onClose()
           window.location.reload()//TODO: this is a hack, fix it
         }
@@ -155,7 +175,7 @@ export const Success = ({ record, onClose }) => {
     {
       onCompleted: () => {
         toast.success('Record deleted')
-        if(onClose) {
+        if (onClose) {
           onClose()
           window.location.reload()//TODO: this is a hack, fix it
         }
@@ -175,6 +195,43 @@ export const Success = ({ record, onClose }) => {
     let isCreate = record.cuid ? false : true
     // lts use getValues() instead of data
     let formValues = getValues()
+    let formData = (()=>{
+      if(isUpdate){
+        return formValues
+      }
+      if(isCreate){
+        return data
+      }
+    })()
+    record.fields.map((field, index) => {
+      // if field type is number, convert to number
+      if (field?.definition?.type === 'number') {
+        console.log({ function: 'onSave - before parseInt',
+          field: field.name,
+          type: field?.definition?.type,
+          formData: formData[field.name],
+        })
+        formData[field.name] = parseInt(formData[field.name],10)
+        console.log({ function: 'onSave- after parseInt',
+          field: field.name,
+          type: field?.definition?.type,
+          formData: formData[field.name],
+        })
+      }
+      if (field?.definition?.type === 'boolean') {
+        console.log({ function: 'onSave - before boolean',
+          field: field.name,
+          type: field?.definition?.type,
+          formData: formData[field.name],
+      })
+        formData[field.name] = formData[field.name] === 'true' ? true : false
+        console.log({ function: 'onSave - after boolean',
+          field: field.name,
+          type: field?.definition?.type,
+          formData: formData[field.name],
+        })
+      }
+    })
     console.log({ function: 'onSave', data, isUpdate, isCreate })
     console.log({ function: 'onSave', formValues: getValues() })
     if (isUpdate) {
@@ -182,7 +239,7 @@ export const Success = ({ record, onClose }) => {
         variables: {
           table: record.table,
           cuid: record.cuid,
-          data: formValues,
+          data: formData,
         },
       })
     }
@@ -190,7 +247,7 @@ export const Success = ({ record, onClose }) => {
       createRecord({
         variables: {
           table: record.table,
-          data: data,
+          data: formData,
         },
       })
     }
@@ -210,7 +267,7 @@ export const Success = ({ record, onClose }) => {
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
-      {/*<form onSubmit={(e) => { e.preventDefault(); handleSubmit(onSubmit) }}>*/}
+        {/*<form onSubmit={(e) => { e.preventDefault(); handleSubmit(onSubmit) }}>*/}
         <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
         <Box>
           <details>
@@ -221,6 +278,8 @@ export const Success = ({ record, onClose }) => {
             <summary>Debug Form Result</summary>
             <pre>{JSON.stringify(record.result, null, 2)}</pre>
           </details>
+          <details>
+            <summary>Debug Form Values</summary>
           <Box border={'1px solid black'} p={2} m={2} rounded={'md'}>
             <Text>Generally Hidden</Text>
             <FormControl>
@@ -232,6 +291,13 @@ export const Success = ({ record, onClose }) => {
               <Input readOnly={true} defaultValue={record.cuid} />
             </FormControl>
           </Box>
+          </details>
+          <details open>
+          <summary>DYNAMIC Form Def</summary>
+          <Box border={'1px solid black'} p={2} m={2} rounded={'md'}>
+            <pre>{JSON.stringify(JSON.parse(formDefinition))}</pre>
+          </Box>
+          </details>
           {record.fields.map((field, index) => {
             let fieldType = field?.definition?.type || 'text'
 
@@ -262,20 +328,16 @@ export const Success = ({ record, onClose }) => {
                 setWhere(`${field?.definition?.display}/contains/${value}`)
               }, 500)
             }
-            /*
-
-                          <Lookup
-                            table={field?.type}
-                            field={field?.definition?.display}
-                            id={field.name}
-                            //TODO: This does not work
-                            defaultValue={record?.result?.[field.name] || field?.definition?.defaultValue || ''}
-                          />
-                          */
-            // end from lookup.js
-
+            let defaultValue = record?.result?.[field.name] ||
+                      field?.definition?.defaultValue ||
+                      ''
             return (
               <FormControl key={`formcell-${field.name}-${index}`}>
+
+                <details>
+                  <summary>Debug Field {field.definition.field || field.name}</summary>
+                  <pre>{JSON.stringify(field, null, 2)}</pre>
+                </details>
                 <FormLabel>{field?.definition?.label || field.name}</FormLabel>
                 {fieldType === 'text' && (
                   <Input
@@ -284,31 +346,23 @@ export const Success = ({ record, onClose }) => {
                       required: field?.definition?.required || false,
                       maxLength: field?.definition?.maxLength || 255,
                       minLength: field?.definition?.minLength || 0,
-                      onChange: field?.definition?.onChange || null,
+                      onChange: ()=>{
+                        setUpdateCount(updateCount+1)
+                        field?.definition?.onChange || null
+                      }
                     })}
-                    defaultValue={
-                      record?.result?.[field.name] ||
-                      field?.definition?.defaultValue ||
-                      ''
-                    }
+                    defaultValue={defaultValue}
                   />
                 )}
+
                 {fieldType === 'textarea' && (
                   <Box>
-                  <details>
-                    <summary>Debug Field</summary>
-                    <pre>{JSON.stringify(field, null, 2)}</pre>
-                  </details>
-                  <AutoResizeTextarea
-                    id={field.name}
-                    {...register(field.name)}
-                    defaultValue={
-                      record?.result?.[field.name] ||
-                      field?.definition?.defaultValue ||
-                      ''
-                    }
-                  />
-                  {/*
+                    <AutoResizeTextarea
+                      id={field.name}
+                      {...register(field.name)}
+                      defaultValue={defaultValue}
+                    />
+                    {/*
                   <Textarea
                     id={field.name}
                     {...register(field.name)}
@@ -325,11 +379,7 @@ export const Success = ({ record, onClose }) => {
                     id={field.name}
                     fontFamily={'mono'}
                     {...register(field.name)}
-                    defaultValue={
-                      record?.result?.[field.name] ||
-                      field?.definition?.defaultValue ||
-                      ''
-                    }
+                    defaultValue={defaultValue}
                   />
                 )}
                 {fieldType === 'reference' && (
@@ -339,6 +389,8 @@ export const Success = ({ record, onClose }) => {
                       //defaultValue={lookUpValue}
                       //readOnly={true}
                       display={'none'}
+                      defaultValue={record?.result?.[field.name].cuid ||
+                        field?.definition?.defaultValue || ''}
                       {...register(field.definition.field, {
                         required: field?.definition?.required || false,
                         maxLength: field?.definition?.maxLength || 255,
@@ -358,10 +410,156 @@ export const Success = ({ record, onClose }) => {
                       setLookUpValue={setLookUpValue}
                       setCuidField={setCuidField}
                       field={field.definition.field}
+                      display={field.definition.display}
                       setQuery={setQuery}
                     />
                   </Box>
                 )}
+                {fieldType === 'number' && (
+                  <Input
+                    id={field.name}
+                    {...register(field.name, {
+                      required: field?.definition?.required || false,
+                      maxLength: field?.definition?.maxLength || 255,
+                      minLength: field?.definition?.minLength || 0,
+                      onChange: field?.definition?.onChange || null,
+                    })}
+                    defaultValue={defaultValue}
+                  />
+                )}
+                {fieldType === 'select' && (
+                  <Select
+                    id={field.name}
+                    {...register(field.name, {
+                      required: field?.definition?.required || false,
+                      maxLength: field?.definition?.maxLength || 255,
+                      minLength: field?.definition?.minLength || 0,
+                      onChange: field?.definition?.onChange || null,
+                    })}
+                    defaultValue={defaultValue}
+                  >
+                    {field?.definition?.options?.map((option, index) => {
+                      return (
+                        <option key={`option-${index}`} value={option.value}>
+                          {option.label}
+                        </option>
+                      )
+                    })}
+                  </Select>
+                )}
+                {fieldType === 'datalist' && (
+                  <Box>
+                    {/*<Input
+                      as={'input'}
+                      id={field.name}
+                      list={field.name}
+                      {...register(field.name, {
+                        required: field?.definition?.required || false,
+                        maxLength: field?.definition?.maxLength || 255,
+                        minLength: field?.definition?.minLength || 0,
+                        onChange: field?.definition?.onChange || null,
+                      })}
+                      defaultValue={
+                        record?.result?.[field.name] ||
+                        field?.definition?.defaultValue ||
+                        ''
+                      }
+                    />*/}
+                    <input
+                      id={field.name}
+                      list={field.name}
+                      {...register(field.name, {
+                        required: field?.definition?.required || false,
+                        maxLength: field?.definition?.maxLength || 255,
+
+                        minLength: field?.definition?.minLength || 0,
+                        onChange: field?.definition?.onChange || null,
+                      })}
+                      defaultValue={
+                        record?.result?.[field.name] ||
+                        field?.definition?.defaultValue ||
+                        ''
+                      }
+                    />
+                    <datalist id={field.name}>
+                      {field?.definition?.options?.map((option, index) => {
+                        return (
+                          <option
+                            key={`${option.value}-${index}`}
+                            value={option.value}
+                          >{option.value}</option>
+                        )
+                      })}
+                    </datalist>
+                  </Box>
+                )}
+                {fieldType === 'JSON' && (
+                  <JSONField
+                    id={field.name}
+                    fontFamily={'mono'}
+                    {...register(field.name)}
+                    defaultValue={defaultValue}
+                    definition={field?.definition}
+                    //requiredattributes={field?.definition?.requiredAttributes}
+                  />
+                )}
+                {fieldType === 'boolean' && (
+                  <Box>
+                  <Switch
+                    colorScheme={'green'}
+                    id={field.name}
+                    onChange= {()=>{
+                        let oldValue = !getValues(field.name)
+                        let newValue = getValues(field.name)
+
+                        console.log({
+                          field: field.name,
+                          oldValue: oldValue,
+                          newValue: newValue,
+                        })
+                        setValue(field.name, newValue)
+                      }}
+                    defaultChecked={defaultValue}
+                  />
+                  <Select
+                    id={field.name}
+                    {...register(field.name, {
+                      required: field?.definition?.required || false,
+                      maxLength: field?.definition?.maxLength || 255,
+                      minLength: field?.definition?.minLength || 0,
+                      onChange: (e) => {
+                        // set the
+                      }
+                    })}
+                    defaultValue={defaultValue}
+                  >
+                    {[{label: "True", value: true},{label: "False", value: false}].map((option, index) => {
+                      return (
+                        <option key={`option-${index}`} value={option.value}>
+                          {option.label}
+                        </option>
+                      )
+                    })}
+                  </Select>
+                  </Box>
+                )}
+                {fieldType === 'originalboolean' && (
+                  <Input
+                    id={field.name}
+                    type={'checkbox'}
+                    {...register(field.name, {
+                      required: field?.definition?.required || false,
+                      maxLength: field?.definition?.maxLength || 255,
+                      minLength: field?.definition?.minLength || 0,
+                      onChange: field?.definition?.onChange || null,
+                    })}
+                    defaultChecked={defaultValue}
+                  />
+                )}
+
+
+
+
               </FormControl>
             )
           })}

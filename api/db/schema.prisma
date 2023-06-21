@@ -35,7 +35,7 @@ model User {
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
   name                String        @default("")
-  username            String        @unique @default("")
+  //username            String        @unique @default("")
   verifiedAt          DateTime?
   email               String        @unique
   loginToken          String?
@@ -48,6 +48,24 @@ model User {
   Question            Question[]
   Thread              Thread[]
   Activity            Activity[]
+
+  @@index([name])
+  @@index([email])
+}
+
+model SideBarItem {
+  cuid       String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  createdBy  String?
+  updatedBy  String?
+  name       String
+  icon       String?
+  iconFamily String?
+  link       String?
+  order      Int
+  active     Boolean  @default(true)
+  type       String   @default("link")
 }
 
 model Preference {
@@ -244,12 +262,15 @@ model Question {
 }
 
 model Thread {
-  cuid      String     @id @default(cuid())
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  userCuid  String?
-  User      User?      @relation(fields: [userCuid], references: [cuid])
-  Question  Question[]
+  cuid          String     @id @default(cuid())
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  title         String?
+  userCuid      String?
+  summary       String?
+  summaryVector String?
+  User          User?      @relation(fields: [userCuid], references: [cuid])
+  Question      Question[]
 
   @@index([userCuid])
 }
@@ -270,4 +291,15 @@ model Activity {
 
   @@index([modelInstanceCuid])
   @@index([userCuid])
+}
+
+model FormDefinition {
+  cuid      String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+  table     String   @unique
+  title     String
+  content   String
 }

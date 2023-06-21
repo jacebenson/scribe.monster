@@ -1,42 +1,89 @@
 import { UserInputError } from '@redwoodjs/graphql-server'
 
 import { db } from 'src/lib/db'
-import {
-  executeBeforeCreateRulesV2,
-  executeAfterCreateRulesV2,
-  executeBeforeReadAllRulesV2,
-  executeAfterReadAllRulesV2,
-  executeBeforeReadRulesV2,
-  executeAfterReadRulesV2,
-  executeBeforeUpdateRulesV2,
-  executeAfterUpdateRulesV2,
-  executeBeforeDeleteRulesV2,
-  executeAfterDeleteRulesV2,
-} from 'src/lib/rules'
+import { executeRules } from 'src/lib/rules'
+import { Thread } from '../threads/threads'
 
 let table = 'question'
 
 export const createQuestion = async ({ input }) => {
   try {
-    let { data, status } = await executeBeforeCreateRulesV2({
-      table,
+    //let { data, status } = await executeBeforeCreateRulesV2({
+    //  table,
+    //  data: input,
+    //})
+    let { data: modifiedData, status: beforeStatus } = await executeRules({
+      table: 'question',
       data: input,
+      when: 'before',
+      operation: 'create',
     })
-    let logableData = { ...data }
+    let logableData = { ...modifiedData }
     delete logableData.rephrasedTextVector
     console.log({
       function: 'createQuestion',
       table,
-      data: logableData,
-      status,
+      data: {
+        ...modifiedData,
+        rephrasedTextVector: '...'
+      },
+      status: beforeStatus,
     })
-    let createdRecord = await db[table].create({ data })
-
-    let { record } = await executeAfterCreateRulesV2({
+    if(beforeStatus.code !== 'success'){
+      return {
+        table,
+        result: [],
+        message: 'Failed to create question',
+        status: beforeStatus,
+      }
+    }
+    let createdRecord = await db[table].create({ data: modifiedData })
+    let { data: postModifiedData, status: afterStatus } = await executeRules({
+      table: 'question',
+      data: {
+        ...createdRecord,
+        Thread: {
+          connect: {
+            cuid: createdRecord.threadCuid
+          }
+        }
+      },
+      when: 'after',
+      operation: 'create',
+    })
+    console.log({
+      function: 'createQuestion',
       table,
-      data: createdRecord,
+      data: postModifiedData,
+      status: afterStatus,
     })
-    return { ...record }
+    if(afterStatus.code !== 'success'){
+      return {
+        table,
+        result: [],
+        message: 'Failed to create question',
+        status: afterStatus,
+      }
+    }
+    return {
+      table,
+      result: [createdRecord],
+      message: 'Successfully created question',
+      status: afterStatus,
+      cuid: createdRecord.cuid,
+      threadCuid: createdRecord.threadCuid,
+      active: createdRecord.active,
+      state: createdRecord.state,
+      text: createdRecord.text,
+      createdAt: createdRecord.createdAt || new Date(),
+      updatedAt: createdRecord.updatedAt || new Date(),
+      Thread: {
+        cuid: createdRecord.threadCuid,
+        createdAt: createdRecord.Thread.createdAt || new Date(),
+        updatedAt: createdRecord.Thread.updatedAt || new Date(),
+        question: createdRecord.Thread.question,
+      }
+    }
   } catch (error) {
     throw new UserInputError(error.message)
   }
@@ -147,8 +194,8 @@ export const deleteQuestion = async ({ cuid }) => {
 }
 
 export const Question = {
-  user: (_obj, { root }) =>
-    db[table].findUnique({ where: { cuid: root.cuid } }).user(),
-  thread: (_obj, { root }) =>
-    db[table].findUnique({ where: { cuid: root.cuid } }).thread(),
+  User: (_obj, { root }) =>
+    db[table].findUnique({ where: { cuid: root.cuid } }).User(),
+  Thread: (_obj, { root }) =>
+    db[table].findUnique({ where: { cuid: root.cuid } }).Thread(),
 }

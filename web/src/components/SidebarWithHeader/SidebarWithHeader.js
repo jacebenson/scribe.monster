@@ -34,6 +34,7 @@ import { ListContext } from 'src/App.js'
 import { useAuth } from 'src/auth'
 
 import NavItem from '../NavItem/NavItem'
+import SideBarItemCell from '../SideBarItemCell'
 const SidebarWithHeader = ({ brand, children }) => {
   const {
     table,
@@ -192,29 +193,7 @@ const SidebarContent = ({ brand, onClose, navigateAndClose, ...rest }) => {
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
 
-      {LinkItems.map((link) => {
-        if (!link?.navigateTo) link.navigateTo = 'list'
-        //
-        //navigateTo={link.navigateTo}
-        return (
-          <NavItem
-            pt={0}
-            pb={0}
-            size={'sm'}
-            key={link.name}
-            icon={link.icon}
-            onClick={() => {
-              navigateAndClose({
-                ...link,
-              })
-            }}
-            navigateTo={link.navigateTo}
-            table={link?.table}
-          >
-            {link.name}
-          </NavItem>
-        )
-      })}
+      <SideBarItemCell />
     </Box>
   )
 }

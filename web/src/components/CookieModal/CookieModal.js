@@ -36,7 +36,7 @@ const CookieModal = () => {
           <DrawerContent>
             <DrawerHeader borderBottomWidth="1px">Your Privacy</DrawerHeader>
             <DrawerBody>
-              <Box pb={4}>
+              <Box pb={4} bg={'white'}>
                 <Text fontSize={{ base: 'sm' }} textAlign={'left'} maxW={'4xl'}>
                   We use cookies and similar technologies to allow you the
                   ability to log in, as well as track if you have accepted this

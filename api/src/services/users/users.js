@@ -22,7 +22,7 @@ export const generateLoginToken = async ({ email }) => {
   console.log({ function: 'generateLoginToken', email })
   try {
     // look up if the user exists
-    let lookupUser = await db[table].findFirst({ where: { username: email } })
+    let lookupUser = await db[table].findFirst({ where: { email } })
     if (!lookupUser) return { message: 'Login Request received' }
 
     // here we're going to generate a random password of 6 numbers, then hash it properly

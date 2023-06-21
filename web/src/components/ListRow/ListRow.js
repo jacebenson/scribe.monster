@@ -46,6 +46,7 @@ const ListRow = ({ record, fields, table }) => {
         // detaulf value is record[field.name]?.name || record[field.name]
         let value = record[field.name]?.name || record[field.name]
         if (field.type === 'DateTime') value = new Date(value).toLocaleString()
+        if (field.type === 'Boolean') value = value.toString()
         return <Td key={`${listKey}-${field.name}-${index}`}>{value}</Td>
       })}
     </Tr>

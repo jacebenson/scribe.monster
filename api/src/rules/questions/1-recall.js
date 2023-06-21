@@ -16,6 +16,8 @@ module.exports = {
         let thread = await createThread({ input: {} })
         data.threadCuid = thread.cuid
       }
+      data.userCuid = context.currentUser.cuid
+      console.log({ data, status })
     } catch (e) {
       logger.error(e)
     }

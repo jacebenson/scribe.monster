@@ -1,4 +1,6 @@
 import { UserInputError } from '@redwoodjs/graphql-server'
+import { camelCase } from 'camel-case'
+import pluralize from 'pluralize'
 
 import allRules from 'src/rules/**/**.{js,ts}'
 
@@ -12,20 +14,59 @@ import { log } from 'src/lib/util'
 // }
 let loadRules = async (allRules, table, when, operation) => {
   let arrRules = Object.keys(allRules).map((k) => allRules[k])
-  arrRules.sort((a, b) => a.order - b.order)
-  arrRules = arrRules.filter((rule) => {
-    if (
-      rule.active &&
-      rule.table === table &&
-      rule.when.includes(when) &&
-      rule.operation.includes(operation)
-    ) {
+  arrRules.sort((a, b) => a?.order - b?.order)
+  //console.log({ function: 'loadRules', allRulesLength: arrRules.length})
+  // lets filter out rules that are on this table.
+  table = camelCase(pluralize(table, 1), { pascalCase: false })
+  //console.log({ function: 'loadRules', table, when, operation})
+  let tableRules = arrRules.filter((rule) => {
+    // table could be plural, or singular or in pascal case.
+    // rules needs to be in singular pascal case.
+    // so we need to convert table to singular pascal case.
+    // we also need to include rules that run in all cases
+    if ( rule.table === table || rule.table === 'all' ) {
       return true
     } else {
       return false
     }
   })
-  arrRules = arrRules.filter((rule) => {
+  //console.log({ tableRulesLength: tableRules.length})
+  // lets filter out rules that are not active.
+  let activeRules = tableRules.filter((rule) => {
+    if ( rule.active ) {
+      return true
+    } else {
+      return false
+    }
+  })
+  //console.log({ activeRulesLength: activeRules.length})
+  // lets filter out rules that are not included in the when array.
+  // e.g. rule file has a when ['before', 'after']
+  // but when we are calling this we only pass a string like 'before'
+  let whenRules = activeRules.filter((rule) => {
+    if( rule.when.includes(when) ) {
+      return true
+    } else {
+      return false
+    }
+  })
+  //console.log({ whenRulesLength: whenRules.length})
+  // lets filter out rules that are not included in the operation array.
+  // e.g. rule file has a operation ['create', 'update']
+  // but when we are calling this we only pass a string like 'create'
+  let operationRules = whenRules.filter((rule) => {
+    //console.log({ ruleOperation: rule.operation, operation })
+    if( rule.operation.includes(operation) ) {
+      return true
+    } else {
+      return false
+    }
+  })
+  //console.log({ operationRulesLength: operationRules.length})
+  operationRules.forEach((rule) => {
+    //console.log({ rule: rule.file })
+  })
+  let rulesWithRequiredFields = operationRules.filter((rule) => {
     let requiredFields = [
       'order',
       'when',
@@ -54,7 +95,7 @@ let loadRules = async (allRules, table, when, operation) => {
   //})
   //let message = [arrRules.length, table, when, operation]
   //logger.info(`${message.join(' ')} rules loaded \n${ruleNames.join('\n')}`)
-  return (await arrRules) || []
+  return (await rulesWithRequiredFields) || []
 }
 let exitWhenNotSuccess = (status) => {
   if (status.code != 'success') {
@@ -66,6 +107,40 @@ let exitWhenNotSuccess = (status) => {
     throw new UserInputError(status?.message || `Error in ${status?.file}`)
   }
 }
+
+
+export const executeRules = async ({
+  table,
+  when,
+  operation,
+  data,
+  cuid,
+  page,
+  where,
+  skip,
+  orderBy,
+  take
+}) => {
+  let rules = await loadRules(allRules, table, when, operation)
+  //console.log({ rulesLength: rules.length })
+  //console.log({ firstRule: rules[0]})
+  let status = { code: 'success', message: '' }
+  //this is not waiting for the rules to finish
+  //rules.forEach(async (rule) => {
+  //  console.log({ message: 'running rule on this data', file: rule.file, data })
+  //  await rule.command({ data, cuid, page, where, skip, orderBy, take, status })
+  //  console.log({ message: 'rule completed on this data', file: rule.file, data })
+  //})
+  // this is waiting for the rules to finish
+  for (const rule of rules) {
+    //console.log({ message: 'running rule on this data', file: rule.file, data })
+    await rule.command({ data, cuid, page, where, skip, orderBy, take, status })
+    //console.log({ message: 'rule completed on this data', file: rule.file, data })
+  }
+  exitWhenNotSuccess(status)
+  return { data, cuid, page, where, skip, orderBy, take, status }
+}
+
 /**
  * Runs the rules before create across all models
  * @param {string} table - the model you're running rules for
@@ -75,42 +150,11 @@ let exitWhenNotSuccess = (status) => {
  */
 export const executeBeforeCreateRulesV2 = async ({ table, data }) => {
   let rules = await loadRules(allRules, table, 'before', 'create')
-  console.log(`RUNNING executeBeforeCreateRulesV2 ${table}`)
   let status = { code: 'success', message: '' }
-  for (let rule of rules) {
-    try {
-      if (status.code == 'success') {
-        status.file = rule.file.split('\\dist\\')[1]
-        console.log({ function: './src/lib/rules.js', file: status.file })
-        let output = await rule.command({ data, status })
-        status = output?.status
-        data = output?.data
-        //console.log({ data, status })
-      }
-      if (status.code != 'success') {
-        break
-      }
-    } catch (error) {
-      status = { code: 'error from catch', message: error }
-      break
-    }
-  }
+  rules.forEach(async (rule) => {
+    await rule.command({ data, status })
+  })
   exitWhenNotSuccess(status)
-  /*
-  for (let i = 0; i < rules.length; i++) {
-    let rule = rules[i]
-    console.log(`Executing ${rule.file}`)
-    let returnObj = await rule.command({ data, status })
-    data = returnObj.data
-    status = returnObj.status
-    console.log(`Executed ${rule.file}, status: ${status.code}`)
-    if (status.code != 'success') {
-      console.log(`STOPPING executeBeforeCreateRulesV2 ${table}`)
-      throw exitWhenNotSuccess(status)
-    }
-  }
-*/
-  console.log(`STOPPED executeBeforeCreateRulesV2 ${table}`)
   return { data, status }
 }
 
@@ -122,30 +166,11 @@ export const executeBeforeCreateRulesV2 = async ({ table, data }) => {
  * @returns {object} { data, status }
  */
 export const executeAfterCreateRulesV2 = async ({ table, data }) => {
-  //console.log({ function: 'executeAfterCreateRulesV2', table, data })
   let rules = await loadRules(allRules, table, 'after', 'create')
   let status = { code: 'success', message: '' }
-  for (let rule of rules) {
-    try {
-      if (status.code == 'success') {
-        status.file = rule.file.split('\\dist\\')[1]
-        console.log({ function: './src/lib/rules.js', file: status.file })
-        let output = await rule.command({ data, status })
-        status = output?.status || status
-        data = output?.data
-        //console.log({ data, status })
-      }
-      if (status.code != 'success') {
-        break
-      }
-    } catch (error) {
-      status = { code: 'error from catch', message: error }
-      break
-    }
-  }
-  //rules.forEach(async (rule) => {
-  //  await rule.command({ data, status })
-  //})
+  rules.forEach(async (rule) => {
+    await rule.command({ data, status })
+  })
   exitWhenNotSuccess(status)
   // we return status as part of the return object
   return { record: data, status }
@@ -188,14 +213,11 @@ export const executeAfterReadAllRulesV2 = async ({ table, data }) => {
  */
 export const executeBeforeUpdateRulesV2 = async ({ table, data, cuid }) => {
   let rules = await loadRules(allRules, table, 'before', 'update')
-  console.log({ function: 'executeBeforeUpdateRulesV2' })
   let status = { code: 'success', message: '' }
   for (let rule of rules /* needs to be a for of to allow break */) {
     try {
       if (status.code == 'success') {
         status.file = rule.file.split('\\dist\\')[1]
-        //console.log({ function: './src/lib/rules.js', file: status.file })
-        console.log(`Executing Before [${rule.order}] update ${status.file}`)
         let output = await rule.command({ data, status, cuid })
         status = output?.status
       }
@@ -216,7 +238,7 @@ export const executeBeforeDeleteRulesV2 = async ({ table, cuid }) => {
       let output = await rule.command({ cuid, status })
       status = output.status
     } catch (error) {
-      console.log({ funciton: 'executeBeforeDeleteRulesV2', error })
+      console.log(error)
       status = { code: 'error from catch', message: error }
       break
     }
@@ -245,24 +267,12 @@ export const executeAfterDeleteRulesV2 = async ({ table, data }) => {
 export const executeAfterUpdateRulesV2 = async ({ table, data }) => {
   let rules = await loadRules(allRules, table, 'after', 'update')
   let status = { code: 'success', message: '' }
-  console.log({ function: 'executeAfterUpdateRulesV2' })
-  for (let rule of rules /* needs to be a for of to allow break */) {
-    try {
-      if (status.code == 'success') {
-        status.file = rule.file.split('\\dist\\')[1]
-        //console.log({ function: './src/lib/rules.js', file: status.file })
-        console.log(`Executing After [${rule.order}] Update ${status.file}`)
-        let output = await rule.command({ data, status })
-        status = output?.status
-      }
-    } catch (error) {
-      status = { code: 'error from catch', message: error }
-      break // stops other rules from running
-    }
-    exitWhenNotSuccess(status)
-    // we return status as part of the return object
-    console.log(`STOPPED executeAfterUpdateRulesV2 ${table}`)
-  }
+  rules.forEach(async (rule) => {
+    console.log({ function: 'executeAfterUpdateRulesV2', rule: rule.file })
+    await rule.command({ data, status })
+  })
+  exitWhenNotSuccess(status)
+  // we return status as part of the return object
   return { record: data, status }
 }
 

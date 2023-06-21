@@ -11,6 +11,7 @@ const Routes = () => {
     <Router useAuth={useAuth}>
       <Route path="/form" page={FormPage} name="form" />
       <Route path="/login" page={Login2Page} name="login" />
+      <Route path="/ask/{cuid:String}" page={AskPage} name="ask" />
       <Route path="/ask" page={AskPage} name="ask" />
       <Route path="/resources" page={ResourcesPage} name="resources" />
       <Route path="/forgot-password" whileLoadingAuth={() => <>Loading...</>} page={ForgotPasswordPage} name="forgotPassword" />

@@ -3,11 +3,11 @@ import { MetaTags } from '@redwoodjs/web'
 
 import AskStew from 'src/components/AskStew/AskStew'
 
-const AskPage = () => {
+const AskPage = ({cuid}) => {
   return (
     <>
       <MetaTags title="Ask" description="Ask page" />
-      <AskStew />
+      <AskStew cuid={cuid} />
     </>
   )
 }

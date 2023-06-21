@@ -135,8 +135,8 @@ export const deleteThread = async ({ cuid }) => {
 }
 
 export const Thread = {
-  user: (_obj, { root }) =>
-    db[table].findUnique({ where: { cuid: root.cuid } }).user(),
-  question: (_obj, { root }) =>
-    db[table].findUnique({ where: { cuid: root.cuid } }).question(),
+  User: (_obj, { root }) =>
+    db[table].findUnique({ where: { cuid: root.cuid } }).User(),
+  Question: (_obj, { root }) =>
+    db[table].findUnique({ where: { cuid: root.cuid } }).Question(),
 }
