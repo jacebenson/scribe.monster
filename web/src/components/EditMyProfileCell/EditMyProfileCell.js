@@ -14,7 +14,7 @@ import FormSkeleton from 'src/components/FormSkeleton/FormSkeleton'
 export const QUERY = gql`
   query getMyProfile {
     myProfile {
-      username
+
       email
       name
       extensionKey
@@ -95,8 +95,8 @@ export const Success = ({ myProfile }) => {
       required: 'This is required',
     },
     {
-      name: 'username',
-      prettyName: 'Username',
+      name: 'email',
+      prettyName: 'Email',
       required: 'This is required',
     },
     {

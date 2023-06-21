@@ -55,7 +55,7 @@ export const handler = async (event /*, context*/) => {
       })
     }
     var authString = event.headers.authorization.split('Basic ')[1]
-    var [username, ...extensionKey] = new Buffer(authString, 'base64')
+    var [email, ...extensionKey] = new Buffer(authString, 'base64')
       .toString()
       .split(':')
     extensionKey = extensionKey.join(':')
@@ -65,7 +65,7 @@ export const handler = async (event /*, context*/) => {
     var where = {
       AND: [
         { extensionKey: { equals: extensionKey } },
-        { username: { equals: username } },
+        { email: { equals: email } },
         //{ level: { OR: [{ equals: 'paid' }, { equals: 'free' }] } },
       ],
     }
@@ -78,7 +78,7 @@ export const handler = async (event /*, context*/) => {
       where: JSON.stringify(where),
       headers: event.headers,
       authString,
-      username,
+      email,
       extensionKey,
     })
     if (!hasValidKey) {

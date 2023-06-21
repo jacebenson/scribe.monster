@@ -157,7 +157,7 @@ export default async ({ args }) => {
       activity: require(`${seedFilesDir}Activity.json`),
       property: require(`${seedFilesDir}Property.json`),
       memory: require(`${seedFilesDir}Memory.json`),
-      thread: require(`${seedFilesDir}Thread.json`),
+      //thread: require(`${seedFilesDir}Thread.json`),
       question: require(`${seedFilesDir}Question.json`),
       sideBarItem: require(`${seedFilesDir}SideBarItem.json`),
       memoryChunk: require(`${seedFilesDir}MemoryChunk.json`),
