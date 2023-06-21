@@ -123,7 +123,7 @@ export const handler = async (event, context) => {
     handler: ({ username, hashedPassword, salt, userAttributes }) => {
       let user = createUser({
         input: {
-          username: username,
+          //username: username,
           email: username,
           ///hashedPassword: hashedPassword,
           loginToken: hashedPassword,
