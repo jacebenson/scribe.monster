@@ -15,7 +15,7 @@ export let client: InMemoryClient | RedisClient
     client = new RedisClient(
       {
         url: process.env.CACHE_HOST,
-        username: process.env.CACHE_USERNAME,
+        //username: process.env.CACHE_USERNAME,
         password:process.env.CACHE_PASSWORD,
         logger
       })
