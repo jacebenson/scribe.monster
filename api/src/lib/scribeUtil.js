@@ -300,16 +300,16 @@ export const authenticateUser = async (event) => {
   //  .toString()
   //  .split(':')
   // user safe buffer
-  let [username, extensionKey] = Buffer.from(token, 'base64')
+  let [email, extensionKey] = Buffer.from(token, 'base64')
     .toString()
     .split(':')
-  if (!username) return { error: 'No username provided' }
+  if (!email) return { error: 'No email provided' }
   if (!extensionKey) return { error: 'No extensionKey provided' }
-  let where = { AND: [{ username }, { extensionKey }] }
+  let where = { AND: [{ email }, { extensionKey }] }
   let user = await db.user.findFirst({ where })
   if (!user)
     return {
-      error: `Authentication for "${username}" failed.
+      error: `Authentication for "${email}" failed.
 We changed to passwordless and if you had an email on file that is now your login.
 
 If you're having problems, please use the "Send Feedback" button to send me a message and we will help you out.
