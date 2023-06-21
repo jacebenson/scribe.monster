@@ -277,7 +277,7 @@ export const readRecords = async ({
     returnObj.table = table // comes in as pascal case User / ModelInstance
     returnObj.page = page
     returnObj.where = where
-    returnObj.skip = skip
+    returnObj.skip = skip || 0
     returnObj.orderBy = orderBy || 'cuid/desc'
     console.log({ where })
     // lets parse the filter
