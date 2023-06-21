@@ -12,7 +12,13 @@ export let client: InMemoryClient | RedisClient
 
   try {
     logger.info(`Connecting to cache at ${process.env.CACHE_HOST}`)
-    client = new RedisClient({ url: process.env.CACHE_HOST, password:process.env.CACHE_PASSWORD , logger })
+    client = new RedisClient(
+      {
+        url: process.env.CACHE_HOST,
+        username: process.env.CACHE_USERNAME,
+        password:process.env.CACHE_PASSWORD,
+        logger
+      })
   } catch (e) {
     logger.error(`Could not connect to cache: ${e.message}`)
   }
