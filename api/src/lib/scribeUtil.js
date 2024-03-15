@@ -5,6 +5,7 @@ import { db } from 'src/lib/db'
 import { getProperty } from './util'
 
 let providerSheet = ({ responseTokens, characters, provider }) => {
+  console.log({ responseTokens, characters, provider })
   if (!responseTokens) return 0
   if (!characters) return 0
   if (!provider) provider = 'openAi'
@@ -300,9 +301,7 @@ export const authenticateUser = async (event) => {
   //  .toString()
   //  .split(':')
   // user safe buffer
-  let [email, extensionKey] = Buffer.from(token, 'base64')
-    .toString()
-    .split(':')
+  let [email, extensionKey] = Buffer.from(token, 'base64').toString().split(':')
   if (!email) return { error: 'No email provided' }
   if (!extensionKey) return { error: 'No extensionKey provided' }
   let where = { AND: [{ email }, { extensionKey }] }

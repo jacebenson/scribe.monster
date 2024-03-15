@@ -2,7 +2,7 @@ version: '3.7'
 services:
   postgres:
       image: postgres:10.5
-      restart: always
+      restart: unless_stopped
       environment:
         - POSTGRES_USER=postgres
         - POSTGRES_PASSWORD=postgres
@@ -17,7 +17,7 @@ services:
         - /postgres/scribemonster:/var/lib/postgresql/data
   redis:
     image: redis:6.2-alpine
-    restart: always
+    restart: unless_stopped
     ports:
       - '6379:6379'
     command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81

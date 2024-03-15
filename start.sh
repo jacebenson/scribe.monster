@@ -5,7 +5,7 @@
 echo "Checking .env and .env.default for required variables"
 
 # Loop over each required variable and check if it exists in the .env file
-required_variables=("DATABASE_URL" "SESSION_SECRET" "CACHE_HOST" "CACHE_PASSWORD")
+required_variables=("DATABASE_URL" "SESSION_SECRET" "CACHE_HOST")
 errors=0
 
 for variable in "${required_variables[@]}"; do
